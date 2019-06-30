@@ -1,4 +1,4 @@
-package com.ledii.pdftools;
+package com.ledi.pdftools;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

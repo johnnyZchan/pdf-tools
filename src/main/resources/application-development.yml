@@ -1,0 +1,14 @@
+server:
+  port: 8091
+  servlet:
+    context-path: pdf-tools
+
+mybatis:
+  type-aliases-package: com.ledi.pdftools.entities
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url:
+    username:
+    password:
