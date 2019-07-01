@@ -1,10 +1,3 @@
--- --------------------------------------------------------
--- 主机:                           127.0.0.1
--- 服务器版本:                        8.0.16 - MySQL Community Server - GPL
--- 服务器OS:                        Win64
--- HeidiSQL 版本:                  10.2.0.5599
--- --------------------------------------------------------
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -13,7 +6,7 @@
 
 
 -- Dumping database structure for pdf_tools
-CREATE DATABASE IF NOT EXISTS `pdf_tools` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `pdf_tools` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `pdf_tools`;
 
 -- Dumping structure for table pdf_tools.pdf_file
@@ -25,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `pdf_file` (
   `file_path` varchar(200) NOT NULL COMMENT '文件存储路径',
   `file_url` varchar(200) NOT NULL COMMENT '文件访问路径',
   PRIMARY KEY (`pdf_file_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 
@@ -35,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `pdf_list` (
   `pdf_id` varchar(32) NOT NULL COMMENT '主键ID',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型（1：原始文件、2：更新文件）',
   `awb` varchar(50) DEFAULT NULL COMMENT '单号',
+  `awb_replace` varchar(50) DEFAULT NULL COMMENT '换单号',
   `num` int(11) DEFAULT NULL COMMENT '件数',
   `weight` decimal(12,2) DEFAULT NULL COMMENT '重量',
   `declare_freight_price` decimal(12,2) DEFAULT NULL COMMENT '申报运费单价',
@@ -87,11 +81,11 @@ CREATE TABLE IF NOT EXISTS `pdf_list` (
   `country_excise_tax_total_amount` decimal(12,2) DEFAULT NULL COMMENT '国内消费税合计',
   `local_excise_tax_total_amount` decimal(12,2) DEFAULT NULL COMMENT '地方消费税合计',
   `make_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '制作状态（0：未制作、1：已制作）',
-  `make_time` timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '制作时间',
+  `make_time` timestamp NULL DEFAULT NULL COMMENT '制作时间',
   `del_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '删除状态（0：未删除、1：已删除）',
   `create_time` timestamp NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`pdf_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Data exporting was unselected.
 

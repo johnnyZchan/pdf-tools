@@ -4,5 +4,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PdfToolsConfig {
+@MapperScan("com.ledi.pdftools.mappers")
+public class DbConfig {
 }
