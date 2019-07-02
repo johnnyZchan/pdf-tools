@@ -4,23 +4,115 @@
     <meta charset="UTF-8">
     <title>PDF文件列表</title>
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-table.min.css">
+    <link rel="stylesheet" href="css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="css/main.css">
 
     <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-table.min.js"></script>
-    <script src="js/bootstrap-table-zh-CN.min.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
     <script src="js/main.js"></script>
 </head>
 <body>
+<div>
+    <label>PDF文件列表</label>
+    <div>
+        <input type="text" placeholder="输入查询单号">
+        <select>
+            <option value="" label="制作状态"></option>
+        </select>
+        <input type="text" placeholder="制作开始时间">
+        <span> 至 </span>
+        <input type="text" placeholder="制作结束时间">
+        <button>查询</button>
+    </div>
+</div>
+<div>
+    <button>上传PDF</button>
+    <button>Ankcustoms下载PDF</button>
+    <button>上传更新数据</button>
+    <button>删除</button>
+    <button>清空更新</button>
+    <button>制作更新PDF</button>
+    <button>导出原始数据</button>
+    <button>导出更新数据</button>
+    <button>导出对比数据</button>
 
+    <button>导出原始PDF</button>
+    <button>导出更新PDF</button>
+</div>
+<div>
+    <table id="pdf_list_table">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th><input id="checkall" type="checkbox"/></th>
+                <th>数据性质</th>
+                <th>单号</th>
+                <th>换单号</th>
+                <th>制作时间</th>
+                <th>制作状态</th>
+                <th>件数</th>
+                <th>重量</th>
+                <th>申报运费单价</th>
+                <th>总申报价值USD</th>
+                <th>申报运费USD</th>
+                <th>通关金额</th>
+                <th>BPR合计</th>
+                <th>关税</th>
+                <th>消费税</th>
+                <th>地方消费税</th>
+                <th>税金总计</th>
+                <th>美元日元汇率</th>
+                <th>品名1美金申报价值</th>
+                <th>品名1关税率</th>
+                <th>品名1运费比重</th>
+                <th>品名1日元申报价值</th>
+                <th>品名1关税计算基数</th>
+                <th>品名1关税额</th>
+                <th>品名1关税取整</th>
+                <th>品名1国内消费税</th>
+                <th>品名1国内消费税额基数</th>
+                <th>品名1国内消费税金额</th>
+                <th>品名1地方消费税基数</th>
+                <th>品名1地方消费税金额</th>
+
+                <th>品名2美金申报价值</th>
+                <th>品名2关税率</th>
+                <th>品名2运费比重</th>
+                <th>品名2日元申报价值</th>
+                <th>品名2关税计算基数</th>
+                <th>品名2关税额</th>
+                <th>品名2关税取整</th>
+                <th>品名2国内消费税</th>
+                <th>品名2国内消费税额基数</th>
+                <th>品名2国内消费税金额</th>
+                <th>品名2地方消费税基数</th>
+                <th>品名2地方消费税金额</th>
+
+                <th>品名3美金申报价值</th>
+                <th>品名3关税率</th>
+                <th>品名3运费比重</th>
+                <th>品名3日元申报价值</th>
+                <th>品名3关税计算基数</th>
+                <th>品名3关税额</th>
+                <th>品名3关税取整</th>
+                <th>品名3国内消费税</th>
+                <th>品名3国内消费税额基数</th>
+                <th>品名3国内消费税金额</th>
+                <th>品名3地方消费税基数</th>
+                <th>品名3地方消费税金额</th>
+
+                <th>关税合计</th>
+                <th>国内消费税合计</th>
+                <th>地方消费税合计</th>
+            </tr>
+        </thead>
+    </table>
+</div>
 </body>
 
 <script type="text/javascript">
     $(function () {
-       alert("load");
+
     });
 </script>
 </html>
