@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PdfToolsApplication {
 
     public static void main(String[] args) {
-
+        log.info("当前环境：" + System.getProperty("spring.profiles.active"));
         SpringApplication.run(PdfToolsApplication.class, args);
     }
 

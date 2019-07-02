@@ -1,14 +1,71 @@
 server:
   port: 8091
   servlet:
-    context-path: pdf-tools
+    context-path: /pdf-tools
+    session:
+      tracking-modes: cookie
+  # 下面是配置undertow作为服务器的参数
+  undertow:
+    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+    io-threads: 16
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
+    worker-threads: 256
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 1024
+    # 是否分配的直接内存
+    direct-buffers: true
+  # 压缩
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  # Enable HTTP/2 support, if the current environment supports it
+  http2:
+    enabled: true
 
 mybatis:
   type-aliases-package: com.ledi.pdftools.entities
 
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url:
-    username:
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pdf_tools?useUnicode=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&characterEncoding=UTF-8
+    username: root
+    password: root123456
+    type: com.alibaba.druid.pool.DruidDataSource
+  thymeleaf:
+    prefix: classpath:/templates/
+    encoding: UTF-8
+    mode: HTML
+    servlet:
+      content-type: text/html
+  resources:
+    cache:
+      cachecontrol:
+        # Maximum time the response should be cached (in seconds)
+        max-age: 120
+        # The cache must re-validate stale resources with the server. Any expired resources must not be used without re-validating.
+        must-revalidate: true
+        # The resources are private and intended for a single user. They must not be stored by a shared cache (e.g CDN).
+        cache-private: true
+        # The resources are public and any cache may store the response.
+        cache-public: true
+  servlet:
+    multipart:
+      # Multipart file uploads are enabled by default in Spring Boot with the following property
+      enabled: true
+      # Write files to disk if the file size is more than 2KB.
+      file-size-threshold: 2KB
+      # The intermediate disk location where the uploaded files are written
+      location: /tmp
+      # Maximum file size that can be uploaded
+      max-file-size: 500MB
+      # Maximum allowed multipart request size
+      max-request-size: 750MB
+
+http:
+  encoding:
+    charset: UTF-8
+    enabled: true
+    force: true
