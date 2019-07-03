@@ -1,28 +1,35 @@
 package com.ledi.pdftools.controllers;
 
+import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.ResponseModel;
+import com.ledi.pdftools.services.PdfListService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api(tags = "PDF列表接口")
 @RestController
 @Slf4j
 public class PdfListController extends BaseController {
 
+    @Resource
+    PdfListService pdfListService;
 
-    @GetMapping("/pdf/list")
+    @PostMapping("/pdf/list")
     public ResponseModel getPdfList(HttpServletRequest request,
                                     @RequestHeader(name = "lang", defaultValue = "sc") String lang,
-                                    @RequestParam(name = "page", defaultValue = "0") Integer page,
-                                    @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+                                    @RequestParam(name = "start", defaultValue = "0") Integer start,
+                                    @RequestParam(name = "length", defaultValue = "10") Integer length) {
+        int totalCount = pdfListService.getPdfListCount();
+        List<PdfListModel> dataList = null;
+        if (totalCount > 0) {
+            dataList = pdfListService.getPdfModelList(start, length);
+        }
 
-
-        return this.getOkResponseModel();
+        return this.getOkResponseModel(totalCount, dataList);
     }
 }

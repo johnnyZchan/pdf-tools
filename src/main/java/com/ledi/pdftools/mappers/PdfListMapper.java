@@ -1,13 +1,12 @@
 package com.ledi.pdftools.mappers;
 
 import com.ledi.pdftools.entities.PdfListEntity;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.ledi.pdftools.mappers.provider.PdfListProvider;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 @Component
@@ -42,6 +41,15 @@ public interface PdfListMapper {
 
     @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO)
     List<PdfListEntity> findAll();
+
+    @SelectProvider(type = PdfListProvider.class, method = "findByCondition")
+    List<PdfListEntity> findByCondition(Map<String, Object> conditions, String orderSql, Integer start, Integer length);
+
+    @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO + " and type=" + PdfListEntity.TYPE_UPDATED + " and awb=#{awb}")
+    PdfListEntity findUpdatedPdfByAwb(String awb);
+
+    @SelectProvider(type = PdfListProvider.class, method = "countByCondition")
+    int countByCondition(Map<String, Object> conditions);
 
     @Update("update pdf_list set del_status=" + DEL_STATUS_YES + " where pdf_id=#{id}")
     void delete(String id);

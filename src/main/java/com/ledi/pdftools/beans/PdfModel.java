@@ -1,17 +1,15 @@
-package com.ledi.pdftools.entities;
+package com.ledi.pdftools.beans;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Data
-public class PdfListEntity {
+@Getter
+@Setter
+public class PdfModel {
 
-    public static final int TYPE_ORIGINAL = 1;
-    public static final int TYPE_UPDATED = 2;
-
-    private String pdfId;
     private Integer type;
     private String awb;
     private String awbReplace;
@@ -68,8 +66,4 @@ public class PdfListEntity {
     private BigDecimal localExciseTaxTotalAmount;
     private Integer makeStatus;
     private Timestamp makeTime;
-    private Integer delStatus;
-    private Timestamp createTime;
-
-
 }

@@ -19,4 +19,10 @@ public abstract class BaseController implements Serializable {
         model.setData(data);
         return model;
     }
+
+    public ResponseModel getOkResponseModel(int total, Object data) {
+        ResponseModel model = this.getOkResponseModel(data);
+        model.setTotal(total);
+        return model;
+    }
 }

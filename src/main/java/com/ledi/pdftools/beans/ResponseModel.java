@@ -10,4 +10,5 @@ public class ResponseModel<T> implements Serializable {
     private Integer code;
     private String message;
     private T data;
+    private Integer total;
 }
