@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "PDF列表接口")
@@ -26,7 +27,7 @@ public class PdfListController extends BaseController {
                                     @RequestParam(name = "start", defaultValue = "0") Integer start,
                                     @RequestParam(name = "length", defaultValue = "10") Integer length) {
         int totalCount = pdfListService.getPdfListCount();
-        List<PdfListModel> dataList = null;
+        List<PdfListModel> dataList = new ArrayList<PdfListModel>();
         if (totalCount > 0) {
             dataList = pdfListService.getPdfModelList(start, length);
         }
