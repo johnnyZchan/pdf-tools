@@ -4,6 +4,7 @@ import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.ResponseModel;
 import com.ledi.pdftools.services.PdfListService;
 import io.swagger.annotations.Api;
+import javafx.scene.chart.ValueAxis;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,5 +32,11 @@ public class PdfListController extends BaseController {
         }
 
         return this.getOkResponseModel(totalCount, dataList);
+    }
+
+    @PutMapping("/pdf/list/{pdfFileId}")
+    public ResponseModel addPdf(@PathVariable(value = "pdfFileId") String pdfFileId) {
+        this.pdfListService.addPdf(pdfFileId);
+        return this.getOkResponseModel();
     }
 }

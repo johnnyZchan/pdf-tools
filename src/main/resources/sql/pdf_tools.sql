@@ -13,10 +13,10 @@ USE `pdf_tools`;
 DROP TABLE IF EXISTS `pdf_file`;
 CREATE TABLE IF NOT EXISTS `pdf_file` (
   `pdf_file_id` varchar(32) NOT NULL COMMENT '主键',
-  `pdf_id` varchar(32) NOT NULL COMMENT 'PDF数据的ID',
-  `file_name` varchar(50) NOT NULL COMMENT '文件名',
-  `file_path` varchar(200) NOT NULL COMMENT '文件存储路径',
-  `file_url` varchar(200) NOT NULL COMMENT '文件访问路径',
+  `pdf_id` varchar(32) NULL COMMENT 'PDF数据的ID',
+  `file_name` varchar(50) NULL COMMENT '文件名',
+  `file_path` varchar(200) NULL COMMENT '文件存储路径',
+  `file_url` varchar(200) NULL COMMENT '文件访问路径',
   PRIMARY KEY (`pdf_file_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS `pdf_list` (
   `awb_replace` varchar(50) DEFAULT NULL COMMENT '换单号',
   `num` int(11) DEFAULT NULL COMMENT '件数',
   `weight` decimal(12,2) DEFAULT NULL COMMENT '重量',
-  `declare_freight_price` decimal(12,2) DEFAULT NULL COMMENT '申报运费单价',
   `declare_total_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '总申报价值USD',
   `declare_freight_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '申报运费USD',
   `clearance_amount` decimal(12,2) DEFAULT NULL COMMENT '通关金额',

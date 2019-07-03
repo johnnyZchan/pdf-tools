@@ -11,4 +11,6 @@ public interface PdfListService {
     public List<PdfListEntity> getPdfList(Integer start, Integer length);
 
     public List<PdfListModel> getPdfModelList(Integer start, Integer length);
+
+    public void addPdf(String pdfFileId);
 }

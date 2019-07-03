@@ -2,7 +2,11 @@ package com.ledi.pdftools.services.impl;
 
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.PdfModel;
+import com.ledi.pdftools.constants.CodeInfo;
+import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
+import com.ledi.pdftools.exceptions.ServiceException;
+import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.mappers.PdfListMapper;
 import com.ledi.pdftools.services.PdfListService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 @Service("pdfListService")
-@Transactional
 @Slf4j
 public class PdfListServiceImpl implements PdfListService {
 
     @Resource
     PdfListMapper pdfListMapper;
+    @Resource
+    PdfFileMapper pdfFileMapper;
 
     public int getPdfListCount() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -48,6 +53,16 @@ public class PdfListServiceImpl implements PdfListService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void addPdf(String pdfFileId) {
+        PdfFileEntity pdfFileEntity = this.pdfFileMapper.findById(pdfFileId);
+        if (pdfFileEntity == null) {
+            throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
+        }
+
+
     }
 
     public PdfListModel convertEntity2PdfListModel(PdfListEntity originalEntity) {
@@ -81,7 +96,6 @@ public class PdfListServiceImpl implements PdfListService {
         model.setAwbReplace(entity.getAwbReplace());
         model.setNum(entity.getNum());
         model.setWeight(entity.getWeight());
-        model.setDeclareFreightPrice(entity.getDeclareFreightPrice());
         model.setDeclareTotalAmountUsd(entity.getDeclareTotalAmountUsd());
         model.setDeclareFreightAmountUsd(entity.getDeclareFreightAmountUsd());
         model.setClearanceAmount(entity.getClearanceAmount());

@@ -36,6 +36,24 @@ public interface PdfListMapper {
             "tariff_total_amount as tariffTotalAmount, country_excise_tax_total_amount as countryExciseTaxTotalAmount, local_excise_tax_total_amount as localExciseTaxTotalAmount," +
             "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime";
 
+    public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight, declare_freight_price," +
+            "declare_total_amount_usd, declare_freight_amount_usd, clearance_amount," +
+            "bpr_amount, tariff, excise_tax, local_excise_tax, tax_total_amount,usd_jpy_exchange_rate," +
+            "prod1_declare_amount_usd, prod2_declare_amount_usd, prod3_declare_amount_usd," +
+            "prod1_tariff_rate, prod2_tariff_rate, prod3_tariff_rate," +
+            "prod1_freight_pct, prod2_freight_pct, prod3_freight_pct," +
+            "prod1_declare_amount_jpy, prod2_declare_amount_jpy, prod3_declare_amount_jpy," +
+            "prod1_tariff_base, prod2_tariff_base, prod3_tariff_base," +
+            "prod1_tariff, prod2_tariff, prod3_tariff," +
+            "prod1_tariff_rounding, prod2_tariff_rounding, prod3_tariff_rounding," +
+            "prod1_country_excise_tax, prod2_country_excise_tax, prod3_country_excise_tax," +
+            "prod1_country_excise_tax_base, prod2_country_excise_tax_base, prod3_country_excise_tax_base," +
+            "prod1_country_excise_tax_amount, prod2_country_excise_tax_amount, prod3_country_excise_tax_amount," +
+            "prod1_local_excise_tax_base, prod2_local_excise_tax_base, prod3_local_excise_tax_base," +
+            "prod1_local_excise_tax_amount, prod2_local_excise_tax_amount, prod3_local_excise_tax_amount," +
+            "tariff_total_amount, country_excise_tax_total_amount, local_excise_tax_total_amount," +
+            "make_status, make_time, del_status, create_time";
+
     @Select("select " + COLUMNS + " from pdf_list where pdf_id=#{id} and del_status=" + DEL_STATUS_NO)
     PdfListEntity findById(String id);
 
@@ -75,7 +93,7 @@ public interface PdfListMapper {
             " where pdf_id=#{pdfId}")
     void update(PdfListEntity pdfListEntity);
 
-    @Insert("insert into pdf_list(" + COLUMNS + ")" +
+    @Insert("insert into pdf_list(" + ADD_COLUMNS + ")" +
             " values(#{pdfId}, #{type}, #{awb}, #{awbReplace}, #{num}, #{weight}, #{declareFreightPrice}, #{declareTotalAmountUsd}, #{declareFreightAmountUsd}," +
             " #{clearanceAmount}, #{bprAmount}, #{tariff}, #{exciseTax}, #{localExciseTax}, #{taxTotalAmount}, #{usdJpyExchangeRate}," +
             " #{prod1DeclareAmountUsd}, #{prod2DeclareAmountUsd}, #{prod3DeclareAmountUsd}," +

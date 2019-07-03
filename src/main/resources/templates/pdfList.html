@@ -26,12 +26,13 @@
     </div>
 </div>
 <div style="margin-top: 20px">
-    <button>上传PDF</button>
+    <input type="file" name="file" id="pdf_file" onchange="pdfFileUpload();" style="display:none">
+    <button onclick="pdfFileSelect();">上传PDF</button>
+
     <button>Ankcustoms下载PDF</button>
     <button>上传更新数据</button>
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button>删除</button>
-    <button>清空更新</button>
     <button>制作更新PDF</button>
     <button>导出原始数据</button>
     <button>导出更新数据</button>
@@ -210,8 +211,6 @@
                 {data: null, width: "80px", className: "column-vertical-top"},
                 // <th>重量</th>
                 {data: null, width: "80px", className: "column-vertical-top"},
-                // <th>申报运费单价</th>
-                {data: null, width: "140px", className: "column-vertical-top"},
                 // <th>总申报价值USD</th>
                 {data: null, width: "140px", className: "column-vertical-top"},
                 // <th>申报运费USD</th>
@@ -383,159 +382,152 @@
                     },
                     "targets" : 8
                 },
-                // <th>申报运费单价</th>
-                {
-                    "render" : function(data, type, row, meta) {
-                        return createColumnHtml(row, "declareFreightPrice");
-                    },
-                    "targets" : 9
-                },
                 // <th>总申报价值USD</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "declareTotalAmountUsd");
                     },
-                    "targets" : 10
+                    "targets" : 9
                 },
                 // <th>申报运费USD</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "declareFreightAmountUsd");
                     },
-                    "targets" : 11
+                    "targets" : 10
                 },
                 // <th>通关金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "clearanceAmount");
                     },
-                    "targets" : 12
+                    "targets" : 11
                 },
                 // <th>BPR合计</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "bprAmount");
                     },
-                    "targets" : 13
+                    "targets" : 12
                 },
                 // <th>关税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "tariff");
                     },
-                    "targets" : 14
+                    "targets" : 13
                 },
                 // <th>消费税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "exciseTax");
                     },
-                    "targets" : 15
+                    "targets" : 14
                 },
                 // <th>地方消费税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "localExciseTax");
                     },
-                    "targets" : 16
+                    "targets" : 15
                 },
                 // <th>税金总计</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "taxTotalAmount");
                     },
-                    "targets" : 17
+                    "targets" : 16
                 },
                 // <th>美元日元汇率</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "usdJpyExchangeRate");
                     },
-                    "targets" : 18
+                    "targets" : 17
                 },
                 // <th>品名1美金申报价值</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1DeclareAmountUsd");
                     },
-                    "targets" : 19
+                    "targets" : 18
                 },
                 // <th>品名1关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1TariffRate");
                     },
-                    "targets" : 20
+                    "targets" : 19
                 },
                 // <th>品名1运费比重</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1FreightPct");
                     },
-                    "targets" : 21
+                    "targets" : 20
                 },
                 // <th>品名1日元申报价值</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1DeclareAmountJpy");
                     },
-                    "targets" : 22
+                    "targets" : 21
                 },
                 // <th>品名1关税计算基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1TariffBase");
                     },
-                    "targets" : 23
+                    "targets" : 22
                 },
                 // <th>品名1关税额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1Tariff");
                     },
-                    "targets" : 24
+                    "targets" : 23
                 },
                 // <th>品名1关税取整</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1TariffRounding");
                     },
-                    "targets" : 25
+                    "targets" : 24
                 },
                 // <th>品名1国内消费税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1CountryExciseTax");
                     },
-                    "targets" : 26
+                    "targets" : 25
                 },
                 // <th>品名1国内消费税额基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1CountryExciseTaxBase");
                     },
-                    "targets" : 27
+                    "targets" : 26
                 },
                 // <th>品名1国内消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1CountryExciseTaxAmount");
                     },
-                    "targets" : 28
+                    "targets" : 27
                 },
                 // <th>品名1地方消费税基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1LocalExciseTaxBase");
                     },
-                    "targets" : 29
+                    "targets" : 28
                 },
                 // <th>品名1地方消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod1LocalExciseTaxAmount");
                     },
-                    "targets" : 30
+                    "targets" : 29
                 },
 
                 // <th>品名2美金申报价值</th>
@@ -543,84 +535,84 @@
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2DeclareAmountUsd");
                     },
-                    "targets" : 31
+                    "targets" : 30
                 },
                 // <th>品名2关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2TariffRate");
                     },
-                    "targets" : 32
+                    "targets" : 31
                 },
                 // <th>品名2运费比重</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2FreightPct");
                     },
-                    "targets" : 33
+                    "targets" : 32
                 },
                 // <th>品名2日元申报价值</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2DeclareAmountJpy");
                     },
-                    "targets" : 34
+                    "targets" : 33
                 },
                 // <th>品名2关税计算基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2TariffBase");
                     },
-                    "targets" : 35
+                    "targets" : 34
                 },
                 // <th>品名2关税额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2Tariff");
                     },
-                    "targets" : 36
+                    "targets" : 35
                 },
                 // <th>品名2关税取整</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2TariffRounding");
                     },
-                    "targets" : 37
+                    "targets" : 36
                 },
                 // <th>品名2国内消费税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2CountryExciseTax");
                     },
-                    "targets" : 38
+                    "targets" : 37
                 },
                 // <th>品名2国内消费税额基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2CountryExciseTaxBase");
                     },
-                    "targets" : 39
+                    "targets" : 38
                 },
                 // <th>品名2国内消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2CountryExciseTaxAmount");
                     },
-                    "targets" : 40
+                    "targets" : 39
                 },
                 // <th>品名2地方消费税基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2LocalExciseTaxBase");
                     },
-                    "targets" : 41
+                    "targets" : 40
                 },
                 // <th>品名2地方消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod2LocalExciseTaxAmount");
                     },
-                    "targets" : 42
+                    "targets" : 41
                 },
 
                 // <th>品名3美金申报价值</th>
@@ -628,84 +620,84 @@
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3DeclareAmountUsd");
                     },
-                    "targets" : 43
+                    "targets" : 42
                 },
                 // <th>品名3关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3TariffRate");
                     },
-                    "targets" : 44
+                    "targets" : 43
                 },
                 // <th>品名3运费比重</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3FreightPct");
                     },
-                    "targets" : 45
+                    "targets" : 44
                 },
                 // <th>品名3日元申报价值</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3DeclareAmountJpy");
                     },
-                    "targets" : 46
+                    "targets" : 45
                 },
                 // <th>品名3关税计算基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3TariffBase");
                     },
-                    "targets" : 47
+                    "targets" : 46
                 },
                 // <th>品名3关税额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3Tariff");
                     },
-                    "targets" : 48
+                    "targets" : 47
                 },
                 // <th>品名3关税取整</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3TariffRounding");
                     },
-                    "targets" : 49
+                    "targets" : 48
                 },
                 // <th>品名3国内消费税</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3CountryExciseTax");
                     },
-                    "targets" : 50
+                    "targets" : 49
                 },
                 // <th>品名3国内消费税额基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3CountryExciseTaxBase");
                     },
-                    "targets" : 51
+                    "targets" : 50
                 },
                 // <th>品名3国内消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3CountryExciseTaxAmount");
                     },
-                    "targets" : 52
+                    "targets" : 51
                 },
                 // <th>品名3地方消费税基数</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3LocalExciseTaxBase");
                     },
-                    "targets" : 53
+                    "targets" : 52
                 },
                 // <th>品名3地方消费税金额</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "prod3LocalExciseTaxAmount");
                     },
-                    "targets" : 54
+                    "targets" : 53
                 },
 
                 // <th>关税合计</th>
@@ -713,21 +705,21 @@
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "tariffTotalAmount");
                     },
-                    "targets" : 55
+                    "targets" : 54
                 },
                 // <th>国内消费税合计</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "countryExciseTaxTotalAmount");
                     },
-                    "targets" : 56
+                    "targets" : 55
                 },
                 // <th>地方消费税合计</th>
                 {
                     "render" : function(data, type, row, meta) {
                         return createColumnHtml(row, "localExciseTaxTotalAmount");
                     },
-                    "targets" : 57
+                    "targets" : 56
                 },
             ],
             language : {
@@ -775,6 +767,31 @@
 
     function downloadTemplateFile() {
         window.location.href = "download/templates";
+    }
+
+    function pdfFileUpload() {
+        var formData = new FormData();
+        formData.append('file', $('#pdf_file')[0].files[0]);
+        $.ajax({
+            url : 'pdf/upload',
+            type : 'POST',
+            data : formData,
+            contentType: false,// 当有文件要上传时，此项是必须的，否则后台无法识别文件流的起始位置
+            processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post)
+            dataType: 'json',//这里是返回类型，一般是json,text等
+            clearForm: true,//提交后是否清空表单数据
+            success: function(data) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
+                alert('上传成功');
+            },
+            error: function(data, status, e) {  //提交失败自动执行的处理函数。
+                console.error(e);
+            }
+        });
+    }
+
+    function pdfFileSelect() {
+        $('#pdf_file').val('');
+        $("#pdf_file").trigger("click");
     }
 </script>
 </html>

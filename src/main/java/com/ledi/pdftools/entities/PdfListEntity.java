@@ -17,7 +17,6 @@ public class PdfListEntity {
     private String awbReplace;
     private Integer num;
     private BigDecimal weight;
-    private BigDecimal declareFreightPrice;
     private BigDecimal declareTotalAmountUsd;
     private BigDecimal declareFreightAmountUsd;
     private BigDecimal clearanceAmount;

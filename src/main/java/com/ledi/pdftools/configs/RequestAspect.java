@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +35,7 @@ public class RequestAspect {
         log.info(joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName() + " 方法执行开始...");
         Object[] args = joinPoint.getArgs();
         List<Object> logArgs = streamOf(args)
-                .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof File) && !(arg instanceof HttpServletResponse)))
+                .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof File) && !(arg instanceof MultipartFile) && !(arg instanceof HttpServletResponse)))
                 .collect(Collectors.toList());
         String argStr = JSON.toJSONString(logArgs);
         log.info("参数：" + argStr);
