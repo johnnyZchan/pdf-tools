@@ -77,7 +77,14 @@ public class PdfFileServiceImpl implements PdfFileService {
                 if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                     for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                         String data = this.readData(reader, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
-                        BeanUtil.setFieldValue(result, coordinate.getKey(), convertData2Value(data, coordinate));
+                        Object convertData = null;
+                        try {
+                            convertData = convertData2Value(data, coordinate);
+                        } catch (NumberFormatException e) {
+                            convertData = null;
+                        }
+                        log.info("文件[" + pdfFileEntity.getPdfFileId() + "]的第[" + page + "]页，字段[" + coordinate.getFieldName() + "]=[" + data + "]，转换后数据[" + convertData + "]");
+                        BeanUtil.setFieldValue(result, coordinate.getFieldName(), convertData);
                     }
                 }
             }
@@ -123,6 +130,7 @@ public class PdfFileServiceImpl implements PdfFileService {
             } else if (PdfDataCoordinateEntity.DATA_TYPE_DECIMAL.equals(entity.getDataType())) {
                 String bdData = formatData(data, entity);
                 if (StringUtils.isNotBlank(bdData)) {
+
                     return new BigDecimal(bdData);
                 }
                 return null;
@@ -140,7 +148,7 @@ public class PdfFileServiceImpl implements PdfFileService {
         data = data.trim();
         // 去掉前缀
         if (StringUtils.isNotBlank(entity.getPrefix()) && data.startsWith(entity.getPrefix())) {
-            data = data.substring(data.indexOf(entity.getPrefix()));
+            data = data.substring(data.indexOf(entity.getPrefix()) + 1);
         }
         // 去掉后缀
         if (StringUtils.isNotBlank(entity.getSuffix()) && data.endsWith(entity.getSuffix())) {

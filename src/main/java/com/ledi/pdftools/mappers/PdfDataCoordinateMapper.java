@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public interface PdfDataCoordinateMapper {
 
-    public static final String COLUMNS = "id, page, key, llx, lly, urx, ury, left, top, width, height, align, data_type as dataType, decimal_digits as decimalDigits, prefix, suffix";
+    public static final String COLUMNS = "id, page_no as pageNo, field_name as fieldName, llx, lly, urx, ury, margin_left as marginLeft, margin_top as marginTop, width, height, align, data_type as dataType, decimal_digits as decimalDigits, prefix, suffix";
 
     @Select("select " + COLUMNS + " from pdf_data_coordinate where id=#{id}")
     PdfDataCoordinateEntity findById(String id);
@@ -20,11 +20,11 @@ public interface PdfDataCoordinateMapper {
     @Select("select " + COLUMNS + " from pdf_data_coordinate")
     List<PdfDataCoordinateEntity> findAll();
 
-    @Select("select " + COLUMNS + " from pdf_data_coordinate where page=#{page}")
-    List<PdfDataCoordinateEntity> findByPage(int page);
+    @Select("select " + COLUMNS + " from pdf_data_coordinate where page_no=#{pageNo}")
+    List<PdfDataCoordinateEntity> findByPage(int pageNo);
 
-    @Update("update pdf_data_coordinate set page=#{page}, key=#{key}, llx=#{llx}, lly=#{lly}, urx=#{urx}, ury=#{ury}," +
-            " left=#{left}, top=#{top}, width=#{width}, height=#{height}, align=#{align}, data_type=#{dataType}, decimal_digits=#{decimalDigits}" +
+    @Update("update pdf_data_coordinate set page_no=#{pageNo}, field_name=#{fieldName}, llx=#{llx}, lly=#{lly}, urx=#{urx}, ury=#{ury}," +
+            " margin_left=#{marginLeft}, margin_top=#{marginTop}, width=#{width}, height=#{height}, align=#{align}, data_type=#{dataType}, decimal_digits=#{decimalDigits}," +
             " prefix=#{prefix}, suffix=#{suffix}" +
             " where id=#{id}")
     void update(PdfDataCoordinateEntity pdfDataCoordinateEntity);

@@ -174,8 +174,9 @@
 </body>
 
 <script type="text/javascript">
+    var pdfListTable;
     $(document).ready(function() {
-        $('#pdf_list_table').DataTable({
+        pdfListTable = $('#pdf_list_table').DataTable({
             serverSide: true,
             ordering: false,
             autoWidth: false,
@@ -362,7 +363,7 @@
                 // <th>制作状态</th>
                 {
                     "render" : function(data, type, row, meta) {
-                        return createColumnHtml(row, "makeStatus");
+                        return createColumnHtml(row, "makeStatus", makeStatusRender);
                     },
                     "targets" : 6
                 },
@@ -453,7 +454,7 @@
                 // <th>品名1关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod1TariffRate");
+                        return createColumnHtml(row, "prod1TariffRate", tariffRateRender);
                     },
                     "targets" : 19
                 },
@@ -538,7 +539,7 @@
                 // <th>品名2关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod2TariffRate");
+                        return createColumnHtml(row, "prod2TariffRate", tariffRateRender);
                     },
                     "targets" : 31
                 },
@@ -623,7 +624,7 @@
                 // <th>品名3关税率</th>
                 {
                     "render" : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod3TariffRate");
+                        return createColumnHtml(row, "prod3TariffRate", tariffRateRender);
                     },
                     "targets" : 43
                 },
@@ -744,6 +745,10 @@
     });
 
     function createColumnHtml(row, key) {
+        return createColumnHtml(row, key, null);
+    }
+    
+    function createColumnHtml(row, key, render) {
         var originalVal = '';
         var updatedVal = '';
         var compareVal = '';
@@ -758,9 +763,32 @@
                 compareVal = row.comparePdf[key];
             }
         }
-
+        if (render != null && typeof render == 'function') {
+            originalVal = render(originalVal, "original");
+            updatedVal = render(updatedVal, "updated");
+            compareVal = render(compareVal, "compare");
+        }
+        
         var html = originalVal + "<br/>" + updatedVal + "<br/>" + compareVal;
         return html;
+    }
+
+    function tariffRateRender(val, rowType) {
+        if (val != null && val != "") {
+            return val + "%";
+        }
+        return val;
+    }
+
+    function makeStatusRender(val, rowType) {
+        if (val != null && rowType == "updated") {
+            if (val == 0) {
+                return "未制作";
+            } else if (val == 1) {
+                return "已制作";
+            }
+        }
+        return "";
     }
 
     function downloadTemplateFile() {
@@ -778,11 +806,17 @@
             processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post)
             dataType: 'json',//这里是返回类型，一般是json,text等
             clearForm: true,//提交后是否清空表单数据
-            success: function(data) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
-                alert('上传成功');
+            success: function(result) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
+                if (result != null && result.code == 0) {
+                    alert('上传成功');
+                    addPdf(result.data.pdfFileId);
+                } else {
+                    alert('上传失败[' + (result != null ? result.message:'') + ']')
+                }
             },
             error: function(data, status, e) {  //提交失败自动执行的处理函数。
-                console.error(e);
+                console.log(e);
+                alert('上传异常')
             }
         });
     }
@@ -790,6 +824,25 @@
     function pdfFileSelect() {
         $('#pdf_file').val('');
         $("#pdf_file").trigger("click");
+    }
+
+    function addPdf(pdfFileId) {
+        $.ajax({
+            url : "pdf/list/" + pdfFileId ,
+            type : "put",
+            dataType: 'json',
+            success : function(result) {
+                if (result != null && result.code == 0) {
+                    pdfListTable.ajax.reload();
+                } else {
+                    alert("生成数据失败");
+                }
+            },
+            error: function (data, status, e) {
+                console.log(e);
+                alert("生成数据失败");
+            }
+        });
     }
 </script>
 </html>

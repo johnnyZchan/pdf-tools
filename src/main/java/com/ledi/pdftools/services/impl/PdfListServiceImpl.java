@@ -197,7 +197,9 @@ public class PdfListServiceImpl implements PdfListService {
     }
 
     public void calPdfValue(PdfListEntity entity) {
-
+        if (entity == null) {
+            return;
+        }
     }
 
 }

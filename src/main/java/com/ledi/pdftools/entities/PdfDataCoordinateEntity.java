@@ -15,14 +15,14 @@ public class PdfDataCoordinateEntity {
     public static final String DATA_TYPE_DECIMAL = "Decimal";
 
     private String id;
-    private Integer page;
-    private String key;
+    private Integer pageNo;
+    private String fieldName;
     private BigDecimal llx;
     private BigDecimal lly;
     private BigDecimal urx;
     private BigDecimal ury;
-    private BigDecimal left;
-    private BigDecimal top;
+    private BigDecimal marginLeft;
+    private BigDecimal marginTop;
     private BigDecimal width;
     private BigDecimal height;
     private String align;

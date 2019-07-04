@@ -18,7 +18,7 @@ public interface PdfListMapper {
     public static final int MAKE_STATUS_NO = 0;
     public static final int MAKE_STATUS_YES = 1;
 
-    public static final String COLUMNS = "pdf_id as pdfId, type, awb, awb_replace as awbReplace, num, weight, declare_freight_price as declareFreightPrice," +
+    public static final String COLUMNS = "pdf_id as pdfId, type, awb, awb_replace as awbReplace, num, weight," +
             "declare_total_amount_usd as declareTotalAmountUsd, declare_freight_amount_usd as declareFreightAmountUsd, clearance_amount as clearanceAmount," +
             "bpr_amount as bprAmount, tariff, excise_tax as exciseTax, local_excise_tax as localExciseTax, tax_total_amount as taxTotalAmount,usd_jpy_exchange_rate as usdJpyExchangeRate," +
             "prod1_declare_amount_usd as prod1DeclareAmountUsd, prod2_declare_amount_usd as prod2DeclareAmountUsd, prod3_declare_amount_usd as prod3DeclareAmountUsd," +
@@ -36,7 +36,7 @@ public interface PdfListMapper {
             "tariff_total_amount as tariffTotalAmount, country_excise_tax_total_amount as countryExciseTaxTotalAmount, local_excise_tax_total_amount as localExciseTaxTotalAmount," +
             "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime";
 
-    public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight, declare_freight_price," +
+    public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight," +
             "declare_total_amount_usd, declare_freight_amount_usd, clearance_amount," +
             "bpr_amount, tariff, excise_tax, local_excise_tax, tax_total_amount,usd_jpy_exchange_rate," +
             "prod1_declare_amount_usd, prod2_declare_amount_usd, prod3_declare_amount_usd," +
@@ -73,7 +73,7 @@ public interface PdfListMapper {
     void delete(String id);
 
     @Update("update pdf_list set type=#{type}, awb=#{awb}, awb_replace=#{awbReplace}, num=#{num}, weight=#{weight}," +
-            " declare_freight_price=#{declareFreightPrice}, declare_total_amount_usd=#{declareTotalAmountUsd}, declare_freight_amount_usd=#{declareFreightAmountUsd}," +
+            " declare_total_amount_usd=#{declareTotalAmountUsd}, declare_freight_amount_usd=#{declareFreightAmountUsd}," +
             " clearance_amount=#{clearanceAmount}, bpr_amount=#{bprAmount}, tariff=#{tariff}, excise_tax=#{exciseTax}, local_excise_tax=#{localExciseTax}," +
             " tax_total_amount=#{taxTotalAmount}, usd_jpy_exchange_rate=#{usdJpyExchangeRate}," +
             " prod1_declare_amount_usd=#{prod1DeclareAmountUsd}, prod2_declare_amount_usd=#{prod2DeclareAmountUsd}, prod3_declare_amount_usd=#{prod3DeclareAmountUsd}," +
@@ -94,7 +94,7 @@ public interface PdfListMapper {
     void update(PdfListEntity pdfListEntity);
 
     @Insert("insert into pdf_list(" + ADD_COLUMNS + ")" +
-            " values(#{pdfId}, #{type}, #{awb}, #{awbReplace}, #{num}, #{weight}, #{declareFreightPrice}, #{declareTotalAmountUsd}, #{declareFreightAmountUsd}," +
+            " values(#{pdfId}, #{type}, #{awb}, #{awbReplace}, #{num}, #{weight}, #{declareTotalAmountUsd}, #{declareFreightAmountUsd}," +
             " #{clearanceAmount}, #{bprAmount}, #{tariff}, #{exciseTax}, #{localExciseTax}, #{taxTotalAmount}, #{usdJpyExchangeRate}," +
             " #{prod1DeclareAmountUsd}, #{prod2DeclareAmountUsd}, #{prod3DeclareAmountUsd}," +
             " #{prod1TariffRate}, #{prod2TariffRate}, #{prod3TariffRate}," +

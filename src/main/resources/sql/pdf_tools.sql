@@ -28,14 +28,14 @@ DROP TABLE IF EXISTS `pdf_data_coordinate`;
 
 CREATE TABLE `pdf_data_coordinate` (
   `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '主键ID',
-  `page` int(11) NOT NULL COMMENT '页',
-  `key` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据键',
+  `page_no` int(11) NOT NULL COMMENT '页',
+  `field_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '字段名',
   `llx` decimal(10,2) DEFAULT NULL COMMENT '左下X坐标',
   `lly` decimal(10,2) DEFAULT NULL COMMENT '左下Y坐标',
   `urx` decimal(10,2) DEFAULT NULL COMMENT '右上X坐标',
   `ury` decimal(10,2) DEFAULT NULL COMMENT '右上Y坐标',
-  `left` decimal(10,2) DEFAULT NULL COMMENT '左距离',
-  `top` decimal(10,2) DEFAULT NULL COMMENT '上距离',
+  `margin_left` decimal(10,2) DEFAULT NULL COMMENT '左距离',
+  `margin_top` decimal(10,2) DEFAULT NULL COMMENT '上距离',
   `width` decimal(10,2) DEFAULT NULL COMMENT '矩形宽度',
   `height` decimal(10,2) DEFAULT NULL COMMENT '矩形高度',
   `align` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '对齐方式',
@@ -49,7 +49,7 @@ CREATE TABLE `pdf_data_coordinate` (
 LOCK TABLES `pdf_data_coordinate` WRITE;
 /*!40000 ALTER TABLE `pdf_data_coordinate` DISABLE KEYS */;
 
-INSERT INTO `pdf_data_coordinate` (`id`, `page`, `key`, `llx`, `lly`, `urx`, `ury`, `left`, `top`, `width`, `height`, `align`, `data_type`, `decimal_digits`, `prefix`, `suffix`)
+INSERT INTO `pdf_data_coordinate` (`id`, `page_no`, `field_name`, `llx`, `lly`, `urx`, `ury`, `margin_left`, `margin_top`, `width`, `height`, `align`, `data_type`, `decimal_digits`, `prefix`, `suffix`)
 VALUES
 	('01',1,'awb',NULL,NULL,NULL,NULL,91.12,214.95,67.13,11.05,'left','String',NULL,NULL,NULL),
 	('02',1,'num',NULL,NULL,NULL,NULL,502.54,215.57,42.10,9.13,'right','Integer',NULL,NULL,NULL),
@@ -95,7 +95,7 @@ DELIMITER ;;
 /*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" */;;
 /*!50003 CREATE */ /*!50017 DEFINER=`root`@`localhost` */ /*!50003 TRIGGER `clear_coordinate_trigger` BEFORE UPDATE ON `pdf_data_coordinate` FOR EACH ROW begin
     /* 如果left，top，width，height有更新。则清除llx，lly，urx，ury */
-    if (old.left != new.left or old.top != new.top or old.width != new.width or old.height != new.height) then
+    if (old.margin_left != new.margin_left or old.margin_top != new.margin_top or old.width != new.width or old.height != new.height) then
     	set new.llx = null;
     	set new.lly = null;
     	set new.urx = null;

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface PdfDataCoordinateService {
 
-    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int page);
+    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int pageNo);
 }

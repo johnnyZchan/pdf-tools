@@ -26,8 +26,8 @@ public class PdfDataCoordinateServiceImpl implements PdfDataCoordinateService {
     PdfDataCoordinateMapper pdfDataCoordinateMapper;
 
     @Transactional
-    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int page) {
-        List<PdfDataCoordinateEntity> result = pdfDataCoordinateMapper.findByPage(page);
+    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int pageNo) {
+        List<PdfDataCoordinateEntity> result = pdfDataCoordinateMapper.findByPage(pageNo);
         if (result != null && result.size() > 0) {
             for (PdfDataCoordinateEntity entity : result) {
                 if (entity.getLlx() == null || entity.getLly() == null
@@ -52,16 +52,16 @@ public class PdfDataCoordinateServiceImpl implements PdfDataCoordinateService {
     public boolean calCoordinate(PdfDataCoordinateEntity entity) {
         boolean result = false;
 
-        if (entity != null && entity.getLeft() != null && entity.getTop() != null
+        if (entity != null && entity.getMarginLeft() != null && entity.getMarginTop() != null
                 && entity.getWidth() != null && entity.getHeight() != null) {
             // llx = left
-            entity.setLlx(entity.getLeft());
+            entity.setLlx(entity.getMarginLeft());
             // lly = PDF高 - top - height
-            entity.setLly(new BigDecimal(this.pdfFileHeight).subtract(entity.getTop()).subtract(entity.getHeight()));
+            entity.setLly(new BigDecimal(this.pdfFileHeight).subtract(entity.getMarginTop()).subtract(entity.getHeight()));
             // urx = left + width
-            entity.setUrx(entity.getLeft().add(entity.getWidth()));
+            entity.setUrx(entity.getMarginLeft().add(entity.getWidth()));
             // ury = PDF高 - top
-            entity.setUry(new BigDecimal(this.pdfFileHeight).subtract(entity.getTop()));
+            entity.setUry(new BigDecimal(this.pdfFileHeight).subtract(entity.getMarginTop()));
             result = true;
         }
 

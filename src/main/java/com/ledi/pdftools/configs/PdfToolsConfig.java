@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.filter.FormContentFilter;
+import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.LocaleResolver;
@@ -71,5 +73,10 @@ public class PdfToolsConfig extends WebMvcConfigurationSupport {
     public ServletListenerRegistrationBean logbackContextListener() {
         ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean(new LogbackContextListener());
         return bean;
+    }
+
+    @Bean
+    public FormContentFilter formContentFilter() {
+        return new FormContentFilter();
     }
 }
