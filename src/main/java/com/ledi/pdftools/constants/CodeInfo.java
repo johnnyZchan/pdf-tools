@@ -14,4 +14,6 @@ public class CodeInfo {
     public static final int CODE_SERVICE_ERROR = 400000;
     // PDF文件不存在
     public static final int CODE_PDF_FILE_NOT_EXIST = 400001;
+    // 文件类型错误
+    public static final int CODE_FILE_TYPE_ERROR = 400002;
 }

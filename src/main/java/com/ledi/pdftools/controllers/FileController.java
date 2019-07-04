@@ -43,4 +43,11 @@ public class FileController extends BaseController {
         PdfFileEntity result = this.pdfFileService.uploadPdfFile(file);
         return this.getOkResponseModel(result);
     }
+
+    @PostMapping("/excel/upload")
+    public ResponseModel excelUpload(@RequestParam("file") MultipartFile file) throws Exception {
+        this.pdfFileService.uploadExcelFile(file);
+        return this.getOkResponseModel();
+    }
+
 }

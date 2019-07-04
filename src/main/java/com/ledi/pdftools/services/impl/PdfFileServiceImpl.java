@@ -17,6 +17,12 @@ import com.ledi.pdftools.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -57,6 +64,54 @@ public class PdfFileServiceImpl implements PdfFileService {
         this.pdfFileMapper.save(entity);
 
         return entity;
+    }
+
+    public List<PdfListEntity> uploadExcelFile(MultipartFile file) throws Exception {
+        if (file == null) {
+            return null;
+        }
+
+        List<PdfListEntity> result = null;
+        Workbook wb = null;
+        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
+        //根据文件后缀（xls/xlsx）进行判断
+        if ( "xls".equals(fileExtension)){
+            wb = new HSSFWorkbook(file.getInputStream());
+        }else if ("xlsx".equals(fileExtension)){
+            wb = new XSSFWorkbook(file.getInputStream());
+        }else {
+            throw new ServiceException(CodeInfo.CODE_FILE_TYPE_ERROR);
+        }
+
+        Sheet sheet = wb.getSheetAt(0);
+        int firstRowIndex = sheet.getFirstRowNum() + 2;   //前两列是列名，所以不读
+        int lastRowIndex = sheet.getLastRowNum();
+        for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex ++) {   //遍历行
+            Row row = sheet.getRow(rIndex);
+            if (row != null && row.getPhysicalNumberOfCells() >= 9) {
+                // 单号
+                String awb = row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null;
+                // 换单号
+                String awbReplace = row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null;
+                // 件数
+                double num = row.getCell(2) != null ? row.getCell(2).getNumericCellValue() : null;
+                // 重量
+                double weight = row.getCell(3) != null ? row.getCell(3).getNumericCellValue() : null;
+                // 总申报价值USD
+                double declareTotalAmountUsd = row.getCell(4) != null ? row.getCell(4).getNumericCellValue() : null;
+                // 申报运费USD
+                double declareFreightAmountUsd = row.getCell(5) != null ? row.getCell(5).getNumericCellValue() : null;
+                // 品名1美⾦申报价值
+                double prod1DeclareAmountUsd = row.getCell(6) != null ? row.getCell(6).getNumericCellValue() : null;
+                // 品名2美⾦申报价值
+                double prod2DeclareAmountUsd = row.getCell(7) != null ? row.getCell(7).getNumericCellValue() : null;
+                // 品名3美⾦申报价值
+                double prod3DeclareAmountUsd = row.getCell(8) != null ? row.getCell(8).getNumericCellValue() : null;
+                System.out.println(awb + " - " + awbReplace + " - " + num + " - " + weight + " - " + declareTotalAmountUsd + " - " + declareFreightAmountUsd + " - " + prod1DeclareAmountUsd + " - " + prod2DeclareAmountUsd + " - " + prod3DeclareAmountUsd);
+            }
+        }
+
+        return result;
     }
 
     public PdfListEntity readDataFromPdfFile(PdfFileEntity pdfFileEntity) {

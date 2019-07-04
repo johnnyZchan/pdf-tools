@@ -26,11 +26,13 @@
     </div>
 </div>
 <div style="margin-top: 20px">
-    <input type="file" name="file" id="pdf_file" onchange="pdfFileUpload();" style="display:none">
+    <input type="file" accept=".pdf" name="file" id="pdf_file" onchange="pdfFileUpload();" style="display:none">
     <button onclick="pdfFileSelect();">上传PDF</button>
 
     <button>Ankcustoms下载PDF</button>
-    <button>上传更新数据</button>
+
+    <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" name="file" id="excel_file" onchange="excelFileUpload();" style="display: none">
+    <button onclick="excelFileSelect();">上传更新数据</button>
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button>删除</button>
     <button>制作更新PDF</button>
@@ -824,6 +826,36 @@
     function pdfFileSelect() {
         $('#pdf_file').val('');
         $("#pdf_file").trigger("click");
+    }
+
+    function excelFileUpload() {
+        var formData = new FormData();
+        formData.append('file', $('#excel_file')[0].files[0]);
+        $.ajax({
+            url : 'excel/upload',
+            type : 'POST',
+            data : formData,
+            contentType: false,// 当有文件要上传时，此项是必须的，否则后台无法识别文件流的起始位置
+            processData: false,// 是否序列化data属性，默认true(注意：false时type必须是post)
+            dataType: 'json',//这里是返回类型，一般是json,text等
+            clearForm: true,//提交后是否清空表单数据
+            success: function(result) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
+                if (result != null && result.code == 0) {
+                    alert('上传成功');
+                } else {
+                    alert('上传失败[' + (result != null ? result.message:'') + ']')
+                }
+            },
+            error: function(data, status, e) {  //提交失败自动执行的处理函数。
+                console.log(e);
+                alert('上传异常')
+            }
+        });
+    }
+
+    function excelFileSelect() {
+        $('#excel_file').val('');
+        $("#excel_file").trigger("click");
     }
 
     function addPdf(pdfFileId) {
