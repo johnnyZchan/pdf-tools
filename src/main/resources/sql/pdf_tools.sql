@@ -1,34 +1,137 @@
+# ************************************************************
+# Sequel Pro SQL dump
+# Version 5446
+#
+# https://www.sequelpro.com/
+# https://github.com/sequelpro/sequelpro
+#
+# Host: 127.0.0.1 (MySQL 8.0.16)
+# Database: pdf_tools
+# Generation Time: 2019-07-04 08:44:13 +0000
+# ************************************************************
+
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
+SET NAMES utf8mb4;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for pdf_tools
-CREATE DATABASE IF NOT EXISTS `pdf_tools` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `pdf_tools`;
+# Dump of table pdf_data_coordinate
+# ------------------------------------------------------------
 
--- Dumping structure for table pdf_tools.pdf_file
+DROP TABLE IF EXISTS `pdf_data_coordinate`;
+
+CREATE TABLE `pdf_data_coordinate` (
+  `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '主键ID',
+  `page` int(11) NOT NULL COMMENT '页',
+  `key` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据键',
+  `llx` decimal(10,2) DEFAULT NULL COMMENT '左下X坐标',
+  `lly` decimal(10,2) DEFAULT NULL COMMENT '左下Y坐标',
+  `urx` decimal(10,2) DEFAULT NULL COMMENT '右上X坐标',
+  `ury` decimal(10,2) DEFAULT NULL COMMENT '右上Y坐标',
+  `left` decimal(10,2) DEFAULT NULL COMMENT '左距离',
+  `top` decimal(10,2) DEFAULT NULL COMMENT '上距离',
+  `width` decimal(10,2) DEFAULT NULL COMMENT '矩形宽度',
+  `height` decimal(10,2) DEFAULT NULL COMMENT '矩形高度',
+  `align` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '对齐方式',
+  `data_type` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据类型',
+  `decimal_digits` int(11) DEFAULT NULL COMMENT '小数位数',
+  `prefix` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '前缀',
+  `suffix` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '后缀',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+LOCK TABLES `pdf_data_coordinate` WRITE;
+/*!40000 ALTER TABLE `pdf_data_coordinate` DISABLE KEYS */;
+
+INSERT INTO `pdf_data_coordinate` (`id`, `page`, `key`, `llx`, `lly`, `urx`, `ury`, `left`, `top`, `width`, `height`, `align`, `data_type`, `decimal_digits`, `prefix`, `suffix`)
+VALUES
+	('01',1,'awb',NULL,NULL,NULL,NULL,91.12,214.95,67.13,11.05,'left','String',NULL,NULL,NULL),
+	('02',1,'num',NULL,NULL,NULL,NULL,502.54,215.57,42.10,9.13,'right','Integer',NULL,NULL,NULL),
+	('03',1,'weight',NULL,NULL,NULL,NULL,502.54,225.57,42.10,9.13,'right','Decimal',1,NULL,NULL),
+	('04',1,'declareTotalAmountUsd',NULL,NULL,NULL,NULL,444.83,300.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
+	('05',1,'declareFreightAmountUsd',NULL,NULL,NULL,NULL,444.83,309.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
+	('06',1,'clearanceAmount',NULL,NULL,NULL,NULL,458.83,327.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
+	('07',1,'bprAmount',NULL,NULL,NULL,NULL,445.28,389.95,55.38,9.57,'right','Decimal',2,NULL,NULL),
+	('08',1,'tariff',NULL,NULL,NULL,NULL,167.77,420.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
+	('09',1,'exciseTax',NULL,NULL,NULL,NULL,167.77,430.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
+	('10',1,'localExciseTax',NULL,NULL,NULL,NULL,167.77,439.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
+	('11',1,'taxTotalAmount',NULL,NULL,NULL,NULL,332.77,411.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
+	('12',1,'usdJpyExchangeRate',NULL,NULL,NULL,NULL,514.88,411.98,38.53,7.91,'right','Decimal',2,NULL,NULL),
+	('13',1,'prod1DeclareAmountUsd',NULL,NULL,NULL,NULL,463.08,505.98,57.33,7.91,'right','Decimal',2,NULL,NULL),
+	('14',1,'prod1TariffRate',NULL,NULL,NULL,NULL,110.12,497.17,19.89,7.91,'left','Decimal',0,NULL,'%'),
+	('15',1,'prod1DeclareAmountJpy',NULL,NULL,NULL,NULL,163.82,479.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('16',1,'prod1Tariff',NULL,NULL,NULL,NULL,163.82,506.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('17',1,'prod1CountryExciseTax',NULL,NULL,NULL,NULL,163.82,563.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('18',1,'prod1CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,590.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('19',1,'prod1LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.82,629.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('20',1,'prod1LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,656.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('21',2,'prod2DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,142.07,60.46,7.91,'right','Decimal',2,NULL,NULL),
+	('22',2,'prod2TariffRate',NULL,NULL,NULL,NULL,109.27,132.07,19.89,7.91,'left','Decimal',0,NULL,'%'),
+	('23',2,'prod2DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,114.51,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('24',2,'prod2Tariff',NULL,NULL,NULL,NULL,163.65,141.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('25',2,'prod2CountryExciseTax',NULL,NULL,NULL,NULL,163.65,207.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('26',2,'prod2CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,234.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('27',2,'prod2LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,273.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('28',2,'prod2LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,300.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('29',2,'prod3DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,385.07,60.46,7.91,'right','Decimal',2,NULL,NULL),
+	('30',2,'prod3TariffRate',NULL,NULL,NULL,NULL,109.27,375.07,19.89,7.91,'left','Decimal',0,NULL,'%'),
+	('31',2,'prod3DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,357.51,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('32',2,'prod3Tariff',NULL,NULL,NULL,NULL,163.65,384.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('33',2,'prod3CountryExciseTax',NULL,NULL,NULL,NULL,163.65,450.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('34',2,'prod3CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,477.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('35',2,'prod3LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,516.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
+	('36',2,'prod3LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,543.79,60.46,7.91,'right','Decimal',0,'\\',NULL);
+
+/*!40000 ALTER TABLE `pdf_data_coordinate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+DELIMITER ;;
+/*!50003 SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION" */;;
+/*!50003 CREATE */ /*!50017 DEFINER=`root`@`localhost` */ /*!50003 TRIGGER `clear_coordinate_trigger` BEFORE UPDATE ON `pdf_data_coordinate` FOR EACH ROW begin
+    /* 如果left，top，width，height有更新。则清除llx，lly，urx，ury */
+    if (old.left != new.left or old.top != new.top or old.width != new.width or old.height != new.height) then
+    	set new.llx = null;
+    	set new.lly = null;
+    	set new.urx = null;
+    	set new.ury = null;
+    end if;
+end */;;
+DELIMITER ;
+/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE */;
+
+
+# Dump of table pdf_file
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `pdf_file`;
-CREATE TABLE IF NOT EXISTS `pdf_file` (
-  `pdf_file_id` varchar(32) NOT NULL COMMENT '主键',
-  `pdf_id` varchar(32) NULL COMMENT 'PDF数据的ID',
-  `file_name` varchar(50) NULL COMMENT '文件名',
-  `file_path` varchar(200) NULL COMMENT '文件存储路径',
-  `file_url` varchar(200) NULL COMMENT '文件访问路径',
+
+CREATE TABLE `pdf_file` (
+  `pdf_file_id` varchar(32) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `pdf_id` varchar(32) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'PDF数据的ID',
+  `file_name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件名',
+  `file_path` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件存储路径',
+  `file_url` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件访问路径',
   PRIMARY KEY (`pdf_file_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Data exporting was unselected.
 
--- Dumping structure for table pdf_tools.pdf_list
+
+# Dump of table pdf_list
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `pdf_list`;
-CREATE TABLE IF NOT EXISTS `pdf_list` (
-  `pdf_id` varchar(32) NOT NULL COMMENT '主键ID',
+
+CREATE TABLE `pdf_list` (
+  `pdf_id` varchar(32) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键ID',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型（1：原始文件、2：更新文件）',
-  `awb` varchar(50) DEFAULT NULL COMMENT '单号',
-  `awb_replace` varchar(50) DEFAULT NULL COMMENT '换单号',
+  `awb` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单号',
+  `awb_replace` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '换单号',
   `num` int(11) DEFAULT NULL COMMENT '件数',
   `weight` decimal(12,2) DEFAULT NULL COMMENT '重量',
   `declare_total_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '总申报价值USD',
@@ -86,8 +189,12 @@ CREATE TABLE IF NOT EXISTS `pdf_list` (
   PRIMARY KEY (`pdf_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Data exporting was unselected.
 
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

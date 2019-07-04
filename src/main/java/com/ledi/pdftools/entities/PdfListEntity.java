@@ -11,6 +11,12 @@ public class PdfListEntity {
     public static final int TYPE_ORIGINAL = 1;
     public static final int TYPE_UPDATED = 2;
 
+    public static final int MAKE_STATUS_NO = 0;
+    public static final int MAKE_STATUS_YES = 1;
+
+    public static final int DEL_STATUS_NO = 0;
+    public static final int DEL_STATUS_YES = 1;
+
     private String pdfId;
     private Integer type;
     private String awb;

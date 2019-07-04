@@ -8,12 +8,16 @@ import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.exceptions.ServiceException;
 import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.mappers.PdfListMapper;
+import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
+import com.ledi.pdftools.utils.IDUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +31,8 @@ public class PdfListServiceImpl implements PdfListService {
     PdfListMapper pdfListMapper;
     @Resource
     PdfFileMapper pdfFileMapper;
+    @Resource
+    PdfFileService pdfFileService;
 
     public int getPdfListCount() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -62,7 +68,22 @@ public class PdfListServiceImpl implements PdfListService {
             throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
         }
 
+        PdfListEntity pdfListEntity = this.pdfFileService.readDataFromPdfFile(pdfFileEntity);
+        if (pdfListEntity != null && StringUtils.isNotBlank(pdfListEntity.getAwb())) {
+            String pdfId = IDUtil.uuid();
+            pdfListEntity.setPdfId(pdfId);
+            pdfListEntity.setType(PdfListEntity.TYPE_ORIGINAL);
+            pdfListEntity.setMakeStatus(PdfListEntity.MAKE_STATUS_NO);
+            pdfListEntity.setMakeTime(new Timestamp(System.currentTimeMillis()));
+            pdfListEntity.setDelStatus(PdfListEntity.DEL_STATUS_NO);
+            pdfListEntity.setCreateTime(pdfListEntity.getMakeTime());
+            this.calPdfValue(pdfListEntity);
 
+            this.pdfListMapper.save(pdfListEntity);
+
+            pdfFileEntity.setPdfId(pdfId);
+            this.pdfFileMapper.update(pdfFileEntity);
+        }
     }
 
     public PdfListModel convertEntity2PdfListModel(PdfListEntity originalEntity) {
@@ -173,6 +194,10 @@ public class PdfListServiceImpl implements PdfListService {
         }
 
         return result;
+    }
+
+    public void calPdfValue(PdfListEntity entity) {
+
     }
 
 }

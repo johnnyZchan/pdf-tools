@@ -2,9 +2,8 @@ package com.ledi.pdftools.controllers;
 
 import com.ledi.pdftools.beans.ResponseModel;
 import com.ledi.pdftools.entities.PdfFileEntity;
-import com.ledi.pdftools.services.FileService;
+import com.ledi.pdftools.services.PdfFileService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,7 +23,7 @@ import java.nio.file.Paths;
 public class FileController extends BaseController {
 
     @Resource
-    private FileService fileService;
+    private PdfFileService pdfFileService;
 
     @GetMapping("/download/templates")
     public void downloadTemplates(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -43,7 +40,7 @@ public class FileController extends BaseController {
 
     @PostMapping("/pdf/upload")
     public ResponseModel pdfUpload(@RequestParam("file") MultipartFile file) throws Exception {
-        PdfFileEntity result = this.fileService.uploadPdfFile(file);
+        PdfFileEntity result = this.pdfFileService.uploadPdfFile(file);
         return this.getOkResponseModel(result);
     }
 }
