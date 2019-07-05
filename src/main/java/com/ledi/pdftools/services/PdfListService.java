@@ -12,5 +12,7 @@ public interface PdfListService {
 
     public List<PdfListModel> getPdfModelList(Integer start, Integer length);
 
-    public void addPdf(String pdfFileId);
+    public void addPdf(String pdfFileId, boolean coverFlg);
+
+    public void addUpdatedData(List<PdfListEntity> pdfList, boolean coverFlg);
 }

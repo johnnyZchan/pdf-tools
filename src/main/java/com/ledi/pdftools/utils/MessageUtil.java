@@ -23,7 +23,17 @@ public class MessageUtil {
     }
 
     public static String getMessage(int code) {
+        return getMessage(code, null);
+    }
+
+    public static String getMessage(int code, Object arg) {
+        Object[] args = new Object[1];
+        args[0] = arg;
+        return getMessage(code, args);
+    }
+
+    public static String getMessage(int code, Object[] args) {
         Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage("code." + code, null, locale);
+        return messageSource.getMessage("code." + code, args, locale);
     }
 }

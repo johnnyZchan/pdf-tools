@@ -63,8 +63,8 @@ public interface PdfListMapper {
     @SelectProvider(type = PdfListProvider.class, method = "findByCondition")
     List<PdfListEntity> findByCondition(Map<String, Object> conditions, String orderSql, Integer start, Integer length);
 
-    @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO + " and type=" + PdfListEntity.TYPE_UPDATED + " and awb=#{awb}")
-    PdfListEntity findUpdatedPdfByAwb(String awb);
+    @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO + " and type=#{type} and awb=#{awb} limit 1")
+    PdfListEntity findPdfByAwb(int type, String awb);
 
     @SelectProvider(type = PdfListProvider.class, method = "countByCondition")
     int countByCondition(Map<String, Object> conditions);

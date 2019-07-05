@@ -1,7 +1,9 @@
 package com.ledi.pdftools.mappers.provider;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public abstract class BaseProvider {
 

@@ -12,9 +12,11 @@ import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.services.PdfDataCoordinateService;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.utils.BeanUtil;
+import com.ledi.pdftools.utils.FileUtil;
 import com.ledi.pdftools.utils.IDUtil;
 import com.ledi.pdftools.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -33,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("pdfFileService")
@@ -67,51 +70,117 @@ public class PdfFileServiceImpl implements PdfFileService {
     }
 
     public List<PdfListEntity> uploadExcelFile(MultipartFile file) throws Exception {
-        if (file == null) {
-            return null;
-        }
+        File tmpFile = null;
+        try {
+            if (file == null) {
+                return null;
+            }
 
-        List<PdfListEntity> result = null;
-        Workbook wb = null;
-        String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
-        //根据文件后缀（xls/xlsx）进行判断
-        if ( "xls".equals(fileExtension)){
-            wb = new HSSFWorkbook(file.getInputStream());
-        }else if ("xlsx".equals(fileExtension)){
-            wb = new XSSFWorkbook(file.getInputStream());
-        }else {
-            throw new ServiceException(CodeInfo.CODE_FILE_TYPE_ERROR);
-        }
+            String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename());
+            tmpFile = new File(fileBaseDir + IDUtil.uuid() + "." + fileExtension);
+            file.transferTo(tmpFile);
 
-        Sheet sheet = wb.getSheetAt(0);
-        int firstRowIndex = sheet.getFirstRowNum() + 2;   //前两列是列名，所以不读
-        int lastRowIndex = sheet.getLastRowNum();
-        for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex ++) {   //遍历行
-            Row row = sheet.getRow(rIndex);
-            if (row != null && row.getPhysicalNumberOfCells() >= 9) {
-                // 单号
-                String awb = row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null;
-                // 换单号
-                String awbReplace = row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null;
-                // 件数
-                double num = row.getCell(2) != null ? row.getCell(2).getNumericCellValue() : null;
-                // 重量
-                double weight = row.getCell(3) != null ? row.getCell(3).getNumericCellValue() : null;
-                // 总申报价值USD
-                double declareTotalAmountUsd = row.getCell(4) != null ? row.getCell(4).getNumericCellValue() : null;
-                // 申报运费USD
-                double declareFreightAmountUsd = row.getCell(5) != null ? row.getCell(5).getNumericCellValue() : null;
-                // 品名1美⾦申报价值
-                double prod1DeclareAmountUsd = row.getCell(6) != null ? row.getCell(6).getNumericCellValue() : null;
-                // 品名2美⾦申报价值
-                double prod2DeclareAmountUsd = row.getCell(7) != null ? row.getCell(7).getNumericCellValue() : null;
-                // 品名3美⾦申报价值
-                double prod3DeclareAmountUsd = row.getCell(8) != null ? row.getCell(8).getNumericCellValue() : null;
-                System.out.println(awb + " - " + awbReplace + " - " + num + " - " + weight + " - " + declareTotalAmountUsd + " - " + declareFreightAmountUsd + " - " + prod1DeclareAmountUsd + " - " + prod2DeclareAmountUsd + " - " + prod3DeclareAmountUsd);
+            List<PdfListEntity> result = null;
+            Workbook wb = null;
+            //根据文件后缀（xls/xlsx）进行判断
+            if ( "xls".equals(fileExtension)) {
+                wb = new HSSFWorkbook(file.getInputStream());
+            } else if ("xlsx".equals(fileExtension)) {
+                wb = new XSSFWorkbook(file.getInputStream());
+            } else {
+                throw new ServiceException(CodeInfo.CODE_FILE_TYPE_ERROR);
+            }
+
+            Sheet sheet = wb.getSheetAt(0);
+            int firstRowIndex = sheet.getFirstRowNum() + 2;   //前两列是列名，所以不读
+            int lastRowIndex = sheet.getLastRowNum();
+
+            result = new ArrayList<PdfListEntity>();
+            PdfListEntity entity = null;
+            for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex ++) {   //遍历行
+                Row row = sheet.getRow(rIndex);
+                if (row != null && row.getPhysicalNumberOfCells() >= 9) {
+                    String awb = null;
+                    String awbReplace = null;
+                    Double num = null;
+                    Double weight = null;
+                    Double declareTotalAmountUsd = null;
+                    Double declareFreightAmountUsd = null;
+                    Double prod1DeclareAmountUsd = null;
+                    Double prod2DeclareAmountUsd = null;
+                    Double prod3DeclareAmountUsd = null;
+
+                    try {
+                        // 单号
+                        awb = row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null;
+                        // 换单号
+                        awbReplace = row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null;
+                        // 件数
+                        num = row.getCell(2) != null ? row.getCell(2).getNumericCellValue() : null;
+                        // 重量
+                        weight = row.getCell(3) != null ? row.getCell(3).getNumericCellValue() : null;
+                        // 总申报价值USD
+                        declareTotalAmountUsd = row.getCell(4) != null ? row.getCell(4).getNumericCellValue() : null;
+                        // 申报运费USD
+                        declareFreightAmountUsd = row.getCell(5) != null ? row.getCell(5).getNumericCellValue() : null;
+                        // 品名1美⾦申报价值
+                        prod1DeclareAmountUsd = row.getCell(6) != null ? row.getCell(6).getNumericCellValue() : null;
+                        // 品名2美⾦申报价值
+                        prod2DeclareAmountUsd = row.getCell(7) != null ? row.getCell(7).getNumericCellValue() : null;
+                        // 品名3美⾦申报价值
+                        prod3DeclareAmountUsd = row.getCell(8) != null ? row.getCell(8).getNumericCellValue() : null;
+                    } catch (Exception e) {
+                        log.warn("Excel数据格式不正确", e);
+                    }
+
+                    // 单号、总申报价值USD、申报运费USD、品名1美金申报价值是必须项
+                    entity = new PdfListEntity();
+                    if (StringUtils.isBlank(awb)) {
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "单号");
+                    }
+                    entity.setAwb(awb);
+                    entity.setAwbReplace(awbReplace);
+                    if (num != null) {
+                        entity.setNum(Integer.parseInt(num.toString()));
+                    }
+                    if (weight != null) {
+                        entity.setWeight(new BigDecimal(weight.toString()));
+                    }
+                    if (declareTotalAmountUsd == null) {
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "总申报价值USD");
+                    }
+                    entity.setDeclareTotalAmountUsd(new BigDecimal(declareTotalAmountUsd.toString()));
+                    if (declareFreightAmountUsd == null) {
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "申报运费USD");
+                    }
+                    entity.setDeclareFreightAmountUsd(new BigDecimal(declareFreightAmountUsd.toString()));
+                    if (prod1DeclareAmountUsd == null) {
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "品名1美金申报价值");
+                    }
+                    entity.setProd1DeclareAmountUsd(new BigDecimal(prod1DeclareAmountUsd.toString()));
+                    if (prod2DeclareAmountUsd != null) {
+                        entity.setProd2DeclareAmountUsd(new BigDecimal(prod2DeclareAmountUsd.toString()));
+                    }
+                    if (prod3DeclareAmountUsd != null) {
+                        entity.setProd3DeclareAmountUsd(new BigDecimal(prod3DeclareAmountUsd.toString()));
+                    }
+                    result.add(entity);
+                }
+            }
+
+            return result;
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("error occurred : ", e);
+            throw new ServiceException("excel.file.read.error");
+        } finally {
+            if (tmpFile != null && tmpFile.exists()) {
+                try {
+                    tmpFile.delete();
+                } catch (Exception e) {}
             }
         }
-
-        return result;
     }
 
     public PdfListEntity readDataFromPdfFile(PdfFileEntity pdfFileEntity) {
@@ -214,5 +283,20 @@ public class PdfFileServiceImpl implements PdfFileService {
         }
 
         return data;
+    }
+
+    @Transactional
+    public void deletePdfFile(String pdfId) {
+        if (StringUtils.isBlank(pdfId)) {
+            return;
+        }
+
+        List<PdfFileEntity> pdfFileList = this.pdfFileMapper.findByPdfId(pdfId);
+        if (pdfFileList != null && pdfFileList.size() > 0) {
+            for (PdfFileEntity entity : pdfFileList) {
+                FileUtil.deleteFile(entity.getFilePath());
+                this.pdfFileMapper.delete(entity.getPdfFileId());
+            }
+        }
     }
 }

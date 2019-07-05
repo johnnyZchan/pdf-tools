@@ -3,7 +3,10 @@ package com.ledi.pdftools.mappers.provider;
 import com.ledi.pdftools.mappers.PdfListMapper;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PdfListProvider extends BaseProvider {
 
@@ -40,6 +43,18 @@ public class PdfListProvider extends BaseProvider {
                 Integer type = this.obj2Integer(conditions.get("type"));
                 if (type != null) {
                     sql.append(" and type = " + type);
+                }
+            }
+            if (conditions.containsKey("makeStatus")) {
+                Integer makeStatus = this.obj2Integer(conditions.get("makeStatus"));
+                if (makeStatus != null) {
+                    sql.append(" and make_status = " + makeStatus);
+                }
+            }
+            if (conditions.containsKey("awbList")) {
+                List<String> awbList = (ArrayList<String>)conditions.get("awbList");
+                if (awbList != null && !awbList.isEmpty()) {
+                    sql.append(" and awb in (" + awbList.stream().map(awb -> getSqlStringEqualVal(awb)).collect(Collectors.joining(",")) + ")");
                 }
             }
         }

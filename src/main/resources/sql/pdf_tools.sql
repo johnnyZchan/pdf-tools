@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.16)
 # Database: pdf_tools
-# Generation Time: 2019-07-04 08:44:13 +0000
+# Generation Time: 2019-07-05 07:33:24 +0000
 # ************************************************************
 
 
@@ -39,10 +39,10 @@ CREATE TABLE `pdf_data_coordinate` (
   `width` decimal(10,2) DEFAULT NULL COMMENT '矩形宽度',
   `height` decimal(10,2) DEFAULT NULL COMMENT '矩形高度',
   `align` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '对齐方式',
-  `data_type` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据类型',
+  `data_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据类型',
   `decimal_digits` int(11) DEFAULT NULL COMMENT '小数位数',
   `prefix` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '前缀',
-  `suffix` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '后缀',
+  `suffix` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '后缀',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -112,11 +112,11 @@ DELIMITER ;
 DROP TABLE IF EXISTS `pdf_file`;
 
 CREATE TABLE `pdf_file` (
-  `pdf_file_id` varchar(32) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
-  `pdf_id` varchar(32) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'PDF数据的ID',
-  `file_name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件名',
-  `file_path` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件存储路径',
-  `file_url` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件访问路径',
+  `pdf_file_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键',
+  `pdf_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'PDF数据的ID',
+  `file_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件名',
+  `file_path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件存储路径',
+  `file_url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件访问路径',
   PRIMARY KEY (`pdf_file_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -128,10 +128,10 @@ CREATE TABLE `pdf_file` (
 DROP TABLE IF EXISTS `pdf_list`;
 
 CREATE TABLE `pdf_list` (
-  `pdf_id` varchar(32) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键ID',
+  `pdf_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '主键ID',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '类型（1：原始文件、2：更新文件）',
-  `awb` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单号',
-  `awb_replace` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '换单号',
+  `awb` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '单号',
+  `awb_replace` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '换单号',
   `num` int(11) DEFAULT NULL COMMENT '件数',
   `weight` decimal(12,2) DEFAULT NULL COMMENT '重量',
   `declare_total_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '总申报价值USD',
@@ -146,9 +146,9 @@ CREATE TABLE `pdf_list` (
   `prod1_declare_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '品名1美金申报价值',
   `prod2_declare_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '品名2美金申报价值',
   `prod3_declare_amount_usd` decimal(12,2) DEFAULT NULL COMMENT '品名3美金申报价值',
-  `prod1_tariff_rate` decimal(12,2) DEFAULT NULL COMMENT '品名1关税率',
-  `prod2_tariff_rate` decimal(12,2) DEFAULT NULL COMMENT '品名2关税率',
-  `prod3_tariff_rate` decimal(12,2) DEFAULT NULL COMMENT '品名3关税率',
+  `prod1_tariff_rate` decimal(12,4) DEFAULT NULL COMMENT '品名1关税率',
+  `prod2_tariff_rate` decimal(12,4) DEFAULT NULL COMMENT '品名2关税率',
+  `prod3_tariff_rate` decimal(12,4) DEFAULT NULL COMMENT '品名3关税率',
   `prod1_freight_pct` decimal(12,4) DEFAULT NULL COMMENT '品名1运费比重',
   `prod2_freight_pct` decimal(12,4) DEFAULT NULL COMMENT '品名2运费比重',
   `prod3_freight_pct` decimal(12,4) DEFAULT NULL COMMENT '品名3运费比重',

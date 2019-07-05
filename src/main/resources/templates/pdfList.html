@@ -31,7 +31,7 @@
 
     <button>Ankcustoms下载PDF</button>
 
-    <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" name="file" id="excel_file" onchange="excelFileUpload();" style="display: none">
+    <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" name="file" id="excel_file" onchange="excelFileUpload(false);" style="display: none">
     <button onclick="excelFileSelect();">上传更新数据</button>
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button>删除</button>
@@ -811,7 +811,7 @@
             success: function(result) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
                 if (result != null && result.code == 0) {
                     alert('上传成功');
-                    addPdf(result.data.pdfFileId);
+                    addPdf(result.data.pdfFileId, false);
                 } else {
                     alert('上传失败[' + (result != null ? result.message:'') + ']')
                 }
@@ -828,9 +828,10 @@
         $("#pdf_file").trigger("click");
     }
 
-    function excelFileUpload() {
+    function excelFileUpload(coverFlg) {
         var formData = new FormData();
         formData.append('file', $('#excel_file')[0].files[0]);
+        formData.append('coverFlg', coverFlg);
         $.ajax({
             url : 'excel/upload',
             type : 'POST',
@@ -840,10 +841,20 @@
             dataType: 'json',//这里是返回类型，一般是json,text等
             clearForm: true,//提交后是否清空表单数据
             success: function(result) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
-                if (result != null && result.code == 0) {
-                    alert('上传成功');
+                if (result != null) {
+                    if (result.code == 0) {
+                        pdfListTable.ajax.reload();
+                        alert('上传成功');
+                    } else if (result.code == 400003) {
+                        var confirmResult = confirm("上传数据中含有已存在的单号，是否覆盖？");
+                        if (confirmResult == true) {
+                            excelFileUpload(true);
+                        }
+                    } else {
+                        alert('上传失败[' + result.message + ']')
+                    }
                 } else {
-                    alert('上传失败[' + (result != null ? result.message:'') + ']')
+                    alert('上传失败')
                 }
             },
             error: function(data, status, e) {  //提交失败自动执行的处理函数。
@@ -858,14 +869,26 @@
         $("#excel_file").trigger("click");
     }
 
-    function addPdf(pdfFileId) {
+    function addPdf(pdfFileId, coverFlg) {
         $.ajax({
             url : "pdf/list/" + pdfFileId ,
             type : "put",
+            data : {
+                "coverFlg": coverFlg
+            },
             dataType: 'json',
             success : function(result) {
-                if (result != null && result.code == 0) {
-                    pdfListTable.ajax.reload();
+                if (result != null) {
+                    if (result.code == 0) {
+                        pdfListTable.ajax.reload();
+                    } else if (result.code == 400003) {
+                        var confirmResult = confirm("单号已存在，是否覆盖？");
+                        if (confirmResult == true) {
+                            addPdf(pdfFileId, true);
+                        }
+                    } else {
+                        alert("生成数据失败[" + result.message + "]");
+                    }
                 } else {
                     alert("生成数据失败");
                 }

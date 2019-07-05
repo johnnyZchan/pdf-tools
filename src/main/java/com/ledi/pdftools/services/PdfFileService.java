@@ -13,4 +13,6 @@ public interface PdfFileService {
     public PdfListEntity readDataFromPdfFile(PdfFileEntity pdfFileEntity);
 
     public List<PdfListEntity> uploadExcelFile(MultipartFile file) throws Exception;
+
+    public void deletePdfFile(String pdfId);
 }
