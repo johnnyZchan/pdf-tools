@@ -40,4 +40,20 @@ public class PdfListController extends BaseController {
         this.pdfListService.addPdf(pdfFileId, coverFlg);
         return this.getOkResponseModel();
     }
+
+    @DeleteMapping("/pdf/list")
+    public ResponseModel delPdf(@RequestParam(value = "awbList[]") List<String> awbList) {
+        this.pdfListService.delPdf(awbList);
+        return this.getOkResponseModel();
+    }
+
+    @PostMapping("/pdf/list/make")
+    public ResponseModel makePdf(@RequestParam(value = "awbList[]") List<String> awbList) {
+        List<String> failAwbList = this.pdfListService.makePdf(awbList);
+        if (failAwbList == null || failAwbList.isEmpty()) {
+            return this.getOkResponseModel();
+        }
+
+        return this.getPartialOkResponseModel(failAwbList);
+    }
 }

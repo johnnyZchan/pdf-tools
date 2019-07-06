@@ -14,6 +14,9 @@ public class PdfDataCoordinateEntity {
     public static final String DATA_TYPE_INTEGER = "Integer";
     public static final String DATA_TYPE_DECIMAL = "Decimal";
 
+    public static final int ACTION_TYPE_DEL = 1;
+    public static final int ACTION_TYPE_REPLACE = 2;
+
     private String id;
     private Integer pageNo;
     private String fieldName;
@@ -31,5 +34,7 @@ public class PdfDataCoordinateEntity {
     private Integer decimalDigits;
     private String prefix;
     private String suffix;
+
+    private Integer actionType;
 
 }

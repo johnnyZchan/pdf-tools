@@ -15,7 +15,7 @@ public class ServiceException extends BaseException{
     }
 
     public ServiceException(String message) {
-        super(CodeInfo.CODE_SERVICE_ERROR, message);
+        super(CodeInfo.CODE_SERVICE_ERROR, StringUtils.isNotBlank(MessageUtil.getMessage(message))?MessageUtil.getMessage(message):message);
     }
 
     public ServiceException(Integer code, String message) {

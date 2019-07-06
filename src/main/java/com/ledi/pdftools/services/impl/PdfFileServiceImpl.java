@@ -71,6 +71,7 @@ public class PdfFileServiceImpl implements PdfFileService {
 
     public List<PdfListEntity> uploadExcelFile(MultipartFile file) throws Exception {
         File tmpFile = null;
+        Workbook wb = null;
         try {
             if (file == null) {
                 return null;
@@ -81,12 +82,11 @@ public class PdfFileServiceImpl implements PdfFileService {
             file.transferTo(tmpFile);
 
             List<PdfListEntity> result = null;
-            Workbook wb = null;
             //根据文件后缀（xls/xlsx）进行判断
             if ( "xls".equals(fileExtension)) {
-                wb = new HSSFWorkbook(file.getInputStream());
+                wb = new HSSFWorkbook(new FileInputStream(tmpFile));
             } else if ("xlsx".equals(fileExtension)) {
-                wb = new XSSFWorkbook(file.getInputStream());
+                wb = new XSSFWorkbook(new FileInputStream(tmpFile));
             } else {
                 throw new ServiceException(CodeInfo.CODE_FILE_TYPE_ERROR);
             }
@@ -141,7 +141,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                     entity.setAwb(awb);
                     entity.setAwbReplace(awbReplace);
                     if (num != null) {
-                        entity.setNum(Integer.parseInt(num.toString()));
+                        entity.setNum(num.intValue());
                     }
                     if (weight != null) {
                         entity.setWeight(new BigDecimal(weight.toString()));
@@ -175,6 +175,11 @@ public class PdfFileServiceImpl implements PdfFileService {
             log.error("error occurred : ", e);
             throw new ServiceException("excel.file.read.error");
         } finally {
+            if (wb != null) {
+                try {
+                    wb.close();
+                } catch (Exception e) {}
+            }
             if (tmpFile != null && tmpFile.exists()) {
                 try {
                     tmpFile.delete();
@@ -197,7 +202,7 @@ public class PdfFileServiceImpl implements PdfFileService {
         try {
             reader = new PdfReader(pdfFileEntity.getFilePath());
             for (int page = 1; page <= reader.getNumberOfPages(); page ++) {
-                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getPageDataCoordinateList(page);
+                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
                 if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                     for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                         String data = this.readData(reader, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());

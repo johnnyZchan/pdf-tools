@@ -60,6 +60,9 @@ public interface PdfListMapper {
     @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO)
     List<PdfListEntity> findAll();
 
+    @Select("select " + COLUMNS + " from pdf_list where del_status=" + DEL_STATUS_NO + " and awb=#{awb}")
+    List<PdfListEntity> findByAwb(String awb);
+
     @SelectProvider(type = PdfListProvider.class, method = "findByCondition")
     List<PdfListEntity> findByCondition(Map<String, Object> conditions, String orderSql, Integer start, Integer length);
 

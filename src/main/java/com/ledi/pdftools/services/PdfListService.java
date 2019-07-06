@@ -14,5 +14,9 @@ public interface PdfListService {
 
     public void addPdf(String pdfFileId, boolean coverFlg);
 
+    public void delPdf(List<String> awbList);
+
+    public List<String> makePdf(List<String> awbList);
+
     public void addUpdatedData(List<PdfListEntity> pdfList, boolean coverFlg);
 }

@@ -119,6 +119,59 @@ public class PdfListServiceImpl implements PdfListService {
         }
     }
 
+    @Transactional
+    public void delPdf(List<String> awbList) {
+        if (awbList != null && !awbList.isEmpty()) {
+            for (String awb : awbList) {
+                List<PdfListEntity> pdfList = this.pdfListMapper.findByAwb(awb);
+                if (pdfList != null && !pdfList.isEmpty()) {
+                    for (PdfListEntity entity : pdfList) {
+                        this.pdfListMapper.delete(entity.getPdfId());
+                        this.pdfFileService.deletePdfFile(entity.getPdfId());
+                    }
+                }
+            }
+        }
+    }
+
+    public List<String> makePdf(List<String> awbList) {
+        if (awbList == null || awbList.isEmpty()) {
+            return null;
+        }
+
+        List<String> failAwbList = new ArrayList<String>();
+        for (String awb : awbList) {
+            if (!makePdf(awb)) {
+                failAwbList.add(awb);
+            }
+        }
+
+        return failAwbList;
+    }
+
+    @Transactional
+    public boolean makePdf(String awb) {
+        try {
+            PdfListEntity updatedPdf = this.getUpdatedPdf(awb);
+            if (updatedPdf == null) {
+                log.warn("未找到PDF[" + awb + "]的更新数据");
+                return false;
+            }
+
+            this.clearPdfData(updatedPdf);
+            this.replacePdfData(updatedPdf);
+
+            updatedPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
+            updatedPdf.setMakeTime(new Timestamp(System.currentTimeMillis()));
+            this.pdfListMapper.update(updatedPdf);
+        } catch (Exception e) {
+            log.warn("制作PDF[" + awb + "]失败", e);
+            return false;
+        }
+
+        return true;
+    }
+
     public int getUpdatedAndMadeDuplicatePdfCount(List<String> awbList) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("type", PdfListEntity.TYPE_UPDATED);
@@ -129,7 +182,7 @@ public class PdfListServiceImpl implements PdfListService {
 
     @Transactional
     public void addUpdatedData(List<PdfListEntity> pdfList, boolean coverFlg) {
-        if (pdfList != null || pdfList.size() == 0) {
+        if (pdfList == null || pdfList.isEmpty()) {
             throw new ServiceException("file.not.data.error");
         }
 
@@ -262,7 +315,7 @@ public class PdfListServiceImpl implements PdfListService {
             result.setWeight(updatedPdf.getWeight().subtract(originalPdf.getWeight()));
         }
         if (updatedPdf.getDeclareTotalAmountUsd() != null && originalPdf.getDeclareTotalAmountUsd() != null) {
-            result.setDeclareTotalAmountUsd(updatedPdf.getDeclareTotalAmountUsd().subtract(originalPdf.getDeclareFreightAmountUsd()));
+            result.setDeclareTotalAmountUsd(updatedPdf.getDeclareTotalAmountUsd().subtract(originalPdf.getDeclareTotalAmountUsd()));
         }
         if (updatedPdf.getDeclareFreightAmountUsd() != null && originalPdf.getDeclareFreightAmountUsd() != null) {
             result.setDeclareFreightAmountUsd(updatedPdf.getDeclareFreightAmountUsd().subtract(originalPdf.getDeclareFreightAmountUsd()));
@@ -407,5 +460,13 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setMakeStatus(PdfListEntity.MAKE_STATUS_NO);
         updatedEntity.setDelStatus(PdfListEntity.DEL_STATUS_NO);
         updatedEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+    }
+
+    public void replacePdfData(PdfListEntity updatedPdf) {
+
+    }
+
+    public void clearPdfData(PdfListEntity updatedPdf) {
+
     }
 }

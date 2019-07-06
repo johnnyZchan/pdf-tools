@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 8.0.16)
 # Database: pdf_tools
-# Generation Time: 2019-07-05 07:33:24 +0000
+# Generation Time: 2019-07-06 14:51:33 +0000
 # ************************************************************
 
 
@@ -43,50 +43,61 @@ CREATE TABLE `pdf_data_coordinate` (
   `decimal_digits` int(11) DEFAULT NULL COMMENT '小数位数',
   `prefix` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '前缀',
   `suffix` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '后缀',
+  `action_type` tinyint(1) DEFAULT NULL COMMENT '动作类型（1：删除、2：替换）',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 LOCK TABLES `pdf_data_coordinate` WRITE;
 /*!40000 ALTER TABLE `pdf_data_coordinate` DISABLE KEYS */;
 
-INSERT INTO `pdf_data_coordinate` (`id`, `page_no`, `field_name`, `llx`, `lly`, `urx`, `ury`, `margin_left`, `margin_top`, `width`, `height`, `align`, `data_type`, `decimal_digits`, `prefix`, `suffix`)
+INSERT INTO `pdf_data_coordinate` (`id`, `page_no`, `field_name`, `llx`, `lly`, `urx`, `ury`, `margin_left`, `margin_top`, `width`, `height`, `align`, `data_type`, `decimal_digits`, `prefix`, `suffix`, `action_type`)
 VALUES
-	('01',1,'awb',NULL,NULL,NULL,NULL,91.12,214.95,67.13,11.05,'left','String',NULL,NULL,NULL),
-	('02',1,'num',NULL,NULL,NULL,NULL,502.54,215.57,42.10,9.13,'right','Integer',NULL,NULL,NULL),
-	('03',1,'weight',NULL,NULL,NULL,NULL,502.54,225.57,42.10,9.13,'right','Decimal',1,NULL,NULL),
-	('04',1,'declareTotalAmountUsd',NULL,NULL,NULL,NULL,444.83,300.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
-	('05',1,'declareFreightAmountUsd',NULL,NULL,NULL,NULL,444.83,309.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
-	('06',1,'clearanceAmount',NULL,NULL,NULL,NULL,458.83,327.84,55.15,9.10,'right','Decimal',2,NULL,NULL),
-	('07',1,'bprAmount',NULL,NULL,NULL,NULL,445.28,389.95,55.38,9.57,'right','Decimal',2,NULL,NULL),
-	('08',1,'tariff',NULL,NULL,NULL,NULL,167.77,420.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
-	('09',1,'exciseTax',NULL,NULL,NULL,NULL,167.77,430.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
-	('10',1,'localExciseTax',NULL,NULL,NULL,NULL,167.77,439.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
-	('11',1,'taxTotalAmount',NULL,NULL,NULL,NULL,332.77,411.98,61.64,7.91,'right','Decimal',0,'\\',NULL),
-	('12',1,'usdJpyExchangeRate',NULL,NULL,NULL,NULL,514.88,411.98,38.53,7.91,'right','Decimal',2,NULL,NULL),
-	('13',1,'prod1DeclareAmountUsd',NULL,NULL,NULL,NULL,463.08,505.98,57.33,7.91,'right','Decimal',2,NULL,NULL),
-	('14',1,'prod1TariffRate',NULL,NULL,NULL,NULL,110.12,497.17,19.89,7.91,'left','Decimal',0,NULL,'%'),
-	('15',1,'prod1DeclareAmountJpy',NULL,NULL,NULL,NULL,163.82,479.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('16',1,'prod1Tariff',NULL,NULL,NULL,NULL,163.82,506.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('17',1,'prod1CountryExciseTax',NULL,NULL,NULL,NULL,163.82,563.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('18',1,'prod1CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,590.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('19',1,'prod1LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.82,629.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('20',1,'prod1LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,656.17,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('21',2,'prod2DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,142.07,60.46,7.91,'right','Decimal',2,NULL,NULL),
-	('22',2,'prod2TariffRate',NULL,NULL,NULL,NULL,109.27,132.07,19.89,7.91,'left','Decimal',0,NULL,'%'),
-	('23',2,'prod2DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,114.51,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('24',2,'prod2Tariff',NULL,NULL,NULL,NULL,163.65,141.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('25',2,'prod2CountryExciseTax',NULL,NULL,NULL,NULL,163.65,207.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('26',2,'prod2CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,234.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('27',2,'prod2LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,273.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('28',2,'prod2LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,300.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('29',2,'prod3DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,385.07,60.46,7.91,'right','Decimal',2,NULL,NULL),
-	('30',2,'prod3TariffRate',NULL,NULL,NULL,NULL,109.27,375.07,19.89,7.91,'left','Decimal',0,NULL,'%'),
-	('31',2,'prod3DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,357.51,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('32',2,'prod3Tariff',NULL,NULL,NULL,NULL,163.65,384.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('33',2,'prod3CountryExciseTax',NULL,NULL,NULL,NULL,163.65,450.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('34',2,'prod3CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,477.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('35',2,'prod3LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,516.79,60.46,7.91,'right','Decimal',0,'\\',NULL),
-	('36',2,'prod3LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,543.79,60.46,7.91,'right','Decimal',0,'\\',NULL);
+	('01',1,'awb',NULL,NULL,NULL,NULL,91.12,214.95,67.13,11.05,'left','String',NULL,NULL,NULL,2),
+	('02',1,'num',NULL,NULL,NULL,NULL,502.54,215.57,42.10,9.13,'right','Integer',NULL,NULL,NULL,2),
+	('03',1,'weight',NULL,NULL,NULL,NULL,502.54,225.57,42.10,9.13,'right','Decimal',1,NULL,NULL,2),
+	('04',1,'declareTotalAmountUsd',NULL,NULL,NULL,NULL,444.83,300.84,55.15,9.10,'right','Decimal',2,NULL,NULL,2),
+	('05',1,'declareFreightAmountUsd',NULL,NULL,NULL,NULL,444.83,309.84,55.15,9.10,'right','Decimal',2,NULL,NULL,2),
+	('06',1,'clearanceAmount',NULL,NULL,NULL,NULL,458.83,327.84,55.15,9.10,'right','Decimal',2,NULL,NULL,2),
+	('07',1,'bprAmount',NULL,NULL,NULL,NULL,445.28,389.95,55.38,9.57,'right','Decimal',2,NULL,NULL,2),
+	('08',1,'tariff',NULL,NULL,NULL,NULL,167.77,420.98,61.64,7.91,'right','Decimal',0,'\\',NULL,2),
+	('09',1,'exciseTax',NULL,NULL,NULL,NULL,167.77,430.98,61.64,7.91,'right','Decimal',0,'\\',NULL,2),
+	('10',1,'localExciseTax',NULL,NULL,NULL,NULL,167.77,439.98,61.64,7.91,'right','Decimal',0,'\\',NULL,2),
+	('11',1,'taxTotalAmount',NULL,NULL,NULL,NULL,332.77,411.98,61.64,7.91,'right','Decimal',0,'\\',NULL,2),
+	('12',1,'usdJpyExchangeRate',NULL,NULL,NULL,NULL,514.88,411.98,38.53,7.91,'right','Decimal',2,NULL,NULL,2),
+	('13',1,'prod1DeclareAmountUsd',NULL,NULL,NULL,NULL,463.08,505.98,57.33,7.91,'right','Decimal',2,NULL,NULL,2),
+	('14',1,'prod1TariffRate',NULL,NULL,NULL,NULL,110.12,497.17,19.89,7.91,'left','Decimal',0,NULL,'%',2),
+	('15',1,'prod1DeclareAmountJpy',NULL,NULL,NULL,NULL,163.82,479.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('16',1,'prod1Tariff',NULL,NULL,NULL,NULL,163.82,506.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('17',1,'prod1CountryExciseTax',NULL,NULL,NULL,NULL,163.82,563.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('18',1,'prod1CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,590.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('19',1,'prod1LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.82,629.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('20',1,'prod1LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.82,656.17,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('21',2,'prod2DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,142.07,60.46,7.91,'right','Decimal',2,NULL,NULL,2),
+	('22',2,'prod2TariffRate',NULL,NULL,NULL,NULL,109.27,132.07,19.89,7.91,'left','Decimal',0,NULL,'%',2),
+	('23',2,'prod2DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,114.51,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('24',2,'prod2Tariff',NULL,NULL,NULL,NULL,163.65,141.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('25',2,'prod2CountryExciseTax',NULL,NULL,NULL,NULL,163.65,207.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('26',2,'prod2CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,234.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('27',2,'prod2LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,273.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('28',2,'prod2LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,300.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('29',2,'prod3DeclareAmountUsd',NULL,NULL,NULL,NULL,460.27,385.07,60.46,7.91,'right','Decimal',2,NULL,NULL,2),
+	('30',2,'prod3TariffRate',NULL,NULL,NULL,NULL,109.27,375.07,19.89,7.91,'left','Decimal',0,NULL,'%',2),
+	('31',2,'prod3DeclareAmountJpy',NULL,NULL,NULL,NULL,163.29,357.51,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('32',2,'prod3Tariff',NULL,NULL,NULL,NULL,163.65,384.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('33',2,'prod3CountryExciseTax',NULL,NULL,NULL,NULL,163.65,450.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('34',2,'prod3CountryExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,477.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('35',2,'prod3LocalExciseTaxBase',NULL,NULL,NULL,NULL,163.65,516.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('36',2,'prod3LocalExciseTaxAmount',NULL,NULL,NULL,NULL,163.65,543.79,60.46,7.91,'right','Decimal',0,'\\',NULL,2),
+	('37',1,NULL,NULL,NULL,NULL,NULL,98.31,85.60,438.50,109.47,NULL,NULL,NULL,NULL,NULL,1),
+	('38',1,NULL,NULL,NULL,NULL,NULL,97.04,197.99,280.01,14.31,NULL,NULL,NULL,NULL,NULL,1),
+	('39',1,NULL,NULL,NULL,NULL,NULL,435.04,197.99,48.68,14.31,NULL,NULL,NULL,NULL,NULL,1),
+	('40',1,NULL,NULL,NULL,NULL,NULL,88.96,225.67,116.08,7.91,NULL,NULL,NULL,NULL,NULL,1),
+	('41',1,NULL,NULL,NULL,NULL,NULL,88.96,261.67,116.08,7.91,NULL,NULL,NULL,NULL,NULL,1),
+	('42',1,NULL,NULL,NULL,NULL,NULL,304.96,215.67,117.39,17.81,NULL,NULL,NULL,NULL,NULL,1),
+	('43',1,NULL,NULL,NULL,NULL,NULL,479.59,225.58,67.76,7.91,NULL,NULL,NULL,NULL,NULL,1),
+	('44',1,NULL,NULL,NULL,NULL,NULL,356.92,460.97,205.31,16.97,NULL,NULL,NULL,NULL,NULL,1),
+	('45',2,NULL,NULL,NULL,NULL,NULL,356.92,96.26,205.31,16.97,NULL,NULL,NULL,NULL,NULL,1),
+	('46',2,NULL,NULL,NULL,NULL,NULL,356.92,339.26,205.31,16.97,NULL,NULL,NULL,NULL,NULL,1);
 
 /*!40000 ALTER TABLE `pdf_data_coordinate` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -2,6 +2,7 @@ package com.ledi.pdftools.services.impl;
 
 
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
+import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.mappers.PdfDataCoordinateMapper;
 import com.ledi.pdftools.services.PdfDataCoordinateService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,17 @@ public class PdfDataCoordinateServiceImpl implements PdfDataCoordinateService {
     @Resource
     PdfDataCoordinateMapper pdfDataCoordinateMapper;
 
+    public List<PdfDataCoordinateEntity> getDeletePageDataCoordinateList(int pageNo) {
+        return this.getPageDataCoordinateList(pageNo, PdfDataCoordinateEntity.ACTION_TYPE_DEL);
+    }
+
+    public List<PdfDataCoordinateEntity> getReplacePageDataCoordinateList(int pageNo) {
+        return this.getPageDataCoordinateList(pageNo, PdfDataCoordinateEntity.ACTION_TYPE_REPLACE);
+    }
+
     @Transactional
-    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int pageNo) {
-        List<PdfDataCoordinateEntity> result = pdfDataCoordinateMapper.findByPage(pageNo);
+    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int pageNo, int actionType) {
+        List<PdfDataCoordinateEntity> result = this.pdfDataCoordinateMapper.findByPageAndAction(pageNo, actionType);
         if (result != null && result.size() > 0) {
             for (PdfDataCoordinateEntity entity : result) {
                 if (entity.getLlx() == null || entity.getLly() == null
