@@ -6,11 +6,9 @@ import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -41,6 +39,21 @@ public class FileController extends BaseController {
             Files.copy(file, response.getOutputStream());
             response.getOutputStream().flush();
         }
+    }
+
+    @GetMapping("/download/pdf/{pdfFileId}")
+    public void downloadPdf(@PathVariable(value = "pdfFileId") String pdfFileId, HttpServletResponse response) throws Exception {
+//        String filePath = this.pdfFileService.getPdfFilePath(pdfFileId);
+//        if (StringUtils.isNotBlank(filePath)) {
+//            Path file = Paths.get(filePath);
+//            if (Files.exists(file)) {
+//                response.setContentType("application/msexcel");
+//                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+//
+//                Files.copy(file, response.getOutputStream());
+//                response.getOutputStream().flush();
+//            }
+//        }
     }
 
     @PostMapping("/pdf/upload")

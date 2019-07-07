@@ -24,4 +24,8 @@ public interface PdfFileService {
     public void makeUpdatedFile(PdfListEntity originalPdf, PdfListEntity updatedPdf) throws ServiceException;
 
     public void clearPdfFile(PdfFileEntity pdfFileEntity);
+
+    public void replacePdfFile(PdfListEntity updatedPdfEntity, PdfListEntity originalPdfEntity, PdfFileEntity pdfFileEntity);
+
+    public String getPdfFilePath(String pdfFileId);
 }

@@ -177,7 +177,7 @@ public class PdfListServiceImpl implements PdfListService {
                 this.clearPdfData(updatedPdf);
             }
             if (isReplace) {
-                this.replacePdfData(updatedPdf);
+                this.replacePdfData(updatedPdf, originalPdf);
             }
 
             updatedPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
@@ -481,11 +481,15 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
     }
 
-    public void replacePdfData(PdfListEntity updatedPdf) {
+    public void replacePdfData(PdfListEntity updatedPdf, PdfListEntity originalPdf) {
         if (updatedPdf == null) {
             return;
         }
+        if (originalPdf == null) {
+            return;
+        }
         PdfFileEntity updatedPdfFile = this.pdfFileService.getPdfFileByPdfId(updatedPdf.getPdfId());
+        this.pdfFileService.replacePdfFile(updatedPdf, originalPdf, updatedPdfFile);
     }
 
     public void clearPdfData(PdfListEntity updatedPdf) {

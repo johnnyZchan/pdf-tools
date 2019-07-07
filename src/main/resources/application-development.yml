@@ -58,7 +58,7 @@ spring:
       # Write files to disk if the file size is more than 2KB.
       file-size-threshold: 2KB
       # The intermediate disk location where the uploaded files are written
-      location: /Users/johnny/Development/ledi/upload
+      location: E:\\development\\upload\\pdf_tools
       # Maximum file size that can be uploaded
       max-file-size: 500MB
       # Maximum allowed multipart request size
@@ -72,6 +72,9 @@ spring:
 pdf:
   tools:
     file:
-      basedir: /Users/johnny/Development/ledi/upload
+      basedir: E:\\development\\upload\\pdf_tools\\
       width: 595
       height: 842
+    replace:
+      rectangle:
+        display: true

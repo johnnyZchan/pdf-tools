@@ -13,6 +13,12 @@ public class BeanUtil {
         field.set(bean, value);
     }
 
+    public static Object getFieldValue(Object bean, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        Field field = bean.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field.get(bean);
+    }
+
     public static void main(String args[]) {
         PdfModel model = new PdfModel();
         try {
