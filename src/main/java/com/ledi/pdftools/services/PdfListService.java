@@ -16,7 +16,7 @@ public interface PdfListService {
 
     public void delPdf(List<String> awbList);
 
-    public List<String> makePdf(List<String> awbList);
+    public List<String> makePdf(List<String> awbList, boolean isDelete, boolean isReplace);
 
     public void addUpdatedData(List<PdfListEntity> pdfList, boolean coverFlg);
 }

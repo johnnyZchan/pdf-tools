@@ -1,7 +1,10 @@
 package com.ledi.pdftools.services.impl;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.parser.*;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
@@ -33,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -67,6 +71,14 @@ public class PdfFileServiceImpl implements PdfFileService {
         this.pdfFileMapper.save(entity);
 
         return entity;
+    }
+
+    public PdfFileEntity getPdfFileByPdfId(String pdfId) {
+        List<PdfFileEntity> list = this.pdfFileMapper.findByPdfId(pdfId);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
     }
 
     public List<PdfListEntity> uploadExcelFile(MultipartFile file) throws Exception {
@@ -299,8 +311,107 @@ public class PdfFileServiceImpl implements PdfFileService {
         List<PdfFileEntity> pdfFileList = this.pdfFileMapper.findByPdfId(pdfId);
         if (pdfFileList != null && pdfFileList.size() > 0) {
             for (PdfFileEntity entity : pdfFileList) {
-                FileUtil.deleteFile(entity.getFilePath());
-                this.pdfFileMapper.delete(entity.getPdfFileId());
+                this.deletePdfFile(entity);
+            }
+        }
+    }
+
+    @Transactional
+    public void deletePdfFile(PdfFileEntity pdfFileEntity) {
+        if (pdfFileEntity == null) {
+            return;
+        }
+
+        FileUtil.deleteFile(pdfFileEntity.getFilePath());
+        this.pdfFileMapper.delete(pdfFileEntity.getPdfFileId());
+
+    }
+
+    @Transactional
+    public void makeUpdatedFile(PdfListEntity originalPdf, PdfListEntity updatedPdf) throws ServiceException {
+        try {
+            if (originalPdf == null || updatedPdf == null) {
+                return;
+            }
+
+            PdfFileEntity updatedPdfFile = this.getPdfFileByPdfId(updatedPdf.getPdfId());
+            if (updatedPdfFile == null) {
+                updatedPdfFile = new PdfFileEntity();
+                updatedPdfFile.setPdfFileId(IDUtil.uuid());
+                updatedPdfFile.setPdfId(updatedPdf.getPdfId());
+
+                String fileName = updatedPdfFile.getPdfFileId() + ".pdf";
+                updatedPdfFile.setFileName(fileName);
+                updatedPdfFile.setFilePath(fileBaseDir + fileName);
+                this.pdfFileMapper.save(updatedPdfFile);
+            }
+
+            PdfFileEntity originalPdfFile = this.getPdfFileByPdfId(originalPdf.getPdfId());
+            if (originalPdfFile != null && StringUtils.isNotBlank(originalPdfFile.getFilePath())) {
+                File originalFile = new File(originalPdfFile.getFilePath());
+                File updatedFile = new File(updatedPdfFile.getFilePath());
+                if (!updatedFile.exists()) {
+                    updatedFile.createNewFile();
+                }
+                FileUtil.copyFile(originalFile, updatedFile);
+            }
+        } catch (Exception e) {
+            log.error("拷贝文件失败", e);
+            throw new ServiceException("file.copy.error");
+        }
+    }
+
+    public void clearPdfFile(PdfFileEntity pdfFileEntity) {
+        if (pdfFileEntity == null) {
+            return;
+        }
+        File pdfFile = new File(pdfFileEntity.getFilePath());
+        if (pdfFile == null || !pdfFile.exists()) {
+            throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
+        }
+
+        PdfReader reader = null;
+        PdfStamper stamper = null;
+        String outputPath = fileBaseDir + pdfFileEntity.getPdfFileId() + "_updated.pdf";
+        try {
+            reader = new PdfReader(pdfFileEntity.getFilePath());
+            stamper = new PdfStamper(reader, new FileOutputStream(outputPath));
+
+            for (int page = 1; page <= reader.getNumberOfPages(); page ++) {
+                PdfContentByte canvas = stamper.getOverContent(page);
+
+                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getDeletePageDataCoordinateList(page);
+                if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
+                    for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
+                        Rectangle rect = new Rectangle(coordinate.getLlx().floatValue(), coordinate.getLly().floatValue(), coordinate.getUrx().floatValue(), coordinate.getUry().floatValue());
+                        rect.setBackgroundColor(BaseColor.WHITE);
+                        canvas.rectangle(rect);
+                        canvas.stroke();
+                    }
+                }
+            }
+
+            stamper.close();
+            reader.close();
+            // 将_updated.pdf文件覆盖原文件
+            File tmpFile = new File(outputPath);
+            if (tmpFile.exists()) {
+                FileUtil.copyFile(tmpFile, pdfFile);
+                FileUtil.deleteFile(tmpFile);
+            }
+        } catch (Exception e) {
+            log.error("error occurred : ", e);
+            throw new ServiceException(MessageUtil.getMessage("pdf.file.clear.error"));
+        } finally {
+            if (stamper != null) {
+                try {
+                    stamper.close();
+                } catch (Exception e) {}
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {}
             }
         }
     }

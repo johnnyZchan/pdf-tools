@@ -48,8 +48,10 @@ public class PdfListController extends BaseController {
     }
 
     @PostMapping("/pdf/list/make")
-    public ResponseModel makePdf(@RequestParam(value = "awbList[]") List<String> awbList) {
-        List<String> failAwbList = this.pdfListService.makePdf(awbList);
+    public ResponseModel makePdf(@RequestParam(value = "awbList[]") List<String> awbList,
+                                 @RequestParam(value = "deleteFlg") Boolean deleteFlg,
+                                 @RequestParam(value = "replaceFlg") Boolean replaceFlg) {
+        List<String> failAwbList = this.pdfListService.makePdf(awbList, deleteFlg, replaceFlg);
         if (failAwbList == null || failAwbList.isEmpty()) {
             return this.getOkResponseModel();
         }

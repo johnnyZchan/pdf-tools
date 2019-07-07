@@ -6,11 +6,13 @@
 
     <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
 
     <script type="text/javascript" charset="UTF-8" src="js/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/main.js"></script>
 </head>
 <body>
@@ -37,7 +39,7 @@
     <button onclick="excelFileSelect();">上传更新数据</button>
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button onclick="delPdf();">删除</button>
-    <button onclick="makePdf();">制作更新PDF</button>
+    <button onclick="openMakeDialog();">制作更新PDF</button>
     <button>导出原始数据</button>
     <button>导出更新数据</button>
     <button>导出对比数据</button>
@@ -175,10 +177,22 @@
         </thead>
     </table>
 </div>
+
+<div id="make_dialog" title="制作更新PDF">
+    <div>
+        <label>删除操作</label>
+        <input id="delete_checkbox" type="checkbox">
+    </div>
+    <div>
+        <label>替换操作</label>
+        <input id="replace_checkbox" type="checkbox">
+    </div>
+</div>
 </body>
 
 <script type="text/javascript">
     var pdfListTable;
+    var makeDialog;
     $(document).ready(function() {
         pdfListTable = $('#pdf_list_table').DataTable({
             serverSide: true,
@@ -757,6 +771,8 @@
         pdfListTable.on('deselect', function ( e, dt, type, indexes ) {
             $("#checkall").prop("checked", false);
         });
+
+        initMakeDialog();
     });
 
     function createColumnHtml(row, key) {
@@ -955,7 +971,24 @@
         });
     }
 
-    function makePdf() {
+    function initMakeDialog() {
+        makeDialog = $( "#make_dialog" ).dialog({
+            autoOpen: false,
+            resizable: false,
+            modal: true,
+            buttons: {
+                Ok: function() {
+                    makePdf();
+                    $( this ).dialog( "close" );
+                },
+                Cancel: function() {
+                    $( this ).dialog( "close" );
+                }
+            }
+        });
+    }
+
+    function openMakeDialog() {
         var confirmResult = confirm("确定制作？");
         if (confirmResult == false) {
             return;
@@ -967,22 +1000,35 @@
             return;
         }
 
+        if (makeDialog != null) {
+            makeDialog.dialog("open");
+        }
+    }
+
+    function makePdf() {
+        var selected = pdfListTable.rows({selected: true}).data().toArray();
+
         var awbList = [];
         for (var i = 0; i < selected.length; i ++) {
             awbList.push(selected[i].originalPdf.awb);
         }
 
+        var deleteFlg = $("#delete_checkbox").is(':checked')?true:false;
+        var replaceFlg = $("#replace_checkbox").is(':checked')?true:false;
         $.ajax({
             url : "pdf/list/make",
             type : "post",
             data : {
-                "awbList": awbList
+                "awbList": awbList,
+                "deleteFlg": deleteFlg,
+                "replaceFlg": replaceFlg
             },
             dataType: 'json',
             success : function(result) {
                 if (result != null) {
                     if (result.code == 0) {
                         reloadTable();
+                        alert("制作成功");
                     } else {
                         alert("制作失败[" + result.message + "]");
                     }

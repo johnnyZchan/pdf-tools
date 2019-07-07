@@ -3,11 +3,13 @@ package com.ledi.pdftools.services.impl;
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.PdfModel;
 import com.ledi.pdftools.constants.CodeInfo;
+import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.exceptions.ServiceException;
 import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.mappers.PdfListMapper;
+import com.ledi.pdftools.services.PdfDataCoordinateService;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.DataUtil;
@@ -35,6 +37,8 @@ public class PdfListServiceImpl implements PdfListService {
     PdfFileMapper pdfFileMapper;
     @Resource
     PdfFileService pdfFileService;
+    @Resource
+    PdfDataCoordinateService pdfDataCoordinateService;
 
     public int getPdfListCount() {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -134,14 +138,17 @@ public class PdfListServiceImpl implements PdfListService {
         }
     }
 
-    public List<String> makePdf(List<String> awbList) {
+    public List<String> makePdf(List<String> awbList, boolean isDelete, boolean isReplace) {
         if (awbList == null || awbList.isEmpty()) {
+            return null;
+        }
+        if (!isDelete && !isReplace) {
             return null;
         }
 
         List<String> failAwbList = new ArrayList<String>();
         for (String awb : awbList) {
-            if (!makePdf(awb)) {
+            if (!makePdf(awb, isDelete, isReplace)) {
                 failAwbList.add(awb);
             }
         }
@@ -150,16 +157,28 @@ public class PdfListServiceImpl implements PdfListService {
     }
 
     @Transactional
-    public boolean makePdf(String awb) {
+    public boolean makePdf(String awb, boolean isDelete, boolean isReplace) {
         try {
             PdfListEntity updatedPdf = this.getUpdatedPdf(awb);
             if (updatedPdf == null) {
                 log.warn("未找到PDF[" + awb + "]的更新数据");
                 return false;
             }
+            PdfListEntity originalPdf = this.getOriginalPdf(awb);
+            if (originalPdf == null) {
+                log.warn("未找到PDF[" + awb + "]的原始数据");
+                return false;
+            }
 
-            this.clearPdfData(updatedPdf);
-            this.replacePdfData(updatedPdf);
+            // 将原始文件拷贝一份，作为更新数据的基础版本
+            this.pdfFileService.makeUpdatedFile(originalPdf, updatedPdf);
+
+            if (isDelete) {
+                this.clearPdfData(updatedPdf);
+            }
+            if (isReplace) {
+                this.replacePdfData(updatedPdf);
+            }
 
             updatedPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
             updatedPdf.setMakeTime(new Timestamp(System.currentTimeMillis()));
@@ -463,10 +482,17 @@ public class PdfListServiceImpl implements PdfListService {
     }
 
     public void replacePdfData(PdfListEntity updatedPdf) {
-
+        if (updatedPdf == null) {
+            return;
+        }
+        PdfFileEntity updatedPdfFile = this.pdfFileService.getPdfFileByPdfId(updatedPdf.getPdfId());
     }
 
     public void clearPdfData(PdfListEntity updatedPdf) {
-
+        if (updatedPdf == null) {
+            return;
+        }
+        PdfFileEntity updatedPdfFile = this.pdfFileService.getPdfFileByPdfId(updatedPdf.getPdfId());
+        this.pdfFileService.clearPdfFile(updatedPdfFile);
     }
 }

@@ -1,6 +1,7 @@
 package com.ledi.pdftools.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -23,5 +24,9 @@ public class FileUtil {
         } catch (Exception e) {
             log.error("error occurred : ", e);
         }
+    }
+
+    public static void copyFile(File srcFile, File destFile) throws Exception {
+        FileUtils.copyFile(srcFile, destFile);
     }
 }
