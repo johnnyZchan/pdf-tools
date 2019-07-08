@@ -9,6 +9,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.parser.*;
+import com.ledi.pdftools.beans.PdfFileModel;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
@@ -17,6 +18,7 @@ import com.ledi.pdftools.exceptions.ServiceException;
 import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.services.PdfDataCoordinateService;
 import com.ledi.pdftools.services.PdfFileService;
+import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -55,6 +57,8 @@ public class PdfFileServiceImpl implements PdfFileService {
     PdfFileMapper pdfFileMapper;
     @Resource
     PdfDataCoordinateService pdfDataCoordinateService;
+    @Resource
+    PdfListService pdfListService;
 
     @Transactional
     public PdfFileEntity uploadPdfFile(MultipartFile file) throws Exception {
@@ -126,7 +130,7 @@ public class PdfFileServiceImpl implements PdfFileService {
             PdfListEntity entity = null;
             for (int rIndex = firstRowIndex; rIndex <= lastRowIndex; rIndex ++) {   //遍历行
                 Row row = sheet.getRow(rIndex);
-                if (row != null && row.getPhysicalNumberOfCells() >= 9) {
+                if (row != null) {
                     String awb = null;
                     String awbReplace = null;
                     Double num = null;
@@ -286,7 +290,9 @@ public class PdfFileServiceImpl implements PdfFileService {
             } else if (PdfDataCoordinateEntity.DATA_TYPE_DECIMAL.equals(entity.getDataType())) {
                 String bdData = formatData(data, entity);
                 if (StringUtils.isNotBlank(bdData)) {
-
+                    if ("%".equals(entity.getSuffix())) {
+                        return (new BigDecimal(bdData)).divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP);
+                    }
                     return new BigDecimal(bdData);
                 }
                 return null;
@@ -554,5 +560,37 @@ public class PdfFileServiceImpl implements PdfFileService {
             log.error("error occurred : ", e);
             return null;
         }
+    }
+
+    public List<PdfFileModel> getPdfFileList(List<String> awbList, int type) {
+        if (awbList == null || awbList.isEmpty()) {
+            return null;
+        }
+
+        List<PdfFileModel> result = null;
+        List<PdfListEntity> pdfList = null;
+        if (type == PdfListEntity.TYPE_ORIGINAL) {
+            pdfList = this.pdfListService.getPdfList(awbList, type, null);
+        } else if (type == PdfListEntity.TYPE_UPDATED) {
+            pdfList = this.pdfListService.getPdfList(awbList, type);
+        }
+        if (pdfList != null && !pdfList.isEmpty()) {
+            result = new ArrayList<PdfFileModel>();
+            PdfFileModel model = null;
+            PdfFileEntity fileEntity = null;
+            for (PdfListEntity entity : pdfList) {
+                fileEntity = this.getPdfFileByPdfId(entity.getPdfId());
+                if (fileEntity == null) {
+                    continue;
+                }
+
+                model = new PdfFileModel();
+                model.setAwb(entity.getAwb());
+                model.setFilePath(fileEntity.getFilePath());
+                result.add(model);
+            }
+        }
+
+        return result;
     }
 }

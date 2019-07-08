@@ -1,5 +1,6 @@
 package com.ledi.pdftools.services;
 
+import com.ledi.pdftools.beans.PdfFileModel;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.exceptions.ServiceException;
@@ -28,4 +29,6 @@ public interface PdfFileService {
     public void replacePdfFile(PdfListEntity updatedPdfEntity, PdfListEntity originalPdfEntity, PdfFileEntity pdfFileEntity);
 
     public String getPdfFilePath(String pdfFileId);
+
+    public List<PdfFileModel> getPdfFileList(List<String> awbList, int type);
 }

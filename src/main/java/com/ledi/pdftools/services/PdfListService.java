@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface PdfListService {
 
-    public int getPdfListCount();
-    public List<PdfListEntity> getPdfList(Integer start, Integer length);
+    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime);
+    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length);
+    public List<PdfListEntity> getPdfList(List<String> awbList, int type);
+    public List<PdfListEntity> getPdfList(List<String> awbList, int type, Integer makeStatus);
 
-    public List<PdfListModel> getPdfModelList(Integer start, Integer length);
+    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length);
 
     public void addPdf(String pdfFileId, boolean coverFlg);
 

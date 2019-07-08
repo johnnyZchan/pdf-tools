@@ -13,39 +13,42 @@
     <script type="text/javascript" charset="UTF-8" src="js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/dataTables.select.min.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="js/datepicker-zh-TW.js"></script>
     <script type="text/javascript" charset="UTF-8" src="js/main.js"></script>
 </head>
 <body>
 <div>
     <label>PDF文件列表</label>
     <div>
-        <input type="text" placeholder="输入查询单号">
-        <select>
+        <input type="text" placeholder="输入查询单号" id="search_awb">
+        <select id="search_makeStatus">
             <option value="" label="制作状态"></option>
+            <option value="0" label="未制作"></option>
+            <option value="1" label="已制作"></option>
         </select>
-        <input type="text" placeholder="制作开始时间">
+        <input type="text" placeholder="制作开始时间" id="search_make_startTime">
         <span> 至 </span>
-        <input type="text" placeholder="制作结束时间">
-        <button>查询</button>
+        <input type="text" placeholder="制作结束时间" id="search_make_endTime">
+        <button id="search_btn">查询</button>
     </div>
 </div>
 <div style="margin-top: 20px">
     <input type="file" accept=".pdf" name="file" id="pdf_file" onchange="pdfFileUpload();" style="display:none">
     <button onclick="pdfFileSelect();">上传PDF</button>
 
-    <button>Ankcustoms下载PDF</button>
+<!--    <button>Ankcustoms下载PDF</button>-->
 
     <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" name="file" id="excel_file" onchange="excelFileUpload(false);" style="display: none">
     <button onclick="excelFileSelect();">上传更新数据</button>
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button onclick="delPdf();">删除</button>
     <button onclick="openMakeDialog();">制作更新PDF</button>
-    <button>导出原始数据</button>
+    <!--<button>导出原始数据</button>
     <button>导出更新数据</button>
-    <button>导出对比数据</button>
+    <button>导出对比数据</button>-->
 
-    <button>导出原始PDF</button>
-    <button>导出更新PDF</button>
+    <button onclick="downloadPdf(1)">导出原始PDF</button>
+    <button onclick="downloadPdf(2)">导出更新PDF</button>
 </div>
 <div style="margin-top: 20px">
     <table id="pdf_list_table" class="cell-border" style="width: 8500px" cellspacing="0" cellpadding="0">
@@ -194,6 +197,8 @@
     var pdfListTable;
     var makeDialog;
     $(document).ready(function() {
+        initDate();
+
         pdfListTable = $('#pdf_list_table').DataTable({
             serverSide: true,
             ordering: false,
@@ -202,6 +207,12 @@
             ajax: {
                 url: 'pdf/list',
                 type: 'POST',
+                data: {
+                    awb: $("#search_awb").val(),
+                    makeStatus: $("#search_makeStatus").val(),
+                    makeStartTime: $("#search_make_startTime").val(),
+                    makeEndTime: $("#search_make_endTime").val()
+                },
                 dataFilter: function(data){
                     var json = jQuery.parseJSON(data);
                     json.recordsTotal = json.total;
@@ -400,7 +411,7 @@
                 // <th>品名1运费比重</th>
                 {
                     render : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod1FreightPct");
+                        return createColumnHtml(row, "prod1FreightPct", tariffRateRender);
                     },
                     width: "140px",
                     className: "column-vertical-top",
@@ -509,7 +520,7 @@
                 // <th>品名2运费比重</th>
                 {
                     render : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod2FreightPct");
+                        return createColumnHtml(row, "prod2FreightPct", tariffRateRender);
                     },
                     width: "140px",
                     className: "column-vertical-top",
@@ -617,7 +628,7 @@
                 // <th>品名3运费比重</th>
                 {
                     render : function(data, type, row, meta) {
-                        return createColumnHtml(row, "prod3FreightPct");
+                        return createColumnHtml(row, "prod3FreightPct", tariffRateRender);
                     },
                     width: "140px",
                     className: "column-vertical-top",
@@ -766,14 +777,39 @@
             } else {
                 pdfListTable.rows().deselect();
             }
-        })
+        });
 
         pdfListTable.on('deselect', function ( e, dt, type, indexes ) {
             $("#checkall").prop("checked", false);
         });
 
+        $("#search_btn").on("click", function() {
+            reloadTable();
+        });
+
         initMakeDialog();
     });
+
+    function initDate() {
+        $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
+
+        $("#search_make_startTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#search_make_endTime" ).datepicker( "option", "minDate", selectedDate);//限制日期范围
+            }
+        });
+        $("#search_make_endTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#search_make_startTime" ).datepicker( "option", "maxDate", selectedDate);//限制日期范围
+            }
+        });
+    }
 
     function createColumnHtml(row, key) {
         return createColumnHtml(row, key, null);
@@ -806,7 +842,7 @@
 
     function tariffRateRender(val, rowType) {
         if (val != null && val != "") {
-            return val + "%";
+            return (val * 100) + "%";
         }
         return val;
     }
@@ -1045,9 +1081,36 @@
 
     function reloadTable() {
         if (pdfListTable != null) {
+            var param = {
+                awb: $("#search_awb").val(),
+                makeStatus: $("#search_makeStatus").val(),
+                makeStartTime: $("#search_make_startTime").val(),
+                makeEndTime: $("#search_make_endTime").val()
+            };
+            pdfListTable.settings()[0].ajax.data = param;
             pdfListTable.ajax.reload();
         }
         $("#checkall").prop("checked", false);
+    }
+
+    function downloadPdf(type) {
+        var selected = pdfListTable.rows({selected: true}).data().toArray();
+        if (selected == null || selected.length == 0) {
+            alert("请选择数据");
+            return;
+        }
+
+        var awbList = [];
+        for (var i = 0; i < selected.length; i ++) {
+            awbList.push(selected[i].originalPdf.awb);
+        }
+
+        DownLoadFile({
+            url: 'download/pdf',
+            data: {
+                awbList: awbList,
+                type: type}
+        });
     }
 </script>
 </html>

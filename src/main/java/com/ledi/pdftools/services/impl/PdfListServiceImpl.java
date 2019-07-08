@@ -40,23 +40,43 @@ public class PdfListServiceImpl implements PdfListService {
     @Resource
     PdfDataCoordinateService pdfDataCoordinateService;
 
-    public int getPdfListCount() {
+    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("type", PdfListEntity.TYPE_ORIGINAL);
+        params.put("awb", awb);
+        params.put("makeStatus", makeStatus);
+        params.put("makeStartTime", DataUtil.convertString2Timestamp(makeStartTime, "yyyy-MM-dd"));
+        params.put("makeEndTime", DataUtil.convertString2Timestamp(makeEndTime, "yyyy-MM-dd"));
         return pdfListMapper.countByCondition(params);
     }
 
-    public List<PdfListEntity> getPdfList(Integer start, Integer length) {
+    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("type", PdfListEntity.TYPE_ORIGINAL);
+        params.put("awb", awb);
+        params.put("makeStatus", makeStatus);
+        params.put("makeStartTime", DataUtil.convertString2Timestamp(makeStartTime, "yyyy-MM-dd"));
+        params.put("makeEndTime", DataUtil.convertString2Timestamp(makeEndTime, "yyyy-MM-dd"));
 
         String orderSql = "create_time desc";
         return pdfListMapper.findByCondition(params, orderSql, start, length);
     }
 
-    public List<PdfListModel> getPdfModelList(Integer start, Integer length) {
+    public List<PdfListEntity> getPdfList(List<String> awbList, int type) {
+        return this.getPdfList(awbList, type, PdfListEntity.MAKE_STATUS_YES);
+    }
+
+    public List<PdfListEntity> getPdfList(List<String> awbList, int type, Integer makeStatus) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("type", type);
+        params.put("makeStatus", makeStatus);
+        params.put("awbList", awbList);
+        return pdfListMapper.findByCondition(params, null, null, null);
+    }
+
+    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length) {
         List<PdfListModel> result = null;
-        List<PdfListEntity> dataList = this.getPdfList(start, length);
+        List<PdfListEntity> dataList = this.getPdfList(awb, makeStatus, makeStartTime, makeEndTime, start, length);
         if (dataList != null) {
             result = new ArrayList<PdfListModel>();
             for (PdfListEntity entity : dataList) {
@@ -183,6 +203,10 @@ public class PdfListServiceImpl implements PdfListService {
             updatedPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
             updatedPdf.setMakeTime(new Timestamp(System.currentTimeMillis()));
             this.pdfListMapper.update(updatedPdf);
+
+            originalPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
+            originalPdf.setMakeTime(updatedPdf.getMakeTime());
+            this.pdfListMapper.update(originalPdf);
         } catch (Exception e) {
             log.warn("制作PDF[" + awb + "]失败", e);
             return false;
