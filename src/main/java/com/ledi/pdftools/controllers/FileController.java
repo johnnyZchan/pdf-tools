@@ -7,7 +7,9 @@ import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,14 +36,20 @@ public class FileController extends BaseController {
 
     @GetMapping("/download/templates")
     public void downloadTemplates(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String fileName = "template.xlsx";
-        Path file = Paths.get(ResourceUtils.getFile("classpath:" + fileName).getPath());
-        if (Files.exists(file)) {
+        InputStream inputStream = null;
+        try {
+            String fileName = "template.xlsx";
+
             response.setContentType("application/msexcel");
             response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
 
-            Files.copy(file, response.getOutputStream());
-            response.getOutputStream().flush();
+            ClassPathResource classPathResource = new ClassPathResource(fileName);
+            inputStream = classPathResource.getInputStream();
+
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
     }
 
@@ -74,7 +82,7 @@ public class FileController extends BaseController {
                     File file = new File(fileModel.getFilePath());
                     if (file != null && file.exists()) {
                         //添加ZipEntry，并ZipEntry中写入文件流
-                        zipos.putNextEntry(new ZipEntry(fileModel.getAwb() + ".pdf"));
+                        zipos.putNextEntry(new ZipEntry(StringUtils.isNotBlank(fileModel.getAwbReplace())?fileModel.getAwbReplace():fileModel.getAwb() + ".pdf"));
                         os = new DataOutputStream(zipos);
                         InputStream is = new FileInputStream(file);
                         byte[] b = new byte[1024];

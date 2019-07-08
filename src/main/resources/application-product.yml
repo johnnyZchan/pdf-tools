@@ -72,7 +72,7 @@ spring:
 pdf:
   tools:
     file:
-      basedir: /usr/local/pdf_tools/upload
+      basedir: /usr/local/pdf_tools/upload/
       width: 595
       height: 842
     replace:

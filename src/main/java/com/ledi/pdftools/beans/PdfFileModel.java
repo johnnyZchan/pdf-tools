@@ -8,5 +8,6 @@ import lombok.Setter;
 public class PdfFileModel {
 
     private String awb;
+    private String awbReplace;
     private String filePath;
 }

@@ -586,6 +586,7 @@ public class PdfFileServiceImpl implements PdfFileService {
 
                 model = new PdfFileModel();
                 model.setAwb(entity.getAwb());
+                model.setAwbReplace(entity.getAwbReplace());
                 model.setFilePath(fileEntity.getFilePath());
                 result.add(model);
             }

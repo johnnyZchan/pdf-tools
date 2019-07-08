@@ -70,9 +70,8 @@ public class PdfToolsConfig extends WebMvcConfigurationSupport {
     }
 
     @Bean
-    public ServletListenerRegistrationBean logbackContextListener() {
-        ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean(new LogbackContextListener());
-        return bean;
+    public LogbackContextListener logbackContextListener() {
+        return new LogbackContextListener();
     }
 
     @Bean

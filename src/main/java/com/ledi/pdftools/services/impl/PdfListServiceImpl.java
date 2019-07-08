@@ -380,14 +380,6 @@ public class PdfListServiceImpl implements PdfListService {
         if (originalEntity.getBprAmount() != null) {
             updatedEntity.setBprAmount(updatedEntity.getClearanceAmount());
         }
-        // 关税用原始数据
-        updatedEntity.setTariff(originalEntity.getTariff());
-        // 消费税用原始数据
-        updatedEntity.setExciseTax(originalEntity.getExciseTax());
-        // 地方消费税用原始数据
-        updatedEntity.setLocalExciseTax(originalEntity.getLocalExciseTax());
-        // 税金总计用原始数据
-        updatedEntity.setTaxTotalAmount(originalEntity.getTaxTotalAmount());
         // 美元日元汇率用原始数据
         updatedEntity.setUsdJpyExchangeRate(originalEntity.getUsdJpyExchangeRate());
 
@@ -421,7 +413,7 @@ public class PdfListServiceImpl implements PdfListService {
         // 品名1地方消费税基数=品名1国内消费税金额，按百位向下取整
         updatedEntity.setProd1LocalExciseTaxBase(DataUtil.round(updatedEntity.getProd1CountryExciseTaxAmount(), 100));
         // 品名1地方消费税金额=品名1地方消费税基数*17/63
-        updatedEntity.setProd1LocalExciseTaxAmount((updatedEntity.getProd1LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 2, BigDecimal.ROUND_HALF_UP));
+        updatedEntity.setProd1LocalExciseTaxAmount((updatedEntity.getProd1LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
 
         if (updatedEntity.getProd2DeclareAmountUsd() != null) {
             // 品名2关税率用原始数据
@@ -449,7 +441,7 @@ public class PdfListServiceImpl implements PdfListService {
             // 品名2地方消费税基数=品名2国内消费税金额，按百位向下取整
             updatedEntity.setProd2LocalExciseTaxBase(DataUtil.round(updatedEntity.getProd2CountryExciseTaxAmount(), 100));
             // 品名2地方消费税金额=品名2地方消费税基数*17/63
-            updatedEntity.setProd2LocalExciseTaxAmount((updatedEntity.getProd2LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 2, BigDecimal.ROUND_HALF_UP));
+            updatedEntity.setProd2LocalExciseTaxAmount((updatedEntity.getProd2LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
         }
 
         if (updatedEntity.getProd3DeclareAmountUsd() != null) {
@@ -478,7 +470,7 @@ public class PdfListServiceImpl implements PdfListService {
             // 品名3地方消费税基数=品名3国内消费税金额，按百位向下取整
             updatedEntity.setProd3LocalExciseTaxBase(DataUtil.round(updatedEntity.getProd3CountryExciseTaxAmount(), 100));
             // 品名3地方消费税金额=品名3地方消费税基数*17/63
-            updatedEntity.setProd3LocalExciseTaxAmount((updatedEntity.getProd3LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 2, BigDecimal.ROUND_HALF_UP));
+            updatedEntity.setProd3LocalExciseTaxAmount((updatedEntity.getProd3LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
         }
 
         // 关税合计
@@ -498,6 +490,15 @@ public class PdfListServiceImpl implements PdfListService {
         BigDecimal prod2LocalExciseTaxAmount = updatedEntity.getProd2LocalExciseTaxAmount()!=null?updatedEntity.getProd2LocalExciseTaxAmount():BigDecimal.ZERO;
         BigDecimal prod3LocalExciseTaxAmount = updatedEntity.getProd3LocalExciseTaxAmount()!=null?updatedEntity.getProd3LocalExciseTaxAmount():BigDecimal.ZERO;
         updatedEntity.setLocalExciseTaxTotalAmount(prod1LocalExciseTaxAmount.add(prod2LocalExciseTaxAmount).add(prod3LocalExciseTaxAmount));
+
+        // 关税用关税合计百位取整
+        updatedEntity.setTariff(DataUtil.round(updatedEntity.getTariffTotalAmount(), 100));
+        // 消费税用国内消费税合计百位取整
+        updatedEntity.setExciseTax(DataUtil.round(updatedEntity.getCountryExciseTaxTotalAmount(), 100));
+        // 地方消费税用地方消费税合计百位取整
+        updatedEntity.setLocalExciseTax(DataUtil.round(updatedEntity.getLocalExciseTaxTotalAmount(), 100));
+        // 税金总计用以上三个数据相加
+        updatedEntity.setTaxTotalAmount(updatedEntity.getTariff().add(updatedEntity.getExciseTax().add(updatedEntity.getLocalExciseTax())));
 
         updatedEntity.setType(PdfListEntity.TYPE_UPDATED);
         updatedEntity.setMakeStatus(PdfListEntity.MAKE_STATUS_NO);
