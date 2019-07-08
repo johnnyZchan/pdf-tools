@@ -22,13 +22,16 @@ public class PdfListController extends BaseController {
 
     @PostMapping("/pdf/list")
     public ResponseModel getPdfList(HttpServletRequest request,
-                                    @RequestHeader(name = "lang", defaultValue = "sc") String lang,
+                                    @RequestParam(name = "awb", required = false) String awb,
+                                    @RequestParam(name = "makeStatus", required = false) Integer makeStatus,
+                                    @RequestParam(name = "makeStartTime", required = false) String makeStartTime,
+                                    @RequestParam(name = "makeEndTime", required = false) String makeEndTime,
                                     @RequestParam(name = "start", defaultValue = "0") Integer start,
                                     @RequestParam(name = "length", defaultValue = "10") Integer length) {
-        int totalCount = pdfListService.getPdfListCount();
+        int totalCount = pdfListService.getPdfListCount(awb, makeStatus, makeStartTime, makeEndTime);
         List<PdfListModel> dataList = new ArrayList<PdfListModel>();
         if (totalCount > 0) {
-            dataList = pdfListService.getPdfModelList(start, length);
+            dataList = pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, start, length);
         }
 
         return this.getOkResponseModel(totalCount, dataList);
