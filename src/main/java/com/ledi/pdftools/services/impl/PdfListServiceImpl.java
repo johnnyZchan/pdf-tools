@@ -397,6 +397,8 @@ public class PdfListServiceImpl implements PdfListService {
         // 品名1日元申报价值=品名1申报价值*美元日元汇率+申报运费USD*美元日元汇率*品名1运费比重
         BigDecimal usdJpyExchangeRate = updatedEntity.getUsdJpyExchangeRate()!=null?updatedEntity.getUsdJpyExchangeRate():BigDecimal.ONE;
         updatedEntity.setProd1DeclareAmountJpy((updatedEntity.getProd1DeclareAmountUsd().multiply(usdJpyExchangeRate)).add(updatedEntity.getDeclareFreightAmountUsd().multiply(usdJpyExchangeRate).multiply(updatedEntity.getProd1FreightPct())));
+        updatedEntity.setProd1DeclareAmountJpy(DataUtil.round(updatedEntity.getProd1DeclareAmountJpy(), 1));
+
         // 品名1关税计算基数=品名1日元申报价值，按千位向下取整
         updatedEntity.setProd1TariffBase(DataUtil.round(updatedEntity.getProd1DeclareAmountJpy(), 1000));
         // 品名1关税额=品名1关税计算基数*品名1关税率
@@ -425,6 +427,8 @@ public class PdfListServiceImpl implements PdfListService {
             }
             // 品名2日元申报价值=品名2申报价值*美元日元汇率+申报运费USD*美元日元汇率*品名2运费比重
             updatedEntity.setProd2DeclareAmountJpy((updatedEntity.getProd2DeclareAmountUsd().multiply(usdJpyExchangeRate)).add(updatedEntity.getDeclareFreightAmountUsd().multiply(usdJpyExchangeRate).multiply(updatedEntity.getProd2FreightPct())));
+            updatedEntity.setProd2DeclareAmountJpy(DataUtil.round(updatedEntity.getProd2DeclareAmountJpy(), 1));
+
             // 品名2关税计算基数=品名2日元申报价值，按千位向下取整
             updatedEntity.setProd2TariffBase(DataUtil.round(updatedEntity.getProd2DeclareAmountJpy(), 1000));
             // 品名2关税额=品名2关税计算基数*品名2关税率
@@ -454,6 +458,8 @@ public class PdfListServiceImpl implements PdfListService {
             }
             // 品名3日元申报价值=品名3申报价值*美元日元汇率+申报运费USD*美元日元汇率*品名3运费比重
             updatedEntity.setProd3DeclareAmountJpy((updatedEntity.getProd3DeclareAmountUsd().multiply(usdJpyExchangeRate)).add(updatedEntity.getDeclareFreightAmountUsd().multiply(usdJpyExchangeRate).multiply(updatedEntity.getProd3FreightPct())));
+            updatedEntity.setProd3DeclareAmountJpy(DataUtil.round(updatedEntity.getProd3DeclareAmountJpy(), 1));
+
             // 品名3关税计算基数=品名3日元申报价值，按千位向下取整
             updatedEntity.setProd3TariffBase(DataUtil.round(updatedEntity.getProd3DeclareAmountJpy(), 1000));
             // 品名3关税额=品名3关税计算基数*品名3关税率

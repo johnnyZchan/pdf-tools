@@ -82,7 +82,7 @@ public class FileController extends BaseController {
                     File file = new File(fileModel.getFilePath());
                     if (file != null && file.exists()) {
                         //添加ZipEntry，并ZipEntry中写入文件流
-                        zipos.putNextEntry(new ZipEntry(StringUtils.isNotBlank(fileModel.getAwbReplace())?fileModel.getAwbReplace():fileModel.getAwb() + ".pdf"));
+                        zipos.putNextEntry(new ZipEntry((StringUtils.isNotBlank(fileModel.getAwbReplace())?fileModel.getAwbReplace():fileModel.getAwb()) + ".pdf"));
                         os = new DataOutputStream(zipos);
                         InputStream is = new FileInputStream(file);
                         byte[] b = new byte[1024];
