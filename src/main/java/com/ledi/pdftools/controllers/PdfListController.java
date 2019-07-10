@@ -2,6 +2,8 @@ package com.ledi.pdftools.controllers;
 
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.ResponseModel;
+import com.ledi.pdftools.beans.SkipModel;
+import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ public class PdfListController extends BaseController {
 
     @Resource
     PdfListService pdfListService;
+    @Resource
+    PdfFileService pdfFileService;
 
     @PostMapping("/pdf/list")
     public ResponseModel getPdfList(HttpServletRequest request,
@@ -37,11 +41,20 @@ public class PdfListController extends BaseController {
         return this.getOkResponseModel(totalCount, dataList);
     }
 
-    @PutMapping("/pdf/list/{pdfFileId}")
-    public ResponseModel addPdf(@PathVariable(value = "pdfFileId") String pdfFileId,
+    @PutMapping("/pdf/list")
+    public ResponseModel addPdf(@RequestParam(value = "pdfFileIdList[]") List<String> pdfFileIdList,
                                 @RequestParam(value = "coverFlg", defaultValue = "false") boolean coverFlg) {
-        this.pdfListService.addPdf(pdfFileId, coverFlg);
-        return this.getOkResponseModel();
+        List<SkipModel> skipList = this.pdfListService.addPdf(pdfFileIdList, coverFlg);
+        if (skipList == null || skipList.isEmpty()) {
+            return this.getOkResponseModel();
+        } else {
+            List<String> skipAwbList = new ArrayList<String>();
+            for (SkipModel model : skipList) {
+                skipAwbList.add(model.getAwb());
+                this.pdfFileService.deletePdfFileById(model.getPdfFileId());
+            }
+            return this.getPartialOkResponseModel(skipAwbList);
+        }
     }
 
     @DeleteMapping("/pdf/list")

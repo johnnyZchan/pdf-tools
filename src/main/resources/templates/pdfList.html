@@ -33,10 +33,11 @@
     </div>
 </div>
 <div style="margin-top: 20px">
-    <input type="file" accept=".pdf" name="file" id="pdf_file" onchange="pdfFileUpload();" style="display:none">
+    <input type="file" accept=".pdf" name="file" multiple="multiple"
+           id="pdf_file" onchange="pdfFileUpload();" style="display:none">
     <button onclick="pdfFileSelect();">上传PDF</button>
 
-    <button>Ankcustoms下载PDF</button>
+    <button id="ank_download_btn">Ankcustoms下载PDF</button>
 
     <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" name="file" id="excel_file" onchange="excelFileUpload(false);" style="display: none">
     <button onclick="excelFileSelect();">上传更新数据</button>
@@ -191,11 +192,44 @@
         <input id="replace_checkbox" type="checkbox">
     </div>
 </div>
+
+<div id="ank_download_dialog" title="Ankcustoms下载PDF">
+    <div>
+        <input type="text" id="ank_cookie" placeholder="Cookie">
+    </div>
+    <div>
+        <input type="text" placeholder="许可开始时间" id="download_startTime">
+        <span>至</span>
+        <input type="text" placeholder="许可结束时间" id="download_endTime">
+
+        <button id="ank_download_dialog_btn" onclick="downloadAck();">下载</button>
+        <span style="margin-left :10px;color: red;">Ps：重复的单号文件将不会保存</span>
+    </div>
+    <div>
+        <label>Cookie获取方式：</label>
+        <img src="images/cookie_guide.jpg" width="800px;">
+    </div>
+</div>
+
+<div id="cover_confirm_dialog" title="单号重复策略确认">
+    <div>
+        <span>
+            文件上传成功，即将进行数据导入。
+        </span>
+        <br/>
+        <span>
+            如果存在重复的单号，是覆盖还是跳过？
+        </span>
+    </div>
+</div>
+
 </body>
 
 <script type="text/javascript">
     var pdfListTable;
     var makeDialog;
+    var ankDownloadDialog;
+    var coverConfirmDialog;
     $(document).ready(function() {
         initDate();
 
@@ -788,6 +822,14 @@
         });
 
         initMakeDialog();
+        initAnkDownloadDialog();
+        initCoverConfirmDialog();
+
+        $("#ank_download_btn").click(function () {
+            if (ankDownloadDialog != null) {
+                ankDownloadDialog.dialog("open");
+            }
+        });
     });
 
     function initDate() {
@@ -864,7 +906,12 @@
 
     function pdfFileUpload() {
         var formData = new FormData();
-        formData.append('file', $('#pdf_file')[0].files[0]);
+
+        var pdfFiles = $('#pdf_file')[0].files;
+        for (var i = 0; i < pdfFiles.length; i ++) {
+            formData.append('file', pdfFiles[i]);
+        }
+
         $.ajax({
             url : 'pdf/upload',
             type : 'POST',
@@ -875,8 +922,7 @@
             clearForm: true,//提交后是否清空表单数据
             success: function(result) {   //提交成功后自动执行的处理函数，参数data就是服务器返回的数据。
                 if (result != null && result.code == 0) {
-                    alert('上传成功');
-                    addPdf(result.data.pdfFileId, false);
+                    openCoverConfirmDialog(result.data);
                 } else {
                     alert('上传失败[' + (result != null ? result.message:'') + ']')
                 }
@@ -934,11 +980,12 @@
         $("#excel_file").trigger("click");
     }
 
-    function addPdf(pdfFileId, coverFlg) {
+    function addPdf(pdfFileIdList, coverFlg) {
         $.ajax({
-            url : "pdf/list/" + pdfFileId ,
+            url : "pdf/list" ,
             type : "put",
             data : {
+                "pdfFileIdList": pdfFileIdList,
                 "coverFlg": coverFlg
             },
             dataType: 'json',
@@ -946,11 +993,10 @@
                 if (result != null) {
                     if (result.code == 0) {
                         reloadTable();
-                    } else if (result.code == 400003) {
-                        var confirmResult = confirm("单号已存在，是否覆盖？");
-                        if (confirmResult == true) {
-                            addPdf(pdfFileId, true);
-                        }
+                        alert("数据生成成功");
+                    } else if (result.code == 1) {
+                        reloadTable();
+                        alert("部分数据生成成功，以下数据被跳过：" + result.data);
                     } else {
                         alert("生成数据失败[" + result.message + "]");
                     }
@@ -1022,6 +1068,59 @@
                 }
             }
         });
+    }
+
+    function initAnkDownloadDialog() {
+        $("#download_startTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#download_endTime" ).datepicker( "option", "minDate", selectedDate);//限制日期范围
+            }
+        });
+        $("#download_endTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#download_startTime" ).datepicker( "option", "maxDate", selectedDate);//限制日期范围
+            }
+        });
+
+        initAnkDownloadBtn(true);
+
+        ankDownloadDialog = $( "#ank_download_dialog" ).dialog({
+            autoOpen: false,
+            resizable: false,
+            modal: true,
+            height: 600,
+            width: 900
+        });
+    }
+
+    function initCoverConfirmDialog() {
+        coverConfirmDialog = $("#cover_confirm_dialog").dialog({
+            autoOpen: false,
+            resizable: false,
+            modal: true,
+            buttons: {
+                "覆盖": function() {
+                    addPdf($(this).data("pdfFileIdList"), true);
+                    $( this ).dialog( "close" );
+                },
+                "跳过": function() {
+                    addPdf($(this).data("pdfFileIdList"), false);
+                    $( this ).dialog( "close" );
+                }
+            }
+        })
+    }
+
+    function openCoverConfirmDialog(pdfFileIdList) {
+        if (coverConfirmDialog != null) {
+            coverConfirmDialog.data("pdfFileIdList", pdfFileIdList).dialog("open");
+        }
     }
 
     function openMakeDialog() {
@@ -1111,6 +1210,71 @@
                 awbList: awbList,
                 type: type}
         });
+    }
+
+    function downloadAck() {
+        var cookie = $("#ank_cookie").val();
+        var startTime = $("#download_startTime").val();
+        var endTime = $("#download_endTime").val();
+
+        if (cookie == null || cookie == "") {
+            alert("请输入Cookie");
+            return;
+        }
+        if (startTime == null || startTime == "") {
+            alert("请选择许可开始时间");
+            return;
+        }
+        if (endTime == null || endTime == "") {
+            alert("请选择许可结束时间");
+            return;
+        }
+
+        $.ajax({
+            url : "ackcustoms/download",
+            type : "post",
+            data : {
+                "cookie": cookie,
+                "startTime": startTime,
+                "endTime": endTime
+            },
+            dataType: 'json',
+            beforeSend: function() {
+                initAnkDownloadBtn(false);
+            },
+            success : function(result) {
+                if (result != null) {
+                    if (result.code == 0) {
+                        reloadTable();
+                        if (ankDownloadDialog != null) {
+                            ankDownloadDialog.dialog( "close" );
+                        }
+                        alert("下载成功");
+                    } else {
+                        alert("下载失败[" + result.message + "]");
+                    }
+                } else {
+                    alert("下载失败");
+                }
+            },
+            error: function (data, status, e) {
+                console.log(e);
+                alert("下载失败");
+            },
+            complete: function () {
+                initAnkDownloadBtn(true);
+            }
+        });
+    }
+
+    function initAnkDownloadBtn(enable) {
+        if (enable) {
+            $("#ank_download_dialog_btn").text("下载");
+            $("#ank_download_dialog_btn").removeAttr("disabled");
+        } else {
+            $("#ank_download_dialog_btn").text("请等待...");
+            $("#ank_download_dialog_btn").attr("disabled", "true");
+        }
     }
 </script>
 </html>

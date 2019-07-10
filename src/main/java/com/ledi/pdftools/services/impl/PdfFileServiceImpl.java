@@ -70,10 +70,25 @@ public class PdfFileServiceImpl implements PdfFileService {
         String filePath = fileBaseDir + pdfFileId + "." + FilenameUtils.getExtension(file.getOriginalFilename());
         file.transferTo(new File(filePath));
 
+        return savePdfFile(pdfFileId, file.getOriginalFilename(), filePath);
+    }
+
+    @Transactional
+    public PdfFileEntity uploadPdfFile(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+
+        String pdfFileId = IDUtil.uuid();
+        return savePdfFile(pdfFileId, file.getName(), file.getAbsolutePath());
+    }
+
+    @Transactional
+    public PdfFileEntity savePdfFile(String id, String name, String path) {
         PdfFileEntity entity = new PdfFileEntity();
-        entity.setPdfFileId(pdfFileId);
-        entity.setFileName(file.getOriginalFilename());
-        entity.setFilePath(filePath);
+        entity.setPdfFileId(id);
+        entity.setFileName(name);
+        entity.setFilePath(path);
         this.pdfFileMapper.save(entity);
 
         return entity;
@@ -343,9 +358,18 @@ public class PdfFileServiceImpl implements PdfFileService {
             return;
         }
 
-        FileUtil.deleteFile(pdfFileEntity.getFilePath());
         this.pdfFileMapper.delete(pdfFileEntity.getPdfFileId());
+        FileUtil.deleteFile(pdfFileEntity.getFilePath());
+    }
 
+    @Transactional
+    public void deletePdfFileById(String id) {
+        if (StringUtils.isBlank(id)) {
+            return;
+        }
+
+        PdfFileEntity pdfFileEntity = this.getPdfFile(id);
+        this.deletePdfFile(pdfFileEntity);
     }
 
     @Transactional
@@ -593,5 +617,9 @@ public class PdfFileServiceImpl implements PdfFileService {
         }
 
         return result;
+    }
+
+    public String getFileBaseDir() {
+        return fileBaseDir;
     }
 }

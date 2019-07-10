@@ -2,6 +2,7 @@ package com.ledi.pdftools.services.impl;
 
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.PdfModel;
+import com.ledi.pdftools.beans.SkipModel;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
@@ -95,6 +96,36 @@ public class PdfListServiceImpl implements PdfListService {
         return this.pdfListMapper.findPdfByAwb(PdfListEntity.TYPE_UPDATED, awb);
     }
 
+    public boolean isAwbExist(String awb) {
+        if (this.getOriginalPdf(awb) != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public List<SkipModel> addPdf(List<String> pdfFileIdList, boolean coverFlg) {
+        if (pdfFileIdList == null || pdfFileIdList.isEmpty()) {
+            return null;
+        }
+
+        List<SkipModel> skipList = new ArrayList<SkipModel>();
+        for (String pdfFileId : pdfFileIdList) {
+            try {
+                this.addPdf(pdfFileId, coverFlg);
+            } catch (ServiceException e) {
+                if (e.getCode() == CodeInfo.CODE_AWB_ALREADY_EXIST) {
+                    SkipModel model = new SkipModel();
+                    model.setAwb(e.getMessage());
+                    model.setPdfFileId(pdfFileId);
+                    skipList.add(model);
+                }
+            }
+        }
+
+        return skipList;
+    }
+
     @Transactional
     public void addPdf(String pdfFileId, boolean coverFlg) {
         PdfFileEntity pdfFileEntity = this.pdfFileMapper.findById(pdfFileId);
@@ -107,7 +138,7 @@ public class PdfListServiceImpl implements PdfListService {
             PdfListEntity oldPdfListEntity = this.getOriginalPdf(pdfListEntity.getAwb());
             // 单号已存在，是否覆盖：false=不覆盖，需要确认
             if (oldPdfListEntity != null && !coverFlg) {
-                throw new ServiceException(CodeInfo.CODE_AWB_ALREADY_EXIST);
+                throw new ServiceException(CodeInfo.CODE_AWB_ALREADY_EXIST, pdfListEntity.getAwb());
             }
 
             pdfListEntity.setType(PdfListEntity.TYPE_ORIGINAL);
@@ -375,7 +406,7 @@ public class PdfListServiceImpl implements PdfListService {
 
     public void createUpdatedEntity(PdfListEntity updatedEntity, PdfListEntity originalEntity) {
         // 通关金额=申报价值合计
-        updatedEntity.setClearanceAmount(originalEntity.getDeclareTotalAmountUsd());
+        updatedEntity.setClearanceAmount(updatedEntity.getDeclareTotalAmountUsd());
         // BPR合计=原始有数据，新数据用通关金额；如果原始没数据，新数据继续为空
         if (originalEntity.getBprAmount() != null) {
             updatedEntity.setBprAmount(updatedEntity.getClearanceAmount());

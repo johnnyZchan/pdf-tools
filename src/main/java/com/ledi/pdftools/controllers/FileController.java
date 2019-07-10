@@ -4,23 +4,23 @@ import com.ledi.pdftools.beans.PdfFileModel;
 import com.ledi.pdftools.beans.ResponseModel;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
+import com.ledi.pdftools.services.AnkcustomsService;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
+import com.ledi.pdftools.utils.IDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -33,6 +33,8 @@ public class FileController extends BaseController {
     private PdfFileService pdfFileService;
     @Resource
     private PdfListService pdfListService;
+    @Resource
+    private AnkcustomsService ankcustomsService;
 
     @GetMapping("/download/templates")
     public void downloadTemplates(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -105,9 +107,23 @@ public class FileController extends BaseController {
     }
 
     @PostMapping("/pdf/upload")
-    public ResponseModel pdfUpload(@RequestParam("file") MultipartFile file) throws Exception {
-        PdfFileEntity result = this.pdfFileService.uploadPdfFile(file);
-        return this.getOkResponseModel(result);
+    public ResponseModel pdfUpload(HttpServletRequest request) throws Exception {
+        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+        List<String> pdfFileIdList = null;
+
+        if (files != null && !files.isEmpty()) {
+            pdfFileIdList = new ArrayList<String>();
+
+            PdfFileEntity result = null;
+            for (MultipartFile file : files) {
+                result = this.pdfFileService.uploadPdfFile(file);
+                if (result != null) {
+                    pdfFileIdList.add(result.getPdfFileId());
+                }
+            }
+        }
+
+        return this.getOkResponseModel(pdfFileIdList);
     }
 
     @PostMapping("/excel/upload")
@@ -115,6 +131,14 @@ public class FileController extends BaseController {
                                      @RequestParam(name = "coverFlg", defaultValue = "false") boolean coverFlg) throws Exception {
         List<PdfListEntity> pdfListList = this.pdfFileService.uploadExcelFile(file);
         this.pdfListService.addUpdatedData(pdfListList, coverFlg);
+        return this.getOkResponseModel();
+    }
+
+    @PostMapping("/ackcustoms/download")
+    public ResponseModel ackcustomsDownload(@RequestParam("cookie") String cookie,
+                                            @RequestParam("startTime") String startTime,
+                                            @RequestParam("endTime") String endTime) {
+        this.ankcustomsService.ankcustomsDownload(cookie, startTime, endTime);
         return this.getOkResponseModel();
     }
 

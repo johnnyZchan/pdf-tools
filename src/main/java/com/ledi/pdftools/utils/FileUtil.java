@@ -29,4 +29,10 @@ public class FileUtil {
     public static void copyFile(File srcFile, File destFile) throws Exception {
         FileUtils.copyFile(srcFile, destFile);
     }
+
+    public static void main(String[] args) {
+        File file = new File("/Users/johnny/Development/ledi/8009180462.pdf");
+        System.out.println(file.getAbsolutePath());
+        System.out.println(file.getName());
+    }
 }
