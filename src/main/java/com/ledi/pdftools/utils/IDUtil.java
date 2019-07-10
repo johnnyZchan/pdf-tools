@@ -10,4 +10,8 @@ public class IDUtil {
         UUID id = Generators.timeBasedGenerator().generate();
         return id.toString().replaceAll("-", "");
     }
+
+    public static String originalUUID() {
+        return Generators.timeBasedGenerator().generate().toString();
+    }
 }

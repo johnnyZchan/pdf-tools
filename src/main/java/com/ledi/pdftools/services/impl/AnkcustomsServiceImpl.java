@@ -13,6 +13,7 @@ import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.DataUtil;
 import com.ledi.pdftools.utils.FileUtil;
+import com.ledi.pdftools.utils.IDUtil;
 import com.ledi.pdftools.utils.RegExpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -90,8 +91,12 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
             if (StringUtils.isNotBlank(response)) {
                 this.replaceAllBlank(response);
                 String regToken = "GlobalManager.Token='(.*?)'";
-                return RegExpUtil.getTextByReg(response, regToken, 1);
-
+                String token = RegExpUtil.getTextByReg(response, regToken, 1);
+                if (StringUtils.isNotBlank(token)) {
+                    return token;
+                } else {
+                    log.warn("获取Token时，未能获取到期望的返回结果：" + response);
+                }
             }
         } catch (Exception e) {
             log.error("error occurred : ", e);

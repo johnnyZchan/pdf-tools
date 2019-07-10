@@ -1,5 +1,6 @@
 package com.ledi.pdftools.configs;
 
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -61,7 +62,7 @@ public class HttpClientConfig {
 
     @Bean
     public RequestConfig getRequestConfig(@Qualifier("builder") RequestConfig.Builder builder) {
-        return builder.build();
+        return builder.setCookieSpec(CookieSpecs.STANDARD).build();
     }
 
 }
