@@ -29,6 +29,10 @@
         <input type="text" placeholder="制作开始时间" id="search_make_startTime">
         <span> 至 </span>
         <input type="text" placeholder="制作结束时间" id="search_make_endTime">
+
+        <input type="text" placeholder="许可开始时间" id="search_permission_startTime">
+        <span> 至 </span>
+        <input type="text" placeholder="许可结束时间" id="search_permission_endTime">
         <button id="search_btn">查询</button>
     </div>
 </div>
@@ -44,9 +48,10 @@
     <button onclick="downloadTemplateFile();">下载更新数据Excel模板</button>
     <button onclick="delPdf();">删除</button>
     <button onclick="openMakeDialog();">制作更新PDF</button>
-    <!--<button>导出原始数据</button>
-    <button>导出更新数据</button>
-    <button>导出对比数据</button>-->
+
+    <button onclick="exportPdfList(1)">导出原始数据</button>
+    <button onclick="exportPdfList(2)">导出更新数据</button>
+    <button onclick="exportPdfList(3)">导出对比数据</button>
 
     <button onclick="downloadPdf(1)">导出原始PDF</button>
     <button onclick="downloadPdf(2)">导出更新PDF</button>
@@ -245,7 +250,9 @@
                     awb: $("#search_awb").val(),
                     makeStatus: $("#search_makeStatus").val(),
                     makeStartTime: $("#search_make_startTime").val(),
-                    makeEndTime: $("#search_make_endTime").val()
+                    makeEndTime: $("#search_make_endTime").val(),
+                    permissionStartTime: $("#search_permission_startTime").val(),
+                    permissionEndTime: $("#search_permission_endTime").val()
                 },
                 dataFilter: function(data){
                     var json = jQuery.parseJSON(data);
@@ -316,6 +323,15 @@
                     className: "column-vertical-top",
                     targets : 5
                 },
+                // <th>许可时间</th>
+                {
+                    render : function(data, type, row, meta) {
+                        return createColumnHtml(row, "permissionTime");
+                    },
+                    width: "180px",
+                    className: "column-vertical-top",
+                    targets : 6
+                },
                 // <th>制作状态</th>
                 {
                     render : function(data, type, row, meta) {
@@ -323,7 +339,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 6
+                    targets : 7
                 },
                 // <th>件数</th>
                 {
@@ -332,7 +348,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 7
+                    targets : 8
                 },
                 // <th>重量</th>
                 {
@@ -341,7 +357,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 8
+                    targets : 9
                 },
                 // <th>总申报价值USD</th>
                 {
@@ -350,7 +366,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 9
+                    targets : 10
                 },
                 // <th>申报运费USD</th>
                 {
@@ -359,7 +375,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 10
+                    targets : 11
                 },
                 // <th>通关金额</th>
                 {
@@ -368,7 +384,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 11
+                    targets : 12
                 },
                 // <th>BPR合计</th>
                 {
@@ -377,7 +393,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 12
+                    targets : 13
                 },
                 // <th>关税</th>
                 {
@@ -386,7 +402,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 13
+                    targets : 14
                 },
                 // <th>消费税</th>
                 {
@@ -395,7 +411,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 14
+                    targets : 15
                 },
                 // <th>地方消费税</th>
                 {
@@ -404,7 +420,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 15
+                    targets : 16
                 },
                 // <th>税金总计</th>
                 {
@@ -413,7 +429,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 16
+                    targets : 17
                 },
                 // <th>美元日元汇率</th>
                 {
@@ -422,7 +438,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 17
+                    targets : 18
                 },
                 // <th>品名1美金申报价值</th>
                 {
@@ -431,7 +447,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 18
+                    targets : 19
                 },
                 // <th>品名1关税率</th>
                 {
@@ -440,7 +456,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 19
+                    targets : 20
                 },
                 // <th>品名1运费比重</th>
                 {
@@ -449,7 +465,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 20
+                    targets : 21
                 },
                 // <th>品名1日元申报价值</th>
                 {
@@ -458,7 +474,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 21
+                    targets : 22
                 },
                 // <th>品名1关税计算基数</th>
                 {
@@ -467,7 +483,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 22
+                    targets : 23
                 },
                 // <th>品名1关税额</th>
                 {
@@ -476,7 +492,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 23
+                    targets : 24
                 },
                 // <th>品名1关税取整</th>
                 {
@@ -485,7 +501,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 24
+                    targets : 25
                 },
                 // <th>品名1国内消费税</th>
                 {
@@ -494,7 +510,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 25
+                    targets : 26
                 },
                 // <th>品名1国内消费税额基数</th>
                 {
@@ -503,7 +519,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 26
+                    targets : 27
                 },
                 // <th>品名1国内消费税金额</th>
                 {
@@ -512,7 +528,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 27
+                    targets : 28
                 },
                 // <th>品名1地方消费税基数</th>
                 {
@@ -521,7 +537,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 28
+                    targets : 29
                 },
                 // <th>品名1地方消费税金额</th>
                 {
@@ -530,7 +546,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 29
+                    targets : 30
                 },
 
                 // <th>品名2美金申报价值</th>
@@ -540,7 +556,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 30
+                    targets : 31
                 },
                 // <th>品名2关税率</th>
                 {
@@ -549,7 +565,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 31
+                    targets : 32
                 },
                 // <th>品名2运费比重</th>
                 {
@@ -558,7 +574,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 32
+                    targets : 33
                 },
                 // <th>品名2日元申报价值</th>
                 {
@@ -567,7 +583,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 33
+                    targets : 34
                 },
                 // <th>品名2关税计算基数</th>
                 {
@@ -576,7 +592,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 34
+                    targets : 35
                 },
                 // <th>品名2关税额</th>
                 {
@@ -585,7 +601,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 35
+                    targets : 36
                 },
                 // <th>品名2关税取整</th>
                 {
@@ -594,7 +610,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 36
+                    targets : 37
                 },
                 // <th>品名2国内消费税</th>
                 {
@@ -603,7 +619,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 37
+                    targets : 38
                 },
                 // <th>品名2国内消费税额基数</th>
                 {
@@ -611,7 +627,7 @@
                         return createColumnHtml(row, "prod2CountryExciseTaxBase");
                     },width: "180px",
                     className: "column-vertical-top",
-                    targets : 38
+                    targets : 39
                 },
                 // <th>品名2国内消费税金额</th>
                 {
@@ -620,7 +636,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 39
+                    targets : 40
                 },
                 // <th>品名2地方消费税基数</th>
                 {
@@ -629,7 +645,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 40
+                    targets : 41
                 },
                 // <th>品名2地方消费税金额</th>
                 {
@@ -638,7 +654,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 41
+                    targets : 42
                 },
 
                 // <th>品名3美金申报价值</th>
@@ -648,7 +664,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 42
+                    targets : 43
                 },
                 // <th>品名3关税率</th>
                 {
@@ -657,7 +673,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 43
+                    targets : 44
                 },
                 // <th>品名3运费比重</th>
                 {
@@ -666,7 +682,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 44
+                    targets : 45
                 },
                 // <th>品名3日元申报价值</th>
                 {
@@ -675,7 +691,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 45
+                    targets : 46
                 },
                 // <th>品名3关税计算基数</th>
                 {
@@ -684,7 +700,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 46
+                    targets : 47
                 },
                 // <th>品名3关税额</th>
                 {
@@ -693,7 +709,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 47
+                    targets : 48
                 },
                 // <th>品名3关税取整</th>
                 {
@@ -702,7 +718,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 48
+                    targets : 49
                 },
                 // <th>品名3国内消费税</th>
                 {
@@ -711,7 +727,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 49
+                    targets : 50
                 },
                 // <th>品名3国内消费税额基数</th>
                 {
@@ -720,7 +736,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 50
+                    targets : 51
                 },
                 // <th>品名3国内消费税金额</th>
                 {
@@ -729,7 +745,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 51
+                    targets : 52
                 },
                 // <th>品名3地方消费税基数</th>
                 {
@@ -738,7 +754,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 52
+                    targets : 53
                 },
                 // <th>品名3地方消费税金额</th>
                 {
@@ -747,7 +763,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 53
+                    targets : 54
                 },
 
                 // <th>关税合计</th>
@@ -757,7 +773,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 54
+                    targets : 55
                 },
                 // <th>国内消费税合计</th>
                 {
@@ -766,7 +782,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 55
+                    targets : 56
                 },
                 // <th>地方消费税合计</th>
                 {
@@ -775,7 +791,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 56
+                    targets : 57
                 },
             ],
             language : {
@@ -849,6 +865,23 @@
             dateFormat: "yy-mm-dd",
             onClose: function(selectedDate) {
                 $( "#search_make_startTime" ).datepicker( "option", "maxDate", selectedDate);//限制日期范围
+            }
+        });
+
+        $("#search_permission_startTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#search_permission_endTime" ).datepicker( "option", "minDate", selectedDate);//限制日期范围
+            }
+        });
+        $("#search_permission_endTime").datepicker({
+            changeMonth: true,
+            numberOfMonths: 1,
+            dateFormat: "yy-mm-dd",
+            onClose: function(selectedDate) {
+                $( "#search_permission_startTime" ).datepicker( "option", "maxDate", selectedDate);//限制日期范围
             }
         });
     }
@@ -1249,7 +1282,11 @@
                         if (ankDownloadDialog != null) {
                             ankDownloadDialog.dialog( "close" );
                         }
-                        alert("下载成功");
+                        var subMsg = "";
+                        if (result.data != null) {
+                            subMsg = "时间区间内共检索到[" + result.data.totalCount + "]个PDF，成功[" + result.data.successCount + "]个，失败[" + result.data.failCount + "]个，跳过[" + result.data.passCount + "]个"
+                        }
+                        alert("下载成功！" + subMsg);
                     } else {
                         alert("下载失败[" + result.message + "]");
                     }
@@ -1275,6 +1312,21 @@
             $("#ank_download_dialog_btn").text("请等待...");
             $("#ank_download_dialog_btn").attr("disabled", "true");
         }
+    }
+
+    function exportPdfList(type) {
+        DownLoadFile({
+            url: 'pdf/list/export',
+            data: {
+                type: type,
+                awb: $("#search_awb").val(),
+                makeStatus: $("#search_makeStatus").val(),
+                makeStartTime: $("#search_make_startTime").val(),
+                makeEndTime: $("#search_make_endTime").val(),
+                permissionStartTime: $("#search_permission_startTime").val(),
+                permissionEndTime: $("#search_permission_endTime").val()
+            }
+        });
     }
 </script>
 </html>

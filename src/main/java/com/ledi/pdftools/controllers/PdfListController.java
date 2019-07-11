@@ -7,10 +7,13 @@ import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,15 +33,43 @@ public class PdfListController extends BaseController {
                                     @RequestParam(name = "makeStatus", required = false) Integer makeStatus,
                                     @RequestParam(name = "makeStartTime", required = false) String makeStartTime,
                                     @RequestParam(name = "makeEndTime", required = false) String makeEndTime,
+                                    @RequestParam(name = "permissionStartTime", required = false) String permissionStartTime,
+                                    @RequestParam(name = "permissionEndTime", required = false) String permissionEndTime,
                                     @RequestParam(name = "start", defaultValue = "0") Integer start,
                                     @RequestParam(name = "length", defaultValue = "10") Integer length) {
-        int totalCount = pdfListService.getPdfListCount(awb, makeStatus, makeStartTime, makeEndTime);
+        int totalCount = pdfListService.getPdfListCount(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime);
         List<PdfListModel> dataList = new ArrayList<PdfListModel>();
         if (totalCount > 0) {
-            dataList = pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, start, length);
+            dataList = pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, start, length);
         }
 
         return this.getOkResponseModel(totalCount, dataList);
+    }
+
+    @PostMapping("/pdf/list/export")
+    public void exportPdfList(HttpServletRequest request, HttpServletResponse response,
+                              @RequestParam(name = "type") Integer type,
+                              @RequestParam(name = "awb", required = false) String awb,
+                              @RequestParam(name = "makeStatus", required = false) Integer makeStatus,
+                              @RequestParam(name = "makeStartTime", required = false) String makeStartTime,
+                              @RequestParam(name = "makeEndTime", required = false) String makeEndTime,
+                              @RequestParam(name = "permissionStartTime", required = false) String permissionStartTime,
+                              @RequestParam(name = "permissionEndTime", required = false) String permissionEndTime) throws Exception {
+        List<PdfListModel> dataList = this.pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, null, null);
+        HSSFWorkbook wb = this.pdfFileService.getExportWorkbook(type, dataList);
+        try {
+            String fileName = "PdfDataList.xlsx";
+            response.setContentType("application/msexcel");
+            response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+            wb.write(response.getOutputStream());
+            response.flushBuffer();
+        } finally {
+            if (wb != null) {
+                try {
+                    wb.close();
+                } catch (Exception e) {}
+            }
+        }
     }
 
     @PutMapping("/pdf/list")

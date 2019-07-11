@@ -1,6 +1,7 @@
 package com.ledi.pdftools.services.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ledi.pdftools.beans.ank.AnkDownloadResultModel;
 import com.ledi.pdftools.beans.ank.ShipListRespModel;
 import com.ledi.pdftools.beans.ank.ShipModel;
 import com.ledi.pdftools.constants.CodeInfo;
@@ -12,8 +13,6 @@ import com.ledi.pdftools.services.AnkcustomsService;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.DataUtil;
-import com.ledi.pdftools.utils.FileUtil;
-import com.ledi.pdftools.utils.IDUtil;
 import com.ledi.pdftools.utils.RegExpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +41,8 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
     private PdfFileService pdfFileService;
     @Resource
     private PdfListService pdfListService;
+
+    private static final Map<String, String> COOKIES_TOKEN_MAP = new HashMap<String, String>();
 
     public Map<String, String> getHiddenValues() {
         try {
@@ -83,11 +84,11 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
             headerMap.put("Connection", "keep-alive");
             headerMap.put("Cookie", cookie);
             headerMap.put("Host", "www.ankcustoms.com");
-            headerMap.put("Referer", "http://www.ankcustoms.com/login.aspx");
+            headerMap.put("Referer", "http://www.ankcustoms.com/ShipList.aspx");
             headerMap.put("Upgrade-Insecure-Requests", "1");
             headerMap.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36");
 
-            String response = this.httpClientService.get(shipListUrl, headerMap);
+            String response = this.httpClientService.get(shipListUrl + "?random=" + System.currentTimeMillis(), headerMap);
             if (StringUtils.isNotBlank(response)) {
                 this.replaceAllBlank(response);
                 String regToken = "GlobalManager.Token='(.*?)'";
@@ -105,14 +106,9 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
         return null;
     }
 
-    public void ankcustomsDownload(String cookie, String startTime, String endTime) throws ServiceException {
+    public AnkDownloadResultModel ankcustomsDownload(String cookie, String startTime, String endTime) throws ServiceException {
         if (StringUtils.isBlank(cookie)) {
             throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "Cookie");
-        }
-
-        String token = this.getToken(cookie);
-        if (StringUtils.isBlank(token)) {
-            throw new ServiceException("token.can.not.be.got");
         }
 
         Timestamp tStartTime = null;
@@ -124,10 +120,36 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
             tEndTime = DataUtil.convertString2Timestamp(endTime, "yyyy-MM-dd");
         }
 
+        // 如果token存在，先用存储的token
+        String token = COOKIES_TOKEN_MAP.get(cookie);
+        if (StringUtils.isBlank(token)) {
+            token = this.getToken(cookie);
+        }
+        if (StringUtils.isBlank(token)) {
+            throw new ServiceException("token.can.not.be.got");
+        }
+
         ShipListRespModel dataList = this.getShipList(cookie, token, tStartTime, tEndTime);
+        // 如果StatusCode不等于0的话，有可能是token过期了，尝试一次获取新的token
+        if (dataList != null && dataList.getStatusCode() != 0) {
+            token = this.getToken(cookie);
+            if (StringUtils.isBlank(token)) {
+                throw new ServiceException("token.can.not.be.got");
+            }
+
+            dataList = this.getShipList(cookie, token, tStartTime, tEndTime);
+        }
+
+        // 保存一下token
+        COOKIES_TOKEN_MAP.put(cookie, token);
+
+        AnkDownloadResultModel result = new AnkDownloadResultModel();
+        // 下载pdf
         if (dataList != null
                 && dataList.getRows() != null
                 && !dataList.getRows().isEmpty()) {
+
+            result.setTotalCount(dataList.getTotal());
 
             PdfFileEntity pdfFileEntity = null;
             boolean coverFlg = false;
@@ -136,21 +158,32 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
                     pdfFileEntity = this.downloadFile(cookie, token, shipModel.getMawbNo(), shipModel.getInvoiceNo(), coverFlg);
                     if (pdfFileEntity != null) {
                         this.pdfListService.addPdf(pdfFileEntity.getPdfFileId(), coverFlg);
+                        result.setSuccessCount(result.getSuccessCount() + 1);
+                    } else {
+                        result.setPassCount(result.getPassCount() + 1);
                     }
                 } catch (ServiceException e) {
                     if (e.getCode() == CodeInfo.CODE_AWB_ALREADY_EXIST) {
+                        result.setPassCount(result.getPassCount() + 1);
+
                         if (pdfFileEntity != null && StringUtils.isNotBlank(pdfFileEntity.getFilePath())) {
                             this.pdfFileService.deletePdfFile(pdfFileEntity);
                         }
+                    } else {
+                        result.setFailCount(result.getFailCount() + 1);
                     }
                 } catch (Exception e) {
+                    result.setFailCount(result.getFailCount() + 1);
+
                     log.error("下载或保存文件失败[MAWB=" + shipModel.getMawbNo() + ", INV=" + shipModel.getInvoiceNo() + "]", e);
                 }
             }
         }
+
+        return result;
     }
 
-    private ShipListRespModel getShipList(String cookie, String token, Timestamp startTime, Timestamp endTime) throws ServiceException {
+    public ShipListRespModel getShipList(String cookie, String token, Timestamp startTime, Timestamp endTime) throws ServiceException {
         try {
             String sStartTime = "";
             if (startTime != null) {

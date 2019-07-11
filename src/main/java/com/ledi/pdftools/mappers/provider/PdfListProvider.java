@@ -55,6 +55,19 @@ public class PdfListProvider extends BaseProvider {
                     sql.append(" and make_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(makeEndTime, "yyyy-MM-dd HH:mm:ss")));
                 }
             }
+
+            if (conditions.containsKey("permissionStartTime")) {
+                Timestamp permissionStartTime = this.obj2Timestamp(conditions.get("permissionStartTime"));
+                if (permissionStartTime != null) {
+                    sql.append(" and permission_time >= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionStartTime, "yyyy-MM-dd HH:mm:ss")));
+                }
+            }
+            if (conditions.containsKey("permissionEndTime")) {
+                Timestamp permissionEndTime = this.obj2Timestamp(conditions.get("permissionEndTime"));
+                if (permissionEndTime != null) {
+                    sql.append(" and permission_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionEndTime, "yyyy-MM-dd HH:mm:ss")));
+                }
+            }
         }
         if (StringUtils.isNotBlank(orderSql)) {
             sql.append(" order by " + orderSql);
@@ -106,6 +119,19 @@ public class PdfListProvider extends BaseProvider {
                 Timestamp makeEndTime = this.obj2Timestamp(conditions.get("makeEndTime"));
                 if (makeEndTime != null) {
                     sql.append(" and make_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(makeEndTime, "yyyy-MM-dd HH:mm:ss")));
+                }
+            }
+
+            if (conditions.containsKey("permissionStartTime")) {
+                Timestamp permissionStartTime = this.obj2Timestamp(conditions.get("permissionStartTime"));
+                if (permissionStartTime != null) {
+                    sql.append(" and permission_time >= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionStartTime, "yyyy-MM-dd HH:mm:ss")));
+                }
+            }
+            if (conditions.containsKey("permissionEndTime")) {
+                Timestamp permissionEndTime = this.obj2Timestamp(conditions.get("permissionEndTime"));
+                if (permissionEndTime != null) {
+                    sql.append(" and permission_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionEndTime, "yyyy-MM-dd HH:mm:ss")));
                 }
             }
         }

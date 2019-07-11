@@ -1,9 +1,11 @@
 package com.ledi.pdftools.services;
 
 import com.ledi.pdftools.beans.PdfFileModel;
+import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.exceptions.ServiceException;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -38,4 +40,6 @@ public interface PdfFileService {
     public List<PdfFileModel> getPdfFileList(List<String> awbList, int type);
 
     public String getFileBaseDir();
+
+    public HSSFWorkbook getExportWorkbook(int type, List<PdfListModel> datas);
 }

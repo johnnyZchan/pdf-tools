@@ -105,6 +105,7 @@ public class PdfListEntity {
     private Timestamp makeTime;
     private Integer delStatus;
     private Timestamp createTime;
+    private Timestamp permissionTime;
 
 
 }

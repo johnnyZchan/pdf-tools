@@ -12,14 +12,11 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +67,7 @@ public class HttpClientService {
         HttpGet get = new HttpGet(url);
         get.setConfig(requestConfig);
         CloseableHttpResponse response = null;
+        InputStream is = null;
         try {
             if (headerMap != null && headerMap.size() > 0) {
                 Iterator<String> iterator = headerMap.keySet().iterator();
@@ -82,14 +80,21 @@ public class HttpClientService {
 
             response = httpClient.execute(get);
             HttpEntity entity = response.getEntity();
-            InputStream is = entity.getContent();
+            is = entity.getContent();
             if (is == null) {
                 return null;
             }
             return IOUtils.toString(is, ENCODING);
         } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e) {}
+            }
             if (response != null) {
-                response.close();
+                try {
+                    response.close();
+                } catch (Exception e) {}
             }
         }
     }
@@ -332,13 +337,6 @@ public class HttpClientService {
         FileOutputStream fos = null;
         CloseableHttpResponse response = null;
         try {
-            httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-            httpGet.setHeader("Accept-Encoding", "gzip, deflate, sdch");
-            httpGet.setHeader("Accept-Language", "zh-CN,zh;q=0.8");
-            httpGet.setHeader("Connection", "keep-alive");
-            httpGet.setHeader("Upgrade-Insecure-Requests", "1");
-            httpGet.setHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36");
-
             if (headerMap != null) {
                 Iterator<String> iterator = headerMap.keySet().iterator();
                 while (iterator.hasNext()) {
@@ -348,7 +346,10 @@ public class HttpClientService {
                 }
             }
 
-            response = this.httpClient.execute(httpGet);
+            CookieStore cookieStore = new BasicCookieStore();
+            HttpClientContext localContext = HttpClientContext.create();
+            localContext.setCookieStore(cookieStore);
+            response = this.httpClient.execute(httpGet, localContext);
 
             HttpEntity entity = response.getEntity();
             int statusCode = response.getStatusLine().getStatusCode();
@@ -381,9 +382,9 @@ public class HttpClientService {
             log.error("error occured while download file from " + url, e);
             return new DownloadResult(false, e.toString());
         } finally {
-            if (response != null) {
+            if (fos != null) {
                 try {
-                    response.close();
+                    fos.close();
                 } catch (Exception e) {}
             }
             if (is != null) {
@@ -391,9 +392,9 @@ public class HttpClientService {
                     is.close();
                 } catch (Exception e) {}
             }
-            if (fos != null) {
+            if (response != null) {
                 try {
-                    fos.close();
+                    response.close();
                 } catch (Exception e) {}
             }
         }

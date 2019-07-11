@@ -34,7 +34,7 @@ public interface PdfListMapper {
             "prod1_local_excise_tax_base as prod1LocalExciseTaxBase, prod2_local_excise_tax_base as prod2LocalExciseTaxBase, prod3_local_excise_tax_base as prod3LocalExciseTaxBase," +
             "prod1_local_excise_tax_amount as prod1LocalExciseTaxAmount, prod2_local_excise_tax_amount as prod2LocalExciseTaxAmount, prod3_local_excise_tax_amount as prod3LocalExciseTaxAmount," +
             "tariff_total_amount as tariffTotalAmount, country_excise_tax_total_amount as countryExciseTaxTotalAmount, local_excise_tax_total_amount as localExciseTaxTotalAmount," +
-            "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime";
+            "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime, permission_time as permissionTime";
 
     public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight," +
             "declare_total_amount_usd, declare_freight_amount_usd, clearance_amount," +
@@ -52,7 +52,7 @@ public interface PdfListMapper {
             "prod1_local_excise_tax_base, prod2_local_excise_tax_base, prod3_local_excise_tax_base," +
             "prod1_local_excise_tax_amount, prod2_local_excise_tax_amount, prod3_local_excise_tax_amount," +
             "tariff_total_amount, country_excise_tax_total_amount, local_excise_tax_total_amount," +
-            "make_status, make_time, del_status, create_time";
+            "make_status, make_time, del_status, create_time, permission_time";
 
     @Select("select " + COLUMNS + " from pdf_list where pdf_id=#{id} and del_status=" + DEL_STATUS_NO)
     PdfListEntity findById(String id);
@@ -92,7 +92,7 @@ public interface PdfListMapper {
             " prod1_local_excise_tax_base=#{prod1LocalExciseTaxBase}, prod2_local_excise_tax_base=#{prod2LocalExciseTaxBase}, prod3_local_excise_tax_base=#{prod3LocalExciseTaxBase}," +
             " prod1_local_excise_tax_amount=#{prod1LocalExciseTaxAmount}, prod2_local_excise_tax_amount=#{prod2LocalExciseTaxAmount}, prod3_local_excise_tax_amount=#{prod3LocalExciseTaxAmount}," +
             " tariff_total_amount=#{tariffTotalAmount}, country_excise_tax_total_amount=#{countryExciseTaxTotalAmount}, local_excise_tax_total_amount=#{localExciseTaxTotalAmount}," +
-            " make_status=#{makeStatus}, make_time=#{makeTime}" +
+            " make_status=#{makeStatus}, make_time=#{makeTime}, permission_time=#{permissionTime}" +
             " where pdf_id=#{pdfId}")
     void update(PdfListEntity pdfListEntity);
 
@@ -111,7 +111,7 @@ public interface PdfListMapper {
             " #{prod1CountryExciseTaxAmount}, #{prod2CountryExciseTaxAmount}, #{prod3CountryExciseTaxAmount}," +
             " #{prod1LocalExciseTaxBase}, #{prod2LocalExciseTaxBase}, #{prod3LocalExciseTaxBase}," +
             " #{prod1LocalExciseTaxAmount}, #{prod2LocalExciseTaxAmount}, #{prod3LocalExciseTaxAmount}," +
-            " #{tariffTotalAmount}, #{countryExciseTaxTotalAmount}, #{localExciseTaxTotalAmount}, #{makeStatus}, #{makeTime}, #{delStatus}, now())")
+            " #{tariffTotalAmount}, #{countryExciseTaxTotalAmount}, #{localExciseTaxTotalAmount}, #{makeStatus}, #{makeTime}, #{delStatus}, now(), #{permissionTime})")
     void save(PdfListEntity pdfListEntity);
 
 }

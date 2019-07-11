@@ -2,6 +2,7 @@ package com.ledi.pdftools.controllers;
 
 import com.ledi.pdftools.beans.PdfFileModel;
 import com.ledi.pdftools.beans.ResponseModel;
+import com.ledi.pdftools.beans.ank.AnkDownloadResultModel;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.services.AnkcustomsService;
@@ -138,8 +139,8 @@ public class FileController extends BaseController {
     public ResponseModel ackcustomsDownload(@RequestParam("cookie") String cookie,
                                             @RequestParam("startTime") String startTime,
                                             @RequestParam("endTime") String endTime) {
-        this.ankcustomsService.ankcustomsDownload(cookie, startTime, endTime);
-        return this.getOkResponseModel();
+        AnkDownloadResultModel result = this.ankcustomsService.ankcustomsDownload(cookie, startTime, endTime);
+        return this.getOkResponseModel(result);
     }
 
 }

@@ -9,7 +9,10 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.parser.*;
+import com.ledi.pdftools.beans.ExportColumnModel;
 import com.ledi.pdftools.beans.PdfFileModel;
+import com.ledi.pdftools.beans.PdfListModel;
+import com.ledi.pdftools.beans.PdfModel;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
@@ -24,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,6 +49,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service("pdfFileService")
 @Slf4j
@@ -621,5 +628,136 @@ public class PdfFileServiceImpl implements PdfFileService {
 
     public String getFileBaseDir() {
         return fileBaseDir;
+    }
+
+    public HSSFWorkbook getExportWorkbook(int type, List<PdfListModel> datas) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        String sheetName = "对比数据";
+        if (type == PdfListEntity.TYPE_ORIGINAL) {
+            sheetName = "原始数据";
+        } else if (type == PdfListEntity.TYPE_UPDATED) {
+            sheetName = "更新数据";
+        }
+        HSSFSheet sheet = wb.createSheet(sheetName);
+
+        List<ExportColumnModel> titles = this.getColumns();
+        HSSFRow row = sheet.createRow(0);
+        //创建标题
+        for(int i = 0; i < titles.size(); i ++) {
+            row.createCell(i).setCellValue(titles.get(i).getTitle());
+        }
+
+        // 创建内容
+        PdfModel pdfModel = null;
+        for (int i = 0; i < datas.size(); i ++) {
+            row = sheet.createRow(i + 1);
+            for (int j = 0; j < titles.size(); j ++) {
+                if (type == PdfListEntity.TYPE_ORIGINAL) {
+                    pdfModel = datas.get(i).getOriginalPdf();
+                } else if (type == PdfListEntity.TYPE_UPDATED) {
+                    pdfModel = datas.get(i).getUpdatedPdf();
+                } else {
+                    pdfModel = datas.get(i).getComparePdf();
+                }
+
+                row.createCell(j).setCellValue(this.createRowValue(pdfModel, titles.get(j).getDataFieldName()));
+            }
+        }
+
+        return wb;
+    }
+
+    private List<ExportColumnModel> getColumns() {
+        List<ExportColumnModel> result = new ArrayList<ExportColumnModel>();
+        result.add(new ExportColumnModel("单号", "awb"));
+        result.add(new ExportColumnModel("换单号", "awbReplace"));
+        result.add(new ExportColumnModel("制作时间", "makeTime"));
+        result.add(new ExportColumnModel("许可时间", "permissionTime"));
+        result.add(new ExportColumnModel("制作状态", "makeStatus"));
+        result.add(new ExportColumnModel("件数", "num"));
+        result.add(new ExportColumnModel("重量", "weight"));
+        result.add(new ExportColumnModel("总申报价值USD", "declareTotalAmountUsd"));
+        result.add(new ExportColumnModel("申报运费USD", "declareFreightAmountUsd"));
+        result.add(new ExportColumnModel("通关金额", "clearanceAmount"));
+        result.add(new ExportColumnModel("BPR合计", "bprAmount"));
+        result.add(new ExportColumnModel("关税", "tariff"));
+        result.add(new ExportColumnModel("消费税", "exciseTax"));
+        result.add(new ExportColumnModel("地方消费税", "localExciseTax"));
+        result.add(new ExportColumnModel("税金合计", "taxTotalAmount"));
+        result.add(new ExportColumnModel("美元日元汇率", "usdJpyExchangeRate"));
+
+        result.add(new ExportColumnModel("品名1美金申报价值", "prod1DeclareAmountUsd"));
+        result.add(new ExportColumnModel("品名1关税率", "prod1TariffRate"));
+        result.add(new ExportColumnModel("品名1运费比重", "prod1FreightPct"));
+        result.add(new ExportColumnModel("品名1日元申报价值", "prod1DeclareAmountJpy"));
+        result.add(new ExportColumnModel("品名1关税计算基数", "prod1TariffBase"));
+        result.add(new ExportColumnModel("品名1关税额", "prod1Tariff"));
+        result.add(new ExportColumnModel("品名1关税取整", "prod1TariffRounding"));
+        result.add(new ExportColumnModel("品名1国内消费税", "prod1CountryExciseTax"));
+        result.add(new ExportColumnModel("品名1国内消费税额基数", "prod1CountryExciseTaxBase"));
+        result.add(new ExportColumnModel("品名1国内消费税金额", "prod1CountryExciseTaxAmount"));
+        result.add(new ExportColumnModel("品名1地方消费税基数", "prod1LocalExciseTaxBase"));
+        result.add(new ExportColumnModel("品名1地方消费税金额", "prod1LocalExciseTaxAmount"));
+
+        result.add(new ExportColumnModel("品名2美金申报价值", "prod2DeclareAmountUsd"));
+        result.add(new ExportColumnModel("品名2关税率", "prod2TariffRate"));
+        result.add(new ExportColumnModel("品名2运费比重", "prod2FreightPct"));
+        result.add(new ExportColumnModel("品名2日元申报价值", "prod2DeclareAmountJpy"));
+        result.add(new ExportColumnModel("品名2关税计算基数", "prod2TariffBase"));
+        result.add(new ExportColumnModel("品名2关税额", "prod2Tariff"));
+        result.add(new ExportColumnModel("品名2关税取整", "prod2TariffRounding"));
+        result.add(new ExportColumnModel("品名2国内消费税", "prod2CountryExciseTax"));
+        result.add(new ExportColumnModel("品名2国内消费税额基数", "prod2CountryExciseTaxBase"));
+        result.add(new ExportColumnModel("品名2国内消费税金额", "prod2CountryExciseTaxAmount"));
+        result.add(new ExportColumnModel("品名2地方消费税基数", "prod2LocalExciseTaxBase"));
+        result.add(new ExportColumnModel("品名2地方消费税金额", "prod2LocalExciseTaxAmount"));
+
+        result.add(new ExportColumnModel("品名3美金申报价值", "prod3DeclareAmountUsd"));
+        result.add(new ExportColumnModel("品名3关税率", "prod3TariffRate"));
+        result.add(new ExportColumnModel("品名3运费比重", "prod3FreightPct"));
+        result.add(new ExportColumnModel("品名3日元申报价值", "prod3DeclareAmountJpy"));
+        result.add(new ExportColumnModel("品名3关税计算基数", "prod3TariffBase"));
+        result.add(new ExportColumnModel("品名3关税额", "prod3Tariff"));
+        result.add(new ExportColumnModel("品名3关税取整", "prod3TariffRounding"));
+        result.add(new ExportColumnModel("品名3国内消费税", "prod3CountryExciseTax"));
+        result.add(new ExportColumnModel("品名3国内消费税额基数", "prod3CountryExciseTaxBase"));
+        result.add(new ExportColumnModel("品名3国内消费税金额", "prod3CountryExciseTaxAmount"));
+        result.add(new ExportColumnModel("品名3地方消费税基数", "prod3LocalExciseTaxBase"));
+        result.add(new ExportColumnModel("品名3地方消费税金额", "prod3LocalExciseTaxAmount"));
+
+        result.add(new ExportColumnModel("关税合计", "tariffTotalAmount"));
+        result.add(new ExportColumnModel("国内消费税合计", "countryExciseTaxTotalAmount"));
+        result.add(new ExportColumnModel("地方消费税合计", "localExciseTaxTotalAmount"));
+
+        return result;
+    }
+
+    private String createRowValue(PdfModel pdfModel, String fieldName) {
+        if (pdfModel == null || StringUtils.isBlank(fieldName)) {
+            return "";
+        }
+        Object fieldVal = null;
+        try {
+            fieldVal = BeanUtil.getFieldValue(pdfModel, fieldName);
+        } catch (Exception e) {
+            log.warn("获取数据失败", e);
+        }
+        if (fieldVal == null) {
+            return "";
+        }
+
+        if ("makeStatus".equals(fieldName)) {
+            int makeStatus = Integer.parseInt(fieldVal.toString());
+            if (makeStatus == PdfListEntity.MAKE_STATUS_YES) {
+                return "已制作";
+            } else {
+                return "未制作";
+            }
+        } else if ("prod1TariffRate".equals(fieldName) || "prod2TariffRate".equals(fieldName) || "prod3TariffRate".equals(fieldName)
+                || "prod1FreightPct".equals(fieldName) || "prod2FreightPct".equals(fieldName) || "prod3FreightPct".equals(fieldName)) {
+            return (new BigDecimal(fieldVal.toString()).multiply(new BigDecimal(100))).toPlainString() + "%";
+        } else {
+            return fieldVal.toString();
+        }
     }
 }

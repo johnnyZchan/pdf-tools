@@ -4,7 +4,6 @@ import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.PdfModel;
 import com.ledi.pdftools.beans.SkipModel;
 import com.ledi.pdftools.constants.CodeInfo;
-import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.exceptions.ServiceException;
@@ -41,23 +40,27 @@ public class PdfListServiceImpl implements PdfListService {
     @Resource
     PdfDataCoordinateService pdfDataCoordinateService;
 
-    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime) {
+    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("type", PdfListEntity.TYPE_ORIGINAL);
         params.put("awb", awb);
         params.put("makeStatus", makeStatus);
         params.put("makeStartTime", DataUtil.convertString2Timestamp(makeStartTime, "yyyy-MM-dd"));
         params.put("makeEndTime", DataUtil.convertString2Timestamp(makeEndTime, "yyyy-MM-dd"));
+        params.put("permissionStartTime", DataUtil.convertString2Timestamp(permissionStartTime, "yyyy-MM-dd"));
+        params.put("permissionEndTime", DataUtil.convertString2Timestamp(permissionEndTime, "yyyy-MM-dd"));
         return pdfListMapper.countByCondition(params);
     }
 
-    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length) {
+    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, Integer start, Integer length) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("type", PdfListEntity.TYPE_ORIGINAL);
         params.put("awb", awb);
         params.put("makeStatus", makeStatus);
         params.put("makeStartTime", DataUtil.convertString2Timestamp(makeStartTime, "yyyy-MM-dd"));
         params.put("makeEndTime", DataUtil.convertString2Timestamp(makeEndTime, "yyyy-MM-dd"));
+        params.put("permissionStartTime", DataUtil.convertString2Timestamp(permissionStartTime, "yyyy-MM-dd"));
+        params.put("permissionEndTime", DataUtil.convertString2Timestamp(permissionEndTime, "yyyy-MM-dd"));
 
         String orderSql = "create_time desc";
         return pdfListMapper.findByCondition(params, orderSql, start, length);
@@ -75,9 +78,9 @@ public class PdfListServiceImpl implements PdfListService {
         return pdfListMapper.findByCondition(params, null, null, null);
     }
 
-    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, Integer start, Integer length) {
+    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, Integer start, Integer length) {
         List<PdfListModel> result = null;
-        List<PdfListEntity> dataList = this.getPdfList(awb, makeStatus, makeStartTime, makeEndTime, start, length);
+        List<PdfListEntity> dataList = this.getPdfList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, start, length);
         if (dataList != null) {
             result = new ArrayList<PdfListModel>();
             for (PdfListEntity entity : dataList) {
@@ -375,6 +378,7 @@ public class PdfListServiceImpl implements PdfListService {
         model.setLocalExciseTaxTotalAmount(entity.getLocalExciseTaxTotalAmount());
         model.setMakeStatus(entity.getMakeStatus());
         model.setMakeTime(entity.getMakeTime());
+        model.setPermissionTime(entity.getPermissionTime());
 
         return model;
     }

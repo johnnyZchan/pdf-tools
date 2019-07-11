@@ -65,4 +65,5 @@ public class PdfModel {
     private BigDecimal localExciseTaxTotalAmount;
     private Integer makeStatus;
     private Timestamp makeTime;
+    private Timestamp permissionTime;
 }
