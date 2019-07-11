@@ -3,6 +3,7 @@ package com.ledi.pdftools.services.impl;
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.PdfModel;
 import com.ledi.pdftools.beans.SkipModel;
+import com.ledi.pdftools.beans.ank.ShipModel;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfFileEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
@@ -129,8 +130,12 @@ public class PdfListServiceImpl implements PdfListService {
         return skipList;
     }
 
-    @Transactional
     public void addPdf(String pdfFileId, boolean coverFlg) {
+        this.addPdf(pdfFileId, null, coverFlg);
+    }
+
+    @Transactional
+    public void addPdf(String pdfFileId, ShipModel shipModel, boolean coverFlg) {
         PdfFileEntity pdfFileEntity = this.pdfFileMapper.findById(pdfFileId);
         if (pdfFileEntity == null) {
             throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
@@ -149,6 +154,9 @@ public class PdfListServiceImpl implements PdfListService {
             pdfListEntity.setMakeTime(new Timestamp(System.currentTimeMillis()));
             pdfListEntity.setDelStatus(PdfListEntity.DEL_STATUS_NO);
             pdfListEntity.setCreateTime(pdfListEntity.getMakeTime());
+            if (shipModel != null && StringUtils.isNotBlank(shipModel.getPermitTime())) {
+                pdfListEntity.setPermissionTime(DataUtil.convertString2Timestamp(shipModel.getPermitTime(), "yyyy-MM-dd HH:mm"));
+            }
             // 如果单号已经存在，则覆盖数据；并且如果已经制作了更新数据，需要删除更新文件并把更新数据的状态改成未制作
             if (oldPdfListEntity != null) {
                 pdfListEntity.setPdfId(oldPdfListEntity.getPdfId());

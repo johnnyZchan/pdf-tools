@@ -2,6 +2,7 @@ package com.ledi.pdftools.services;
 
 import com.ledi.pdftools.beans.PdfListModel;
 import com.ledi.pdftools.beans.SkipModel;
+import com.ledi.pdftools.beans.ank.ShipModel;
 import com.ledi.pdftools.entities.PdfListEntity;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public interface PdfListService {
 
     public void addPdf(String pdfFileId, boolean coverFlg);
     public List<SkipModel> addPdf(List<String> pdfFileIdList, boolean coverFlg);
+    public void addPdf(String pdfFileId, ShipModel shipModel, boolean coverFlg);
     public boolean isAwbExist(String awb);
 
     public void delPdf(List<String> awbList);

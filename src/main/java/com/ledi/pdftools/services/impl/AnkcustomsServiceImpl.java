@@ -157,7 +157,7 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
                 try {
                     pdfFileEntity = this.downloadFile(cookie, token, shipModel.getMawbNo(), shipModel.getInvoiceNo(), coverFlg);
                     if (pdfFileEntity != null) {
-                        this.pdfListService.addPdf(pdfFileEntity.getPdfFileId(), coverFlg);
+                        this.pdfListService.addPdf(pdfFileEntity.getPdfFileId(), shipModel, coverFlg);
                         result.setSuccessCount(result.getSuccessCount() + 1);
                     } else {
                         result.setPassCount(result.getPassCount() + 1);

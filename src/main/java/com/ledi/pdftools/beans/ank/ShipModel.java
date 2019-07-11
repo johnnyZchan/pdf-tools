@@ -13,4 +13,7 @@ public class ShipModel {
 
     @JSONField(name = "INVOICE_NO")
     private String invoiceNo;
+
+    @JSONField(name = "PERMIT_DTIME")
+    private String permitTime;
 }
