@@ -62,6 +62,14 @@ public class DataUtil {
         return null;
     }
 
+    public static String formatAwb(String inv) {
+        if (StringUtils.isNotBlank(inv) && inv.startsWith("800")) {
+            return inv.substring(0, 3) + "-" + inv.substring(3);
+        }
+
+        return inv;
+    }
+
     public static void main(String[] args) {
         System.out.println(parseNumber(new BigDecimal(6.3), 0));
     }

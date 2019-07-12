@@ -226,7 +226,7 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
             return null;
         }
 
-        if (!coverFlg && this.pdfListService.isAwbExist(this.formatAwb(inv))) {
+        if (!coverFlg && this.pdfListService.isAwbExist(DataUtil.formatAwb(inv))) {
             return null;
         }
 
@@ -274,13 +274,5 @@ public class AnkcustomsServiceImpl implements AnkcustomsService {
             return RegExpUtil.getTextByReg(content, reg, 1);
         }
         return null;
-    }
-
-    private String formatAwb(String inv) {
-        if (StringUtils.isNotBlank(inv) && inv.startsWith("800")) {
-            return inv.substring(0, 3) + "-" + inv.substring(3);
-        }
-
-        return inv;
     }
 }

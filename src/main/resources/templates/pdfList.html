@@ -1219,7 +1219,9 @@
                 awb: $("#search_awb").val(),
                 makeStatus: $("#search_makeStatus").val(),
                 makeStartTime: $("#search_make_startTime").val(),
-                makeEndTime: $("#search_make_endTime").val()
+                makeEndTime: $("#search_make_endTime").val(),
+                permissionStartTime: $("#search_permission_startTime").val(),
+                permissionEndTime: $("#search_permission_endTime").val()
             };
             pdfListTable.settings()[0].ajax.data = param;
             pdfListTable.ajax.reload();

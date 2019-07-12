@@ -58,7 +58,7 @@ public class PdfListController extends BaseController {
         List<PdfListModel> dataList = this.pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, null, null);
         HSSFWorkbook wb = this.pdfFileService.getExportWorkbook(type, dataList);
         try {
-            String fileName = "PdfDataList.xlsx";
+            String fileName = "PdfDataList.xls";
             response.setContentType("application/msexcel");
             response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
             wb.write(response.getOutputStream());

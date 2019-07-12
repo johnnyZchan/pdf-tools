@@ -142,6 +142,14 @@ public class PdfListServiceImpl implements PdfListService {
         }
 
         PdfListEntity pdfListEntity = this.pdfFileService.readDataFromPdfFile(pdfFileEntity);
+        // 如果是从ank下载的，可以直接知道转单号，直接用，不用从文件中读出来的转单号。这样避免格式不一样的pdf导致转单号错误。
+        if (pdfListEntity != null && shipModel != null) {
+            String awb= DataUtil.formatAwb(shipModel.getInvoiceNo());
+            if (StringUtils.isNotBlank(awb)) {
+                pdfListEntity.setAwb(awb);
+            }
+        }
+
         if (pdfListEntity != null && StringUtils.isNotBlank(pdfListEntity.getAwb())) {
             PdfListEntity oldPdfListEntity = this.getOriginalPdf(pdfListEntity.getAwb());
             // 单号已存在，是否覆盖：false=不覆盖，需要确认
