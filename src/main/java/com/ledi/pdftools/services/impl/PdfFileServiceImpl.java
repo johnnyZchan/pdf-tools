@@ -493,7 +493,8 @@ public class PdfFileServiceImpl implements PdfFileService {
                         String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
                         String originalText = getCoordinateText(coordinate, originalPdfEntity);
                         if (StringUtils.isBlank(replaceText)
-                                || (StringUtils.isNotBlank(originalText) && replaceText.equals(originalText))) {
+                                || StringUtils.isBlank(originalText)
+                                || replaceText.equals(originalText)) {
                             continue;
                         }
 
@@ -509,8 +510,8 @@ public class PdfFileServiceImpl implements PdfFileService {
                         canvas.stroke();
 
                         canvas.beginText();
-//                        BaseFont bf = BaseFont.createFont("ZS僑僔僢僋", "Identity-H", false);
-                        BaseFont bf = BaseFont.createFont();
+
+                        BaseFont bf = BaseFont.createFont("fonts/font.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                         canvas.setFontAndSize(bf, 8.88f);
                         int align = Element.ALIGN_LEFT;
                         float x = rect.getLeft();
@@ -566,11 +567,13 @@ public class PdfFileServiceImpl implements PdfFileService {
 
             if (StringUtils.isNotBlank(result)) {
                 if (StringUtils.isNotBlank(coordinate.getPrefix())) {
-                    if ("\\".equals(coordinate.getPrefix())) {
-                        result = "¥" + result;
-                    } else {
-                        result = coordinate.getPrefix() + result;
-                    }
+//                    if ("\\".equals(coordinate.getPrefix())) {
+//                        result = "¥" + result;
+//                    } else {
+//                        result = coordinate.getPrefix() + result;
+//                    }
+
+                    result = coordinate.getPrefix() + result;
                 }
                 if (StringUtils.isNotBlank(coordinate.getSuffix())) {
                     result = result + coordinate.getSuffix();
