@@ -1,13 +1,12 @@
 package com.ledi.pdftools.services.impl;
 
+import com.aspose.pdf.*;
+import com.aspose.pdf.facades.PdfContentEditor;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
 import com.ledi.pdftools.beans.ExportColumnModel;
 import com.ledi.pdftools.beans.PdfFileModel;
@@ -422,131 +421,137 @@ public class PdfFileServiceImpl implements PdfFileService {
             throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
         }
 
-        PdfReader reader = null;
-        PdfStamper stamper = null;
-        String outputPath = fileBaseDir + pdfFileEntity.getPdfFileId() + "_updated.pdf";
+        Document document = null;
         try {
-            reader = new PdfReader(pdfFileEntity.getFilePath());
-            stamper = new PdfStamper(reader, new FileOutputStream(outputPath));
+            document = new Document(pdfFileEntity.getFilePath());
+            for (int page = 1; page <= document.getPages().size(); page ++) {
 
-            for (int page = 1; page <= reader.getNumberOfPages(); page ++) {
-                PdfContentByte canvas = stamper.getOverContent(page);
-
-                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getDeletePageDataCoordinateList(page);
-                if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
-                    for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
-                        Rectangle rect = new Rectangle(coordinate.getLlx().floatValue(), coordinate.getLly().floatValue(), coordinate.getUrx().floatValue(), coordinate.getUry().floatValue());
-                        rect.setBackgroundColor(BaseColor.WHITE);
-                        canvas.rectangle(rect);
-                        canvas.stroke();
-                    }
-                }
-            }
-
-            stamper.close();
-            reader.close();
-            // 将_updated.pdf文件覆盖原文件
-            File tmpFile = new File(outputPath);
-            if (tmpFile.exists()) {
-                FileUtil.copyFile(tmpFile, pdfFile);
-                FileUtil.deleteFile(tmpFile);
             }
         } catch (Exception e) {
             log.error("error occurred : ", e);
             throw new ServiceException(MessageUtil.getMessage("pdf.file.clear.error"));
         } finally {
-            if (stamper != null) {
+            if (document != null) {
                 try {
-                    stamper.close();
-                } catch (Exception e) {}
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
+                    document.close();
                 } catch (Exception e) {}
             }
         }
     }
 
-    public void replacePdfFile(PdfListEntity updatedPdfEntity, PdfListEntity originalPdfEntity, PdfFileEntity pdfFileEntity) {
-        if (pdfFileEntity == null || updatedPdfEntity == null || originalPdfEntity == null) {
+    public void replacePdfFile(PdfListEntity updatedPdfEntity, PdfListEntity originalPdfEntity, boolean isClear, boolean isReplace) {
+        if (updatedPdfEntity == null || originalPdfEntity == null) {
             return;
         }
-        File pdfFile = new File(pdfFileEntity.getFilePath());
-        if (pdfFile == null || !pdfFile.exists()) {
+        PdfFileEntity originalPdfFile = this.getPdfFileByPdfId(originalPdfEntity.getPdfId());
+        if (originalPdfFile == null) {
+            return;
+        }
+        PdfFileEntity updatedPdfFile = this.getPdfFileByPdfId(updatedPdfEntity.getPdfId());
+        if (updatedPdfFile == null) {
+            updatedPdfFile = new PdfFileEntity();
+            updatedPdfFile.setPdfFileId(IDUtil.uuid());
+            updatedPdfFile.setPdfId(updatedPdfEntity.getPdfId());
+
+            String fileName = updatedPdfFile.getPdfFileId() + ".pdf";
+            updatedPdfFile.setFileName(fileName);
+            updatedPdfFile.setFilePath(fileBaseDir + fileName);
+            this.pdfFileMapper.save(updatedPdfFile);
+        }
+
+        File originalFile = new File(originalPdfFile.getFilePath());
+        if (originalFile == null || !originalFile.exists()) {
             throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
         }
 
-        PdfReader reader = null;
-        PdfStamper stamper = null;
-        String outputPath = fileBaseDir + pdfFileEntity.getPdfFileId() + "_updated.pdf";
+        Document document = null;
         try {
-            reader = new PdfReader(pdfFileEntity.getFilePath());
-            stamper = new PdfStamper(reader, new FileOutputStream(outputPath));
+            document = new Document(originalPdfFile.getFilePath());
+            for (int page = 1; page <= document.getPages().size(); page ++) {
+                if (isReplace) {
+                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
+                    if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
+                        for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
+                            String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
+                            String originalText = getCoordinateText(coordinate, originalPdfEntity);
+                            if (StringUtils.isBlank(replaceText)
+                                    || StringUtils.isBlank(originalText)
+                                    || replaceText.equals(originalText)) {
+                                continue;
+                            }
 
-            for (int page = 1; page <= reader.getNumberOfPages(); page ++) {
-                PdfContentByte canvas = stamper.getOverContent(page);
+                            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber(originalText);
+                            TextReplaceOptions replaceOptions = new TextReplaceOptions();
+                            replaceOptions.setReplaceAdjustmentAction(TextReplaceOptions.ReplaceAdjustment.None);
+                            textFragmentAbsorber.setTextReplaceOptions(replaceOptions);
 
-                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
-                if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
-                    for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
-                        String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
-                        String originalText = getCoordinateText(coordinate, originalPdfEntity);
-                        if (StringUtils.isBlank(replaceText)
-                                || StringUtils.isBlank(originalText)
-                                || replaceText.equals(originalText)) {
-                            continue;
+                            document.getPages().get_Item(page).accept(textFragmentAbsorber);
+                            TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
+                            for (TextFragment textFragment : (Iterable<TextFragment>) textFragmentCollection) {
+                                double replaceBeforeURX = textFragment.getRectangle().getURX();
+                                textFragment.setText(replaceText);
+                                double replaceAfterURX = textFragment.getRectangle().getURX();
+                                if (PdfDataCoordinateEntity.ALIGN_RIGHT.equals(coordinate.getAlign())) {
+                                    double gap = replaceAfterURX - replaceBeforeURX;
+                                    if (gap > 0.0) {
+//                                        textFragment.getBaselinePosition().setXIndent(textFragment.getBaselinePosition().getXIndent() - gap);
+                                        textFragment.setBaselinePosition(new Position(textFragment.getBaselinePosition().getXIndent() - gap - 1, textFragment.getBaselinePosition().getYIndent()));
+                                    }
+                                }
+
+                                if (this.displayRectangle) {
+                                    textFragment.getTextState().setBackgroundColor(Color.getRed());
+                                }
+                            }
                         }
+                    }
+                }
 
-                        Rectangle rect = new Rectangle(coordinate.getLlx().floatValue(), coordinate.getLly().floatValue(), coordinate.getUrx().floatValue(), coordinate.getUry().floatValue());
-                        rect.setBackgroundColor(BaseColor.WHITE);
-                        if (displayRectangle) {
-                            rect.setBorder(Rectangle.BOX);
-                            rect.setBorderWidth(1);
-                            rect.setBorderColor(BaseColor.RED);
-                            rect.setUseVariableBorders(false);
+                if (isClear) {
+                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getDeletePageDataCoordinateList(page);
+                    if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
+                        for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
+                            if (StringUtils.isNotBlank(coordinate.getFieldName())) {
+                                String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
+                                String originalText = getCoordinateText(coordinate, originalPdfEntity);
+                                if (StringUtils.isNotBlank(replaceText)
+                                        && StringUtils.isNotBlank(originalText)
+                                        && !replaceText.equals(originalText)) {
+                                    continue;
+                                }
+                            }
+
+                            com.aspose.pdf.Rectangle rectangle = new com.aspose.pdf.Rectangle(coordinate.getLlx().doubleValue(), coordinate.getLly().doubleValue(), coordinate.getUrx().doubleValue(), coordinate.getUry().doubleValue());
+
+                            TextReplaceOptions replaceOptions = new TextReplaceOptions();
+                            replaceOptions.setReplaceAdjustmentAction(TextReplaceOptions.ReplaceAdjustment.None);
+                            TextSearchOptions searchOptions = new TextSearchOptions(rectangle);
+
+                            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber();
+                            textFragmentAbsorber.setTextReplaceOptions(replaceOptions);
+                            textFragmentAbsorber.setTextSearchOptions(searchOptions);
+
+                            document.getPages().get_Item(page).accept(textFragmentAbsorber);
+                            TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
+                            for (TextFragment textFragment : (Iterable<TextFragment>) textFragmentCollection) {
+                                textFragment.setText(" ");
+                                if (this.displayRectangle) {
+                                    textFragment.getTextState().setBackgroundColor(Color.getGray());
+                                }
+                            }
                         }
-                        canvas.rectangle(rect);
-                        canvas.stroke();
-
-                        canvas.beginText();
-
-                        BaseFont bf = BaseFont.createFont("fonts/font.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                        canvas.setFontAndSize(bf, 8.88f);
-                        int align = Element.ALIGN_LEFT;
-                        float x = rect.getLeft();
-                        float y = rect.getBottom();
-                        if (PdfDataCoordinateEntity.ALIGN_RIGHT.equals(coordinate.getAlign())) {
-                            align = Element.ALIGN_RIGHT;
-                            x = rect.getRight();
-                            y = rect.getBottom();
-                        }
-                        canvas.showTextAligned(align, replaceText, x, y, 0);
-                        canvas.endText();
                     }
                 }
             }
 
-            stamper.close();
-            reader.close();
-            // 将_updated.pdf文件覆盖原文件
-            File tmpFile = new File(outputPath);
-            if (tmpFile.exists()) {
-                FileUtil.copyFile(tmpFile, pdfFile);
-                FileUtil.deleteFile(tmpFile);
-            }
+            document.save(updatedPdfFile.getFilePath());
         } catch (Exception e) {
             log.error("error occurred : ", e);
             throw new ServiceException(MessageUtil.getMessage("pdf.file.replace.error"));
         } finally {
-            if (stamper != null) {
+            if (document != null) {
                 try {
-                    stamper.close();
-                } catch (Exception e) {}
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
+                    document.close();
                 } catch (Exception e) {}
             }
         }
@@ -560,6 +565,12 @@ public class PdfFileServiceImpl implements PdfFileService {
                 if (PdfDataCoordinateEntity.DATA_TYPE_DECIMAL.equals(coordinate.getDataType())) {
                     BigDecimal bd = (BigDecimal)obj;
                     result = DataUtil.parseNumber(bd, coordinate.getDecimalDigits());
+                } else if ("awb".equals(coordinate.getFieldName())) { // 如果是单号，需要判断是否用换单号替换
+                    if (StringUtils.isNotBlank(updatedPdf.getAwbReplace())) {
+                        result = updatedPdf.getAwbReplace();
+                    } else {
+                        result = updatedPdf.getAwb();
+                    }
                 } else {
                     result = String.valueOf(obj);
                 }
@@ -567,25 +578,10 @@ public class PdfFileServiceImpl implements PdfFileService {
 
             if (StringUtils.isNotBlank(result)) {
                 if (StringUtils.isNotBlank(coordinate.getPrefix())) {
-//                    if ("\\".equals(coordinate.getPrefix())) {
-//                        result = "¥" + result;
-//                    } else {
-//                        result = coordinate.getPrefix() + result;
-//                    }
-
                     result = coordinate.getPrefix() + result;
                 }
                 if (StringUtils.isNotBlank(coordinate.getSuffix())) {
                     result = result + coordinate.getSuffix();
-                }
-            }
-
-            // 如果是单号，需要判断是否用换单号替换
-            if ("awb".equals(coordinate.getFieldName())) {
-                if (StringUtils.isNotBlank(updatedPdf.getAwbReplace())) {
-                    result = updatedPdf.getAwbReplace();
-                } else {
-                    result = "";
                 }
             }
 

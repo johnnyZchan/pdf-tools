@@ -240,15 +240,7 @@ public class PdfListServiceImpl implements PdfListService {
                 return false;
             }
 
-            // 将原始文件拷贝一份，作为更新数据的基础版本
-            this.pdfFileService.makeUpdatedFile(originalPdf, updatedPdf);
-
-            if (isDelete) {
-                this.clearPdfData(updatedPdf);
-            }
-            if (isReplace) {
-                this.replacePdfData(updatedPdf, originalPdf);
-            }
+            this.pdfFileService.replacePdfFile(updatedPdf, originalPdf, isDelete, isReplace);
 
             updatedPdf.setMakeStatus(PdfListEntity.MAKE_STATUS_YES);
             updatedPdf.setMakeTime(new Timestamp(System.currentTimeMillis()));
@@ -561,24 +553,5 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setMakeStatus(PdfListEntity.MAKE_STATUS_NO);
         updatedEntity.setDelStatus(PdfListEntity.DEL_STATUS_NO);
         updatedEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-    }
-
-    public void replacePdfData(PdfListEntity updatedPdf, PdfListEntity originalPdf) {
-        if (updatedPdf == null) {
-            return;
-        }
-        if (originalPdf == null) {
-            return;
-        }
-        PdfFileEntity updatedPdfFile = this.pdfFileService.getPdfFileByPdfId(updatedPdf.getPdfId());
-        this.pdfFileService.replacePdfFile(updatedPdf, originalPdf, updatedPdfFile);
-    }
-
-    public void clearPdfData(PdfListEntity updatedPdf) {
-        if (updatedPdf == null) {
-            return;
-        }
-        PdfFileEntity updatedPdfFile = this.pdfFileService.getPdfFileByPdfId(updatedPdf.getPdfId());
-        this.pdfFileService.clearPdfFile(updatedPdfFile);
     }
 }
