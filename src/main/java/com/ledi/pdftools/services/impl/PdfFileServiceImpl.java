@@ -480,21 +480,29 @@ public class PdfFileServiceImpl implements PdfFileService {
                                 continue;
                             }
 
-                            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber(originalText);
+                            com.aspose.pdf.Rectangle rectangle = new com.aspose.pdf.Rectangle(coordinate.getLlx().doubleValue(), coordinate.getLly().doubleValue(), coordinate.getUrx().doubleValue(), coordinate.getUry().doubleValue());
+
                             TextReplaceOptions replaceOptions = new TextReplaceOptions();
                             replaceOptions.setReplaceAdjustmentAction(TextReplaceOptions.ReplaceAdjustment.None);
+                            TextSearchOptions searchOptions = new TextSearchOptions(rectangle);
+
+                            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber();
                             textFragmentAbsorber.setTextReplaceOptions(replaceOptions);
+                            textFragmentAbsorber.setTextSearchOptions(searchOptions);
 
                             document.getPages().get_Item(page).accept(textFragmentAbsorber);
                             TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
                             for (TextFragment textFragment : (Iterable<TextFragment>) textFragmentCollection) {
+                                if (!originalText.equals(textFragment.getText())) {
+                                    continue;
+                                }
+
                                 double replaceBeforeURX = textFragment.getRectangle().getURX();
                                 textFragment.setText(replaceText);
                                 double replaceAfterURX = textFragment.getRectangle().getURX();
                                 if (PdfDataCoordinateEntity.ALIGN_RIGHT.equals(coordinate.getAlign())) {
                                     double gap = replaceAfterURX - replaceBeforeURX;
                                     if (gap > 0.0) {
-//                                        textFragment.getBaselinePosition().setXIndent(textFragment.getBaselinePosition().getXIndent() - gap);
                                         textFragment.setBaselinePosition(new Position(textFragment.getBaselinePosition().getXIndent() - gap - 1, textFragment.getBaselinePosition().getYIndent()));
                                     }
                                 }
