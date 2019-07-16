@@ -46,7 +46,7 @@ public class PdfListController extends BaseController {
         return this.getOkResponseModel(totalCount, dataList);
     }
 
-    @PostMapping("/pdf/list/export")
+    @GetMapping("/pdf/list/export")
     public void exportPdfList(HttpServletRequest request, HttpServletResponse response,
                               @RequestParam(name = "type") Integer type,
                               @RequestParam(name = "awb", required = false) String awb,

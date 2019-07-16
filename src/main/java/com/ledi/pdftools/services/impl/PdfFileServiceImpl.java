@@ -667,6 +667,10 @@ public class PdfFileServiceImpl implements PdfFileService {
                     pdfModel = datas.get(i).getUpdatedPdf();
                 } else {
                     pdfModel = datas.get(i).getComparePdf();
+                    if (pdfModel != null && datas.get(i).getUpdatedPdf() != null) {
+                        pdfModel.setAwb(datas.get(i).getUpdatedPdf().getAwb());
+                        pdfModel.setAwbReplace(datas.get(i).getUpdatedPdf().getAwbReplace());
+                    }
                 }
 
                 row.createCell(j).setCellValue(this.createRowValue(pdfModel, titles.get(j).getDataFieldName()));

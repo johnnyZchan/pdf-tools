@@ -1,0 +1,1 @@
+UPDATE pdf_data_coordinate SET margin_left=437.35, margin_top=225.58, width=126.93, height=7.91 WHERE id=43

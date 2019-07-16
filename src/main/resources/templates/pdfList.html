@@ -1319,18 +1319,14 @@
     }
 
     function exportPdfList(type) {
-        DownLoadFile({
-            url: 'pdf/list/export',
-            data: {
-                type: type,
-                awb: $("#search_awb").val(),
-                makeStatus: $("#search_makeStatus").val(),
-                makeStartTime: $("#search_make_startTime").val(),
-                makeEndTime: $("#search_make_endTime").val(),
-                permissionStartTime: $("#search_permission_startTime").val(),
-                permissionEndTime: $("#search_permission_endTime").val()
-            }
-        });
+        var awb = $("#search_awb").val();
+        var makeStatus = $("#search_makeStatus").val();
+        var makeStartTime = $("#search_make_startTime").val();
+        var makeEndTime = $("#search_make_endTime").val();
+        var permissionStartTime = $("#search_permission_startTime").val();
+        var permissionEndTime = $("#search_permission_endTime").val();
+
+        window.location.href = "pdf/list/export?type=" + type + "&awb=" + awb + "&makeStatus=" + makeStatus + "&makeStartTime=" + makeStartTime + "&makeEndTime=" + makeEndTime + "&permissionStartTime=" + permissionStartTime + "&permissionEndTime=" + permissionEndTime;
     }
 </script>
 </html>
