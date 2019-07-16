@@ -1,10 +1,6 @@
 package com.ledi.pdftools.services.impl;
 
 import com.aspose.pdf.*;
-import com.aspose.pdf.facades.PdfContentEditor;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
@@ -23,14 +19,11 @@ import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -43,12 +36,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service("pdfFileService")
 @Slf4j
@@ -467,6 +458,7 @@ public class PdfFileServiceImpl implements PdfFileService {
         Document document = null;
         try {
             document = new Document(originalPdfFile.getFilePath());
+            document.getInfo().setAuthor("");
             for (int page = 1; page <= document.getPages().size(); page ++) {
                 if (isReplace) {
                     List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
@@ -498,17 +490,27 @@ public class PdfFileServiceImpl implements PdfFileService {
                                 }
 
                                 double replaceBeforeURX = textFragment.getRectangle().getURX();
+                                System.out.println("before : " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
                                 textFragment.setText(replaceText);
                                 double replaceAfterURX = textFragment.getRectangle().getURX();
+                                System.out.println("after  : " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
+                                double gap = replaceAfterURX - replaceBeforeURX;
+                                System.out.println("gap words : " + (originalText.length() - replaceText.length())  + " gap : " + gap);
+
                                 if (PdfDataCoordinateEntity.ALIGN_RIGHT.equals(coordinate.getAlign())) {
-                                    double gap = replaceAfterURX - replaceBeforeURX;
-                                    if (gap > 0.0) {
-                                        textFragment.setBaselinePosition(new Position(textFragment.getBaselinePosition().getXIndent() - gap - 1, textFragment.getBaselinePosition().getYIndent()));
+                                    if (gap != 0.0) {
+                                        double baseLineX = textFragment.getBaselinePosition().getXIndent();
+                                        double baseLineY = textFragment.getBaselinePosition().getYIndent();
+                                        System.out.println("baseLineX : " + baseLineX + " - baseLineY : " + baseLineY);
+
+                                        textFragment.setBaselinePosition(new Position(baseLineX - gap, baseLineY + 1.2432));
+                                        System.out.println("after cal: " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
                                     }
                                 }
+                                System.out.println("");
 
                                 if (this.displayRectangle) {
-                                    textFragment.getTextState().setBackgroundColor(Color.getRed());
+                                    textFragment.getTextState().setBackgroundColor(Color.getYellow());
                                 }
                             }
                         }
