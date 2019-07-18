@@ -5,9 +5,11 @@ UPDATE pdf_data_coordinate SET margin_left=444.83, margin_top=301.23, width=55.1
 UPDATE pdf_data_coordinate SET margin_left=444.83, margin_top=310.23, width=55.15, height=7.61 WHERE id='05';
 UPDATE pdf_data_coordinate SET margin_left=458.83, margin_top=328.23, width=55.15, height=7.61 WHERE id='06';
 UPDATE pdf_data_coordinate SET margin_left=445.28, margin_top=391.31, width=55.38, height=7.61 WHERE id='07';
-UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=421.56, width=61.64, height=6.98 WHERE id='08';
-UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=430.56, width=61.64, height=6.98 WHERE id='09';
-UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=439.56, width=61.64, height=6.98 WHERE id='10';
+
+UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=421.56, width=61.64, height=6.17 WHERE id='08';
+UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=430.56, width=61.64, height=6.17 WHERE id='09';
+UPDATE pdf_data_coordinate SET margin_left=167.77, margin_top=440.56, width=61.64, height=6.17 WHERE id='10';
+
 UPDATE pdf_data_coordinate SET margin_left=332.77, margin_top=412.08, width=61.64, height=7.61 WHERE id='11';
 UPDATE pdf_data_coordinate SET margin_left=514.88, margin_top=411.98, width=38.53, height=7.61 WHERE id='12';
 UPDATE pdf_data_coordinate SET margin_left=463.08, margin_top=505.98, width=57.33, height=7.61 WHERE id='13';
