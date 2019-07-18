@@ -39,7 +39,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("pdfFileService")
 @Slf4j
@@ -403,33 +405,6 @@ public class PdfFileServiceImpl implements PdfFileService {
         }
     }
 
-    public void clearPdfFile(PdfFileEntity pdfFileEntity) {
-        if (pdfFileEntity == null) {
-            return;
-        }
-        File pdfFile = new File(pdfFileEntity.getFilePath());
-        if (pdfFile == null || !pdfFile.exists()) {
-            throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
-        }
-
-        Document document = null;
-        try {
-            document = new Document(pdfFileEntity.getFilePath());
-            for (int page = 1; page <= document.getPages().size(); page ++) {
-
-            }
-        } catch (Exception e) {
-            log.error("error occurred : ", e);
-            throw new ServiceException(MessageUtil.getMessage("pdf.file.clear.error"));
-        } finally {
-            if (document != null) {
-                try {
-                    document.close();
-                } catch (Exception e) {}
-            }
-        }
-    }
-
     public void replacePdfFile(PdfListEntity updatedPdfEntity, PdfListEntity originalPdfEntity, boolean isClear, boolean isReplace) {
         if (updatedPdfEntity == null || originalPdfEntity == null) {
             return;
@@ -490,24 +465,18 @@ public class PdfFileServiceImpl implements PdfFileService {
                                 }
 
                                 double replaceBeforeURX = textFragment.getRectangle().getURX();
-                                System.out.println("before : " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
                                 textFragment.setText(replaceText);
                                 double replaceAfterURX = textFragment.getRectangle().getURX();
-                                System.out.println("after  : " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
                                 double gap = replaceAfterURX - replaceBeforeURX;
-                                System.out.println("gap words : " + (originalText.length() - replaceText.length())  + " gap : " + gap);
 
                                 if (PdfDataCoordinateEntity.ALIGN_RIGHT.equals(coordinate.getAlign())) {
                                     if (gap != 0.0) {
                                         double baseLineX = textFragment.getBaselinePosition().getXIndent();
                                         double baseLineY = textFragment.getBaselinePosition().getYIndent();
-                                        System.out.println("baseLineX : " + baseLineX + " - baseLineY : " + baseLineY);
 
                                         textFragment.setBaselinePosition(new Position(baseLineX - gap, baseLineY + 1.2432));
-                                        System.out.println("after cal: " + textFragment.getText() + " : " + textFragment.getRectangle() + " - " + textFragment.getBaselinePosition());
                                     }
                                 }
-                                System.out.println("");
 
                                 if (this.displayRectangle) {
                                     textFragment.getTextState().setBackgroundColor(Color.getYellow());
@@ -522,11 +491,9 @@ public class PdfFileServiceImpl implements PdfFileService {
                     if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                         for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                             if (StringUtils.isNotBlank(coordinate.getFieldName())) {
+                                // 如果有更新数据，则不替换
                                 String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
-                                String originalText = getCoordinateText(coordinate, originalPdfEntity);
-                                if (StringUtils.isNotBlank(replaceText)
-                                        && StringUtils.isNotBlank(originalText)
-                                        && !replaceText.equals(originalText)) {
+                                if (StringUtils.isNotBlank(replaceText)) {
                                     continue;
                                 }
                             }
