@@ -8,6 +8,7 @@ import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.services.AnkcustomsService;
 import com.ledi.pdftools.services.PdfFileService;
 import com.ledi.pdftools.services.PdfListService;
+import com.ledi.pdftools.utils.DataUtil;
 import com.ledi.pdftools.utils.IDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -85,7 +86,8 @@ public class FileController extends BaseController {
                     File file = new File(fileModel.getFilePath());
                     if (file != null && file.exists()) {
                         //添加ZipEntry，并ZipEntry中写入文件流
-                        zipos.putNextEntry(new ZipEntry((StringUtils.isNotBlank(fileModel.getAwbReplace())?fileModel.getAwbReplace():fileModel.getAwb()) + ".pdf"));
+                        String fileName = (StringUtils.isNotBlank(fileModel.getAwbReplace())?fileModel.getAwbReplace():fileModel.getAwb()) + ".pdf";
+                        zipos.putNextEntry(new ZipEntry(DataUtil.formatPdfFileName(fileName)));
                         os = new DataOutputStream(zipos);
                         InputStream is = new FileInputStream(file);
                         byte[] b = new byte[1024];

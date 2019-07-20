@@ -70,6 +70,14 @@ public class DataUtil {
         return inv;
     }
 
+    public static String formatPdfFileName(String fileName) {
+        if (StringUtils.isNotBlank(fileName) && fileName.contains("-")) {
+            return fileName.replaceAll("-", "");
+        }
+
+        return fileName;
+    }
+
     public static void main(String[] args) {
         System.out.println(parseNumber(new BigDecimal(6.3), 0));
     }
