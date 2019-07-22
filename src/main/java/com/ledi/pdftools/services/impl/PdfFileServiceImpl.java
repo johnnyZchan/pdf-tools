@@ -441,6 +441,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                         for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                             String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
                             String originalText = getCoordinateText(coordinate, originalPdfEntity);
+                            log.info("replacePdfFileData[" + coordinate.getFieldName() + "] : originalText[" + originalText + "] - replaceText[" + replaceText + "]");
                             if (StringUtils.isBlank(replaceText)
                                     || StringUtils.isBlank(originalText)
                                     || replaceText.equals(originalText)) {
@@ -460,6 +461,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                             document.getPages().get_Item(page).accept(textFragmentAbsorber);
                             TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
                             for (TextFragment textFragment : (Iterable<TextFragment>) textFragmentCollection) {
+                                log.info("replacePdfFileData[" + coordinate.getFieldName() + "] : textFragment.getText()[" + textFragment.getText() + "] - rectangle[" + textFragment.getRectangle() + "]");
                                 if (!originalText.equals(textFragment.getText())) {
                                     continue;
                                 }
