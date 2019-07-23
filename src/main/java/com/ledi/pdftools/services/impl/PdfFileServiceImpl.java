@@ -242,15 +242,15 @@ public class PdfFileServiceImpl implements PdfFileService {
             throw new ServiceException(CodeInfo.CODE_PDF_FILE_NOT_EXIST);
         }
 
-        PdfReader reader = null;
+        Document document = null;
         PdfListEntity result = new PdfListEntity();
         try {
-            reader = new PdfReader(pdfFileEntity.getFilePath());
-            for (int page = 1; page <= reader.getNumberOfPages(); page ++) {
+            document = new Document(pdfFileEntity.getFilePath());
+            for (int page = 1; page <= document.getPages().size(); page ++) {
                 List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
                 if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                     for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
-                        String data = this.readData(reader, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
+                        String data = this.readData(document, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
                         Object convertData = null;
                         try {
                             convertData = convertData2Value(data, coordinate);
@@ -266,9 +266,9 @@ public class PdfFileServiceImpl implements PdfFileService {
             log.error("error occurred : ", e);
             throw new ServiceException(MessageUtil.getMessage("pdf.file.read.error"));
         } finally {
-            if (reader != null) {
+            if (document != null) {
                 try {
-                    reader.close();
+                    document.close();
                 } catch (Exception e) {}
             }
         }
@@ -276,15 +276,24 @@ public class PdfFileServiceImpl implements PdfFileService {
         return result;
     }
 
-    public String readData(PdfReader reader, int page, BigDecimal llx, BigDecimal lly, BigDecimal urx, BigDecimal ury) throws IOException {
-        if (reader == null || llx == null || lly == null || urx == null || ury == null) {
+    public String readData(Document document, int page, BigDecimal llx, BigDecimal lly, BigDecimal urx, BigDecimal ury) throws IOException {
+        if (document == null || llx == null || lly == null || urx == null || ury == null) {
             return null;
         }
 
-        Rectangle rect = new Rectangle(llx.floatValue(), lly.floatValue(), urx.floatValue(), ury.floatValue());
-        RenderFilter filter = new RegionTextRenderFilter(rect);
-        TextExtractionStrategy strategy = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
-        String result = PdfTextExtractor.getTextFromPage(reader, page, strategy);
+        com.aspose.pdf.Rectangle rectangle = new com.aspose.pdf.Rectangle(llx.doubleValue(), lly.doubleValue(), urx.doubleValue(), ury.doubleValue());
+        TextSearchOptions searchOptions = new TextSearchOptions(rectangle);
+
+        TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber();
+        textFragmentAbsorber.setTextSearchOptions(searchOptions);
+
+        document.getPages().get_Item(page).accept(textFragmentAbsorber);
+        TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
+        String result = null;
+        if (textFragmentCollection != null && textFragmentCollection.size() > 0) {
+            result = textFragmentCollection.get_Item(1).getText();
+        }
+
         return result;
     }
 
