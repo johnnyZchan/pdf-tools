@@ -442,25 +442,46 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setProd1DeclareAmountJpy((updatedEntity.getProd1DeclareAmountUsd().multiply(usdJpyExchangeRate)).add(updatedEntity.getDeclareFreightAmountUsd().multiply(usdJpyExchangeRate).multiply(updatedEntity.getProd1FreightPct())));
         updatedEntity.setProd1DeclareAmountJpy(DataUtil.round(updatedEntity.getProd1DeclareAmountJpy(), 1));
 
-        // 品名1关税计算基数=品名1日元申报价值，按千位向下取整
-        updatedEntity.setProd1TariffBase(DataUtil.round(updatedEntity.getProd1DeclareAmountJpy(), 1000));
-        // 品名1关税额=品名1关税计算基数*品名1关税率
-        BigDecimal prod1TariffRate = updatedEntity.getProd1TariffRate()!=null?updatedEntity.getProd1TariffRate():BigDecimal.ZERO;
-        updatedEntity.setProd1Tariff(updatedEntity.getProd1TariffBase().multiply(prod1TariffRate));
-        // 品名1关税取整=品名1关税额，按百位向下取整
-        updatedEntity.setProd1TariffRounding(DataUtil.round(updatedEntity.getProd1Tariff(), 100));
-        // 品名1国内消费税=品名1日元申报价值+品名1关税取整
-        updatedEntity.setProd1CountryExciseTax(updatedEntity.getProd1DeclareAmountJpy().add(updatedEntity.getProd1TariffRounding()));
-        // 品名1国内消费税额基数=品名1国内消费税，按千位向下取整
-        updatedEntity.setProd1CountryExciseTaxBase(DataUtil.round(updatedEntity.getProd1CountryExciseTax(), 1000));
-        // 品名1国内消费税金额=品名1国内消费税额基数*6.3%
-        updatedEntity.setProd1CountryExciseTaxAmount(updatedEntity.getProd1CountryExciseTaxBase().multiply(new BigDecimal(0.063)));
-        // 品名1地方消费税基数=品名1国内消费税金额，按百位向下取整
-        updatedEntity.setProd1LocalExciseTaxBase(DataUtil.round(updatedEntity.getProd1CountryExciseTaxAmount(), 100));
-        // 品名1地方消费税金额=品名1地方消费税基数*17/63
-        updatedEntity.setProd1LocalExciseTaxAmount((updatedEntity.getProd1LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
+        /**
+         * 如果原始数据中的税金合计=0，则更新数据保持和原始数据一致即可，不需要进行计算
+         */
+        // 品名1关税计算基数
+        updatedEntity.setProd1TariffBase(originalEntity.getProd1TariffBase());
+        // 品名1关税额
+        updatedEntity.setProd1Tariff(originalEntity.getProd1Tariff());
+        // 品名1关税取整
+        updatedEntity.setProd1TariffRounding(originalEntity.getProd1TariffRounding());
+        // 品名1国内消费税
+        updatedEntity.setProd1CountryExciseTax(originalEntity.getProd1CountryExciseTax());
+        // 品名1国内消费税额基数
+        updatedEntity.setProd1CountryExciseTaxBase(originalEntity.getProd1CountryExciseTaxBase());
+        // 品名1国内消费税金额
+        updatedEntity.setProd1CountryExciseTaxAmount(originalEntity.getProd1CountryExciseTaxAmount());
+        // 品名1地方消费税基数
+        updatedEntity.setProd1LocalExciseTaxBase(originalEntity.getProd1LocalExciseTaxBase());
+        // 品名1地方消费税金额
+        updatedEntity.setProd1LocalExciseTaxAmount(originalEntity.getProd1LocalExciseTaxAmount());
+        if (originalEntity.getTaxTotalAmount() != null && originalEntity.getTaxTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+            // 品名1关税计算基数=品名1日元申报价值，按千位向下取整
+            updatedEntity.setProd1TariffBase(DataUtil.round(updatedEntity.getProd1DeclareAmountJpy(), 1000));
+            // 品名1关税额=品名1关税计算基数*品名1关税率
+            BigDecimal prod1TariffRate = updatedEntity.getProd1TariffRate()!=null?updatedEntity.getProd1TariffRate():BigDecimal.ZERO;
+            updatedEntity.setProd1Tariff(updatedEntity.getProd1TariffBase().multiply(prod1TariffRate));
+            // 品名1关税取整=品名1关税额，按百位向下取整
+            updatedEntity.setProd1TariffRounding(DataUtil.round(updatedEntity.getProd1Tariff(), 100));
+            // 品名1国内消费税=品名1日元申报价值+品名1关税取整
+            updatedEntity.setProd1CountryExciseTax(updatedEntity.getProd1DeclareAmountJpy().add(updatedEntity.getProd1TariffRounding()));
+            // 品名1国内消费税额基数=品名1国内消费税，按千位向下取整
+            updatedEntity.setProd1CountryExciseTaxBase(DataUtil.round(updatedEntity.getProd1CountryExciseTax(), 1000));
+            // 品名1国内消费税金额=品名1国内消费税额基数*6.3%
+            updatedEntity.setProd1CountryExciseTaxAmount(updatedEntity.getProd1CountryExciseTaxBase().multiply(new BigDecimal(0.063)));
+            // 品名1地方消费税基数=品名1国内消费税金额，按百位向下取整
+            updatedEntity.setProd1LocalExciseTaxBase(DataUtil.round(updatedEntity.getProd1CountryExciseTaxAmount(), 100));
+            // 品名1地方消费税金额=品名1地方消费税基数*17/63
+            updatedEntity.setProd1LocalExciseTaxAmount((updatedEntity.getProd1LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
+        }
 
-        if (updatedEntity.getProd2DeclareAmountUsd() != null) {
+        if (updatedEntity.getProd2DeclareAmountUsd() != null && originalEntity.getTaxTotalAmount() != null && originalEntity.getTaxTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
             // 品名2关税率用原始数据
             updatedEntity.setProd2TariffRate(originalEntity.getProd2TariffRate());
             // 品名2运费比重=品名2申报价值/总申报价值（当品名2申报价值=空，则为100%）
@@ -491,7 +512,7 @@ public class PdfListServiceImpl implements PdfListService {
             updatedEntity.setProd2LocalExciseTaxAmount((updatedEntity.getProd2LocalExciseTaxBase().multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP));
         }
 
-        if (updatedEntity.getProd3DeclareAmountUsd() != null) {
+        if (updatedEntity.getProd3DeclareAmountUsd() != null && originalEntity.getTaxTotalAmount() != null && originalEntity.getTaxTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
             // 品名3关税率用原始数据
             updatedEntity.setProd3TariffRate(originalEntity.getProd3TariffRate());
             // 品名3运费比重=品名3申报价值/总申报价值（当品名3申报价值=空，则为100%）
