@@ -39,9 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service("pdfFileService")
 @Slf4j
@@ -250,14 +248,20 @@ public class PdfFileServiceImpl implements PdfFileService {
                 List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
                 if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                     for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
-                        String data = this.readData(document, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
+                        String data = null;
+                        if (coordinate.getReadType().equals(PdfDataCoordinateEntity.READ_TYPE_ASPOSE)) {
+                            data = this.readDataByAspose(pdfFileEntity, page, coordinate);
+                        } else if (coordinate.getReadType().equals(PdfDataCoordinateEntity.READ_TYPE_ITEXT)) {
+                            data = this.readDataByItext(pdfFileEntity, page, coordinate);
+                        }
+
                         Object convertData = null;
                         try {
                             convertData = convertData2Value(data, coordinate);
                         } catch (NumberFormatException e) {
                             convertData = null;
                         }
-                        log.info("文件[" + pdfFileEntity.getPdfFileId() + "]的第[" + page + "]页，字段[" + coordinate.getFieldName() + "]=[" + data + "]，转换后数据[" + convertData + "]");
+                        log.info("文件[" + pdfFileEntity.getPdfFileId() + "]的第[" + page + "]页，字段[" + coordinate.getFieldName() + "]=[" + data + "]，转换后数据[" + convertData + "]，读取方式[" + coordinate.getReadType() + "]");
                         BeanUtil.setFieldValue(result, coordinate.getFieldName(), convertData);
                     }
                 }
@@ -276,22 +280,61 @@ public class PdfFileServiceImpl implements PdfFileService {
         return result;
     }
 
-    public String readData(Document document, int page, BigDecimal llx, BigDecimal lly, BigDecimal urx, BigDecimal ury) throws IOException {
-        if (document == null || llx == null || lly == null || urx == null || ury == null) {
+    public String readDataByItext(PdfFileEntity pdfFile, int page, PdfDataCoordinateEntity coordinate) throws IOException {
+        PdfReader reader = null;
+        try {
+            reader = new PdfReader(pdfFile.getFilePath());
+            return this.readData(reader, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+    public String readDataByAspose(PdfFileEntity pdfFile, int page, PdfDataCoordinateEntity coordinate) throws IOException {
+        Document document = null;
+        try {
+            document = new Document(pdfFile.getFilePath());
+            return this.readData(document, page, coordinate.getLlx(), coordinate.getLly(), coordinate.getUrx(), coordinate.getUry());
+        } finally {
+            if (document != null) {
+                try {
+                    document.close();
+                } catch (Exception e) {}
+            }
+        }
+    }
+
+    public String readData(Object pdf, int page, BigDecimal llx, BigDecimal lly, BigDecimal urx, BigDecimal ury) throws IOException {
+        if (pdf == null || llx == null || lly == null || urx == null || ury == null) {
             return null;
         }
 
-        com.aspose.pdf.Rectangle rectangle = new com.aspose.pdf.Rectangle(llx.doubleValue(), lly.doubleValue(), urx.doubleValue(), ury.doubleValue());
-        TextSearchOptions searchOptions = new TextSearchOptions(rectangle);
-
-        TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber();
-        textFragmentAbsorber.setTextSearchOptions(searchOptions);
-
-        document.getPages().get_Item(page).accept(textFragmentAbsorber);
-        TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
         String result = null;
-        if (textFragmentCollection != null && textFragmentCollection.size() > 0) {
-            result = textFragmentCollection.get_Item(1).getText();
+        if (pdf instanceof Document) {
+            Document document = (Document)pdf;
+
+            com.aspose.pdf.Rectangle rectangle = new com.aspose.pdf.Rectangle(llx.doubleValue(), lly.doubleValue(), urx.doubleValue(), ury.doubleValue());
+            TextSearchOptions searchOptions = new TextSearchOptions(rectangle);
+
+            TextFragmentAbsorber textFragmentAbsorber = new TextFragmentAbsorber();
+            textFragmentAbsorber.setTextSearchOptions(searchOptions);
+
+            document.getPages().get_Item(page).accept(textFragmentAbsorber);
+            TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
+            if (textFragmentCollection != null && textFragmentCollection.size() > 0) {
+                result = textFragmentCollection.get_Item(1).getText();
+            }
+        } else if (pdf instanceof PdfReader) {
+            PdfReader reader = (PdfReader)pdf;
+
+            Rectangle rect = new Rectangle(llx.floatValue(), lly.floatValue(), urx.floatValue(), ury.floatValue());
+            RenderFilter filter = new RegionTextRenderFilter(rect);
+            TextExtractionStrategy strategy = new FilteredTextRenderListener(new LocationTextExtractionStrategy(), filter);
+            result = PdfTextExtractor.getTextFromPage(reader, page, strategy);
         }
 
         return result;

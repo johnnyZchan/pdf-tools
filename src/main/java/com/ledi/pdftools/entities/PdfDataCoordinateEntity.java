@@ -17,6 +17,9 @@ public class PdfDataCoordinateEntity {
     public static final int ACTION_TYPE_DEL = 1;
     public static final int ACTION_TYPE_REPLACE = 2;
 
+    public static final String READ_TYPE_ASPOSE = "aspose";
+    public static final String READ_TYPE_ITEXT = "itext";
+
     private String id;
     private Integer pageNo;
     private String fieldName;
@@ -36,5 +39,6 @@ public class PdfDataCoordinateEntity {
     private String suffix;
 
     private Integer actionType;
+    private String readType;
 
 }

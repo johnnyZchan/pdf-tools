@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public interface PdfDataCoordinateMapper {
 
-    public static final String COLUMNS = "id, page_no as pageNo, field_name as fieldName, llx, lly, urx, ury, margin_left as marginLeft, margin_top as marginTop, width, height, align, data_type as dataType, decimal_digits as decimalDigits, prefix, suffix, action_type as actionType";
+    public static final String COLUMNS = "id, page_no as pageNo, field_name as fieldName, llx, lly, urx, ury, margin_left as marginLeft, margin_top as marginTop, width, height, align, data_type as dataType, decimal_digits as decimalDigits, prefix, suffix, action_type as actionType, read_type as readType";
 
     @Select("select " + COLUMNS + " from pdf_data_coordinate where id=#{id}")
     PdfDataCoordinateEntity findById(String id);
