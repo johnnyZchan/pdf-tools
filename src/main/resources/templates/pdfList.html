@@ -60,69 +60,71 @@
     <table id="pdf_list_table" class="cell-border" style="width: 8500px" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>AWB番号</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>貨物個数</th>
-            <th>貨物重量</th>
-            <th>仕入書価格</th>
-            <th>運賃</th>
-            <th>通関金額</th>
-            <th>BPR合計</th>
-            <th>関税</th>
-            <th>消費税</th>
-            <th>地方消費税</th>
-            <th>納税額合計</th>
-            <th>通貨レート USD</th>
-            <th>BPR按分係数</th>
-            <th>関税率</th>
-            <th></th>
-            <th>申告価格(CIF)</th>
-            <th></th>
-            <th>関税額</th>
-            <th></th>
-            <th>(1)消費税課税標準額</th>
-            <th></th>
-            <th>税額</th>
-            <th>(2)地方消費税課税標準額</th>
-            <th>税額</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>AWB番号</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>貨物個数</th>
+                <th>貨物重量</th>
+                <th>仕入書価格</th>
+                <th>運賃</th>
+                <th>通関金額</th>
+                <th>BPR合計</th>
+                <th>関税</th>
+                <th>消費税</th>
+                <th>地方消費税</th>
+                <th>納税額合計</th>
+                <th>通貨レート USD</th>
+                <th>BPR按分係数</th>
+                <th>関税率</th>
+                <th></th>
+                <th>申告価格(CIF)</th>
+                <th></th>
+                <th>関税額</th>
+                <th></th>
+                <th>(1)消費税課税標準額</th>
+                <th></th>
+                <th>税額</th>
+                <th>(2)地方消費税課税標準額</th>
+                <th>税額</th>
 
-            <th>BPR按分係数</th>
-            <th>関税率</th>
-            <th></th>
-            <th>申告価格(CIF)</th>
-            <th></th>
-            <th>関税額</th>
-            <th></th>
-            <th>(1)消費税課税標準額</th>
-            <th></th>
-            <th>税額</th>
-            <th>(2)地方消費税課税標準額</th>
-            <th>税額</th>
+                <th>BPR按分係数</th>
+                <th>関税率</th>
+                <th></th>
+                <th>申告価格(CIF)</th>
+                <th></th>
+                <th>関税額</th>
+                <th></th>
+                <th>(1)消費税課税標準額</th>
+                <th></th>
+                <th>税額</th>
+                <th>(2)地方消費税課税標準額</th>
+                <th>税額</th>
 
-            <th>BPR按分係数</th>
-            <th>関税率</th>
-            <th></th>
-            <th>申告価格(CIF)</th>
-            <th></th>
-            <th>関税額</th>
-            <th></th>
-            <th>(1)消費税課税標準額</th>
-            <th></th>
-            <th>税額</th>
-            <th>(2)地方消費税課税標準額</th>
-            <th>税額</th>
+                <th>BPR按分係数</th>
+                <th>関税率</th>
+                <th></th>
+                <th>申告価格(CIF)</th>
+                <th></th>
+                <th>関税額</th>
+                <th></th>
+                <th>(1)消費税課税標準額</th>
+                <th></th>
+                <th>税額</th>
+                <th>(2)地方消費税課税標準額</th>
+                <th>税額</th>
 
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
             <tr>
+                <th></th>
                 <th>序号</th>
                 <th><input id="checkall" type="checkbox"/></th>
                 <th>数据性质</th>
@@ -266,6 +268,15 @@
                 }
             },
             "columnDefs": [
+                // 展开标签
+                {
+                    render : function (data, type, row, meta) {
+                        return "";
+                    },
+                    className: "details-control",
+                    width: "50px",
+                    targets: 0
+                },
                 // <th>序号</th>
                 {
                     render : function(data, type, row, meta) {
@@ -273,7 +284,7 @@
                         return html;
                     },
                     width: "50px",
-                    targets : 0
+                    targets : 1
                 },
                 // checkbox
                 {
@@ -282,7 +293,7 @@
                     },
                     className: 'select-checkbox',
                     width: "50px",
-                    targets:   1
+                    targets:   2
                 },
                 // <th>数据性质</th>
                 {
@@ -296,7 +307,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 2
+                    targets : 3
                 },
                 // <th>单号</th>
                 {
@@ -305,7 +316,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 3
+                    targets : 4
                 },
                 // <th>换单号</th>
                 {
@@ -314,7 +325,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 4
+                    targets : 5
                 },
                 // <th>制作时间</th>
                 {
@@ -323,7 +334,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 5
+                    targets : 6
                 },
                 // <th>许可时间</th>
                 {
@@ -332,7 +343,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 6
+                    targets : 7
                 },
                 // <th>制作状态</th>
                 {
@@ -341,7 +352,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 7
+                    targets : 8
                 },
                 // <th>件数</th>
                 {
@@ -350,7 +361,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 8
+                    targets : 9
                 },
                 // <th>重量</th>
                 {
@@ -359,7 +370,7 @@
                     },
                     width: "80px",
                     className: "column-vertical-top",
-                    targets : 9
+                    targets : 10
                 },
                 // <th>总申报价值USD</th>
                 {
@@ -368,7 +379,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 10
+                    targets : 11
                 },
                 // <th>申报运费USD</th>
                 {
@@ -377,7 +388,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 11
+                    targets : 12
                 },
                 // <th>通关金额</th>
                 {
@@ -386,7 +397,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 12
+                    targets : 13
                 },
                 // <th>BPR合计</th>
                 {
@@ -395,7 +406,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 13
+                    targets : 14
                 },
                 // <th>关税</th>
                 {
@@ -404,7 +415,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 14
+                    targets : 15
                 },
                 // <th>消费税</th>
                 {
@@ -413,7 +424,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 15
+                    targets : 16
                 },
                 // <th>地方消费税</th>
                 {
@@ -422,7 +433,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 16
+                    targets : 17
                 },
                 // <th>税金总计</th>
                 {
@@ -431,7 +442,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 17
+                    targets : 18
                 },
                 // <th>美元日元汇率</th>
                 {
@@ -440,7 +451,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 18
+                    targets : 19
                 },
                 // <th>品名1美金申报价值</th>
                 {
@@ -449,7 +460,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 19
+                    targets : 20
                 },
                 // <th>品名1关税率</th>
                 {
@@ -458,7 +469,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 20
+                    targets : 21
                 },
                 // <th>品名1运费比重</th>
                 {
@@ -467,7 +478,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 21
+                    targets : 22
                 },
                 // <th>品名1日元申报价值</th>
                 {
@@ -476,7 +487,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 22
+                    targets : 23
                 },
                 // <th>品名1关税计算基数</th>
                 {
@@ -485,7 +496,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 23
+                    targets : 24
                 },
                 // <th>品名1关税额</th>
                 {
@@ -494,7 +505,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 24
+                    targets : 25
                 },
                 // <th>品名1关税取整</th>
                 {
@@ -503,7 +514,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 25
+                    targets : 26
                 },
                 // <th>品名1国内消费税</th>
                 {
@@ -512,7 +523,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 26
+                    targets : 27
                 },
                 // <th>品名1国内消费税额基数</th>
                 {
@@ -521,7 +532,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 27
+                    targets : 28
                 },
                 // <th>品名1国内消费税金额</th>
                 {
@@ -530,7 +541,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 28
+                    targets : 29
                 },
                 // <th>品名1地方消费税基数</th>
                 {
@@ -539,7 +550,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 29
+                    targets : 30
                 },
                 // <th>品名1地方消费税金额</th>
                 {
@@ -548,7 +559,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 30
+                    targets : 31
                 },
 
                 // <th>品名2美金申报价值</th>
@@ -558,7 +569,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 31
+                    targets : 32
                 },
                 // <th>品名2关税率</th>
                 {
@@ -567,7 +578,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 32
+                    targets : 33
                 },
                 // <th>品名2运费比重</th>
                 {
@@ -576,7 +587,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 33
+                    targets : 34
                 },
                 // <th>品名2日元申报价值</th>
                 {
@@ -585,7 +596,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 34
+                    targets : 35
                 },
                 // <th>品名2关税计算基数</th>
                 {
@@ -594,7 +605,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 35
+                    targets : 36
                 },
                 // <th>品名2关税额</th>
                 {
@@ -603,7 +614,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 36
+                    targets : 37
                 },
                 // <th>品名2关税取整</th>
                 {
@@ -612,7 +623,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 37
+                    targets : 38
                 },
                 // <th>品名2国内消费税</th>
                 {
@@ -621,7 +632,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 38
+                    targets : 39
                 },
                 // <th>品名2国内消费税额基数</th>
                 {
@@ -629,7 +640,7 @@
                         return createColumnHtml(row, "prod2CountryExciseTaxBase");
                     },width: "180px",
                     className: "column-vertical-top",
-                    targets : 39
+                    targets : 40
                 },
                 // <th>品名2国内消费税金额</th>
                 {
@@ -638,7 +649,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 40
+                    targets : 41
                 },
                 // <th>品名2地方消费税基数</th>
                 {
@@ -647,7 +658,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 41
+                    targets : 42
                 },
                 // <th>品名2地方消费税金额</th>
                 {
@@ -656,7 +667,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 42
+                    targets : 43
                 },
 
                 // <th>品名3美金申报价值</th>
@@ -666,7 +677,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 43
+                    targets : 44
                 },
                 // <th>品名3关税率</th>
                 {
@@ -675,7 +686,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 44
+                    targets : 45
                 },
                 // <th>品名3运费比重</th>
                 {
@@ -684,7 +695,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 45
+                    targets : 46
                 },
                 // <th>品名3日元申报价值</th>
                 {
@@ -693,7 +704,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 46
+                    targets : 47
                 },
                 // <th>品名3关税计算基数</th>
                 {
@@ -702,7 +713,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 47
+                    targets : 48
                 },
                 // <th>品名3关税额</th>
                 {
@@ -711,7 +722,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 48
+                    targets : 49
                 },
                 // <th>品名3关税取整</th>
                 {
@@ -720,7 +731,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 49
+                    targets : 50
                 },
                 // <th>品名3国内消费税</th>
                 {
@@ -729,7 +740,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 50
+                    targets : 51
                 },
                 // <th>品名3国内消费税额基数</th>
                 {
@@ -738,7 +749,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 51
+                    targets : 52
                 },
                 // <th>品名3国内消费税金额</th>
                 {
@@ -747,7 +758,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 52
+                    targets : 53
                 },
                 // <th>品名3地方消费税基数</th>
                 {
@@ -756,7 +767,7 @@
                     },
                     width: "200px",
                     className: "column-vertical-top",
-                    targets : 53
+                    targets : 54
                 },
                 // <th>品名3地方消费税金额</th>
                 {
@@ -765,7 +776,7 @@
                     },
                     width: "180px",
                     className: "column-vertical-top",
-                    targets : 54
+                    targets : 55
                 },
 
                 // <th>关税合计</th>
@@ -775,7 +786,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 55
+                    targets : 56
                 },
                 // <th>国内消费税合计</th>
                 {
@@ -784,7 +795,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 56
+                    targets : 57
                 },
                 // <th>地方消费税合计</th>
                 {
@@ -793,7 +804,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 57
+                    targets : 58
                 },
             ],
             language : {
@@ -848,7 +859,49 @@
                 ankDownloadDialog.dialog("open");
             }
         });
+
+        $('#pdf_list_table tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = pdfListTable.row( tr );
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( getPdfDetailHtml(row.data()) ).show();
+                tr.addClass('shown');
+            }
+        });
+
+
     });
+
+    function getPdfDetailHtml(rowData) {
+        var html = "";
+        html += "<talbe cellpadding='5' cellspacing='0' border='0'>";
+        html += "<thead>";
+        html += "<tr>";
+        html += "<th>品名</th>";
+        html += "<th>美金申报价值</th>";
+        html += "<th>关税率</th>";
+        html += "<th>运费比重</th>";
+        html += "<th>日元申报价值</th>";
+        html += "<th>关税计算基数</th>";
+        html += "<th>关税额</th>";
+        html += "<th>关税取整</th>";
+        html += "<th>国内消费税</th>";
+        html += "<th>国内消费税额基数</th>";
+        html += "<th>国内消费税金额</th>";
+        html += "<th>地方消费税基数</th>";
+        html += "<th>地方消费税金额</th>";
+        html += "</tr>";
+        html += "</thead>";
+        html += "</table>";
+
+        return html;
+    }
 
     function initDate() {
         $.datepicker.setDefaults($.datepicker.regional['zh-CN']);
