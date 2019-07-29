@@ -33,6 +33,9 @@ public interface PdfListDetailMapper {
     @Delete("delete from pdf_list_detail where pdf_detail_id=#{id}")
     void delete(String id);
 
+    @Delete("delete from pdf_list_detail where pdf_id=#{pdfId}")
+    void deleteByPdfId(String pdfId);
+
     @Update("update pdf_list_detail set pdf_id=#{pdfId}, prod_no=#{prodNo}, declare_amount_usd=#{declareAmountUsd}, tariff_rate=#{tariffRate}, freight_pct=#{freightPct}, declare_amount_jpy=#{declareAmountJpy}," +
             " tariff_base=#{tariffBase}, tariff=#{tariff}, tariff_rounding=#{tariffRounding}, country_excise_tax=#{countryExciseTax}, country_excise_tax_base=#{countryExciseTaxBase}, country_excise_tax_amount=#{countryExciseTaxAmount}," +
             " localExciseTaxBase=#{local_excise_tax_base}, local_excise_tax_amount=#{localExciseTaxAmount} where pdf_detail_id=#{pdfDetailId}")

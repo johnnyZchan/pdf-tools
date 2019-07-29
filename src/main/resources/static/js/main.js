@@ -11,3 +11,18 @@ var DownLoadFile = function (options) {
     $form[0].submit();
     $iframe.remove();
 }
+
+function formatText(data) {
+    if (data == null || data == undefined) {
+        return "";
+    }
+
+    return data;
+}
+
+function formatPercentText(data) {
+    if (data != null && data != "") {
+        return (data * 100) + "%";
+    }
+    return data;
+}

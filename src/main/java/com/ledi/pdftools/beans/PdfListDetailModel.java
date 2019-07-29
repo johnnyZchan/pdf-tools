@@ -7,7 +7,8 @@ import lombok.Setter;
 @Setter
 public class PdfListDetailModel {
 
+    private String prodNo;
+
     private PdfDetailModel originalPdfDetail;
     private PdfDetailModel updatedPdfDetail;
-    private PdfDetailModel comparePdfDetail;
 }

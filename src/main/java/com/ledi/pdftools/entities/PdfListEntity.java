@@ -1,11 +1,18 @@
 package com.ledi.pdftools.entities;
 
+import com.ledi.pdftools.utils.BeanUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
+@Slf4j
 public class PdfListEntity {
 
     public static final int TYPE_ORIGINAL = 1;
@@ -47,65 +54,77 @@ public class PdfListEntity {
     private BigDecimal taxTotalAmount;
     // 美元日元汇率
     private BigDecimal usdJpyExchangeRate;
-    // 品名1 - 3美金申报价值
-    private BigDecimal prod1DeclareAmountUsd;
-    private BigDecimal prod2DeclareAmountUsd;
-    private BigDecimal prod3DeclareAmountUsd;
-    // 品名1 - 3关税率
-    private BigDecimal prod1TariffRate;
-    private BigDecimal prod2TariffRate;
-    private BigDecimal prod3TariffRate;
-    // 品名1 - 3运费比重
-    private BigDecimal prod1FreightPct;
-    private BigDecimal prod2FreightPct;
-    private BigDecimal prod3FreightPct;
-    // 品名1 - 3日元申报价值
-    private BigDecimal prod1DeclareAmountJpy;
-    private BigDecimal prod2DeclareAmountJpy;
-    private BigDecimal prod3DeclareAmountJpy;
-    // 品名1 - 3关税计算基数
-    private BigDecimal prod1TariffBase;
-    private BigDecimal prod2TariffBase;
-    private BigDecimal prod3TariffBase;
-    // 品名1 - 3关税额
-    private BigDecimal prod1Tariff;
-    private BigDecimal prod2Tariff;
-    private BigDecimal prod3Tariff;
-    // 品名1 - 3关税取整
-    private BigDecimal prod1TariffRounding;
-    private BigDecimal prod2TariffRounding;
-    private BigDecimal prod3TariffRounding;
-    // 品名1 - 3国内消费税
-    private BigDecimal prod1CountryExciseTax;
-    private BigDecimal prod2CountryExciseTax;
-    private BigDecimal prod3CountryExciseTax;
-    // 品名1 - 3国内消费税额基数
-    private BigDecimal prod1CountryExciseTaxBase;
-    private BigDecimal prod2CountryExciseTaxBase;
-    private BigDecimal prod3CountryExciseTaxBase;
-    // 品名1 - 3国内消费税金额
-    private BigDecimal prod1CountryExciseTaxAmount;
-    private BigDecimal prod2CountryExciseTaxAmount;
-    private BigDecimal prod3CountryExciseTaxAmount;
-    // 品名1 - 3地方消费税基数
-    private BigDecimal prod1LocalExciseTaxBase;
-    private BigDecimal prod2LocalExciseTaxBase;
-    private BigDecimal prod3LocalExciseTaxBase;
-    // 品名1 - 3地方消费税金额
-    private BigDecimal prod1LocalExciseTaxAmount;
-    private BigDecimal prod2LocalExciseTaxAmount;
-    private BigDecimal prod3LocalExciseTaxAmount;
     // 关税合计
     private BigDecimal tariffTotalAmount;
     // 国内消费税合计
     private BigDecimal countryExciseTaxTotalAmount;
     // 地方消费税合计
     private BigDecimal localExciseTaxTotalAmount;
+
     private Integer makeStatus;
     private Timestamp makeTime;
     private Integer delStatus;
     private Timestamp createTime;
     private Timestamp permissionTime;
 
+    private Map<String, PdfListDetailEntity> pdfListDetailMap;
 
+    public void setDetail(String fieldCategory, String fieldName, Object value) {
+        if (StringUtils.isBlank(fieldCategory)
+                || StringUtils.isBlank(fieldName)) {
+            return;
+        }
+
+        if (pdfListDetailMap == null) {
+            pdfListDetailMap = new HashMap<String, PdfListDetailEntity>();
+        }
+        if (!pdfListDetailMap.containsKey(fieldCategory) || pdfListDetailMap.get(fieldCategory) == null) {
+            PdfListDetailEntity detailEntity = new PdfListDetailEntity();
+            detailEntity.setProdNo(fieldCategory);
+            detailEntity.setPdfId(this.getPdfId());
+
+            pdfListDetailMap.put(fieldCategory, detailEntity);
+        }
+
+        try {
+            BeanUtil.setFieldValue(pdfListDetailMap.get(fieldCategory), fieldName, value);
+        } catch (Exception e) {
+            log.warn("error occurred in setDetail()", e);
+        }
+    }
+
+    public Object getDetail(String fieldCategory, String fieldName) {
+        if (StringUtils.isBlank(fieldCategory)
+                || StringUtils.isBlank(fieldName)) {
+            return null;
+        }
+
+        if (pdfListDetailMap == null || pdfListDetailMap.isEmpty()) {
+            return null;
+        }
+
+        if (!pdfListDetailMap.containsKey(fieldCategory) || pdfListDetailMap.get(fieldCategory) == null) {
+            return null;
+        }
+
+        Object result = null;
+        try {
+            result = BeanUtil.getFieldValue(pdfListDetailMap.get(fieldCategory), fieldName);
+        } catch (Exception e) {
+            log.warn("error occurred in getDetail()", e);
+            result = null;
+        }
+        return result;
+    }
+
+    public void initPdfListDetailMap(List<PdfListDetailEntity> pdfDetailList) {
+        if (pdfDetailList == null) {
+            return;
+        }
+
+        this.pdfListDetailMap = new HashMap<String, PdfListDetailEntity>();
+        for (PdfListDetailEntity entity : pdfDetailList) {
+            this.pdfListDetailMap.put(entity.getProdNo(), entity);
+        }
+    }
 }

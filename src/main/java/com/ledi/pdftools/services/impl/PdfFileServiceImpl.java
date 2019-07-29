@@ -16,6 +16,7 @@ import com.ledi.pdftools.exceptions.ServiceException;
 import com.ledi.pdftools.mappers.PdfFileMapper;
 import com.ledi.pdftools.services.PdfDataCoordinateService;
 import com.ledi.pdftools.services.PdfFileService;
+import com.ledi.pdftools.services.PdfListDetailService;
 import com.ledi.pdftools.services.PdfListService;
 import com.ledi.pdftools.utils.*;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,8 @@ public class PdfFileServiceImpl implements PdfFileService {
     PdfDataCoordinateService pdfDataCoordinateService;
     @Resource
     PdfListService pdfListService;
+    @Resource
+    PdfListDetailService pdfListDetailService;
 
     @Transactional
     public PdfFileEntity uploadPdfFile(MultipartFile file) throws Exception {
@@ -152,6 +155,13 @@ public class PdfFileServiceImpl implements PdfFileService {
                     Double prod1DeclareAmountUsd = null;
                     Double prod2DeclareAmountUsd = null;
                     Double prod3DeclareAmountUsd = null;
+                    Double prod4DeclareAmountUsd = null;
+                    Double prod5DeclareAmountUsd = null;
+                    Double prod6DeclareAmountUsd = null;
+                    Double prod7DeclareAmountUsd = null;
+                    Double prod8DeclareAmountUsd = null;
+                    Double prod9DeclareAmountUsd = null;
+                    Double prod10DeclareAmountUsd = null;
 
                     try {
                         // 单号
@@ -172,6 +182,21 @@ public class PdfFileServiceImpl implements PdfFileService {
                         prod2DeclareAmountUsd = row.getCell(7) != null ? row.getCell(7).getNumericCellValue() : null;
                         // 品名3美⾦申报价值
                         prod3DeclareAmountUsd = row.getCell(8) != null ? row.getCell(8).getNumericCellValue() : null;
+
+                        // 品名4美⾦申报价值
+                        prod4DeclareAmountUsd = row.getCell(9) != null ? row.getCell(9).getNumericCellValue() : null;
+                        // 品名5美⾦申报价值
+                        prod5DeclareAmountUsd = row.getCell(10) != null ? row.getCell(10).getNumericCellValue() : null;
+                        // 品名6美⾦申报价值
+                        prod6DeclareAmountUsd = row.getCell(11) != null ? row.getCell(11).getNumericCellValue() : null;
+                        // 品名7美⾦申报价值
+                        prod7DeclareAmountUsd = row.getCell(12) != null ? row.getCell(12).getNumericCellValue() : null;
+                        // 品名8美⾦申报价值
+                        prod8DeclareAmountUsd = row.getCell(13) != null ? row.getCell(13).getNumericCellValue() : null;
+                        // 品名9美⾦申报价值
+                        prod9DeclareAmountUsd = row.getCell(14) != null ? row.getCell(14).getNumericCellValue() : null;
+                        // 品名10美⾦申报价值
+                        prod10DeclareAmountUsd = row.getCell(15) != null ? row.getCell(15).getNumericCellValue() : null;
                     } catch (Exception e) {
                         log.warn("Excel数据格式不正确", e);
                     }
@@ -200,12 +225,33 @@ public class PdfFileServiceImpl implements PdfFileService {
                     if (prod1DeclareAmountUsd == null) {
                         throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "品名1美金申报价值");
                     }
-                    entity.setProd1DeclareAmountUsd(new BigDecimal(prod1DeclareAmountUsd.toString()));
+                    entity.setDetail("prod1", "declareAmountUsd", new BigDecimal(prod1DeclareAmountUsd));
                     if (prod2DeclareAmountUsd != null) {
-                        entity.setProd2DeclareAmountUsd(new BigDecimal(prod2DeclareAmountUsd.toString()));
+                        entity.setDetail("prod2", "declareAmountUsd", new BigDecimal(prod2DeclareAmountUsd));
                     }
                     if (prod3DeclareAmountUsd != null) {
-                        entity.setProd3DeclareAmountUsd(new BigDecimal(prod3DeclareAmountUsd.toString()));
+                        entity.setDetail("prod3", "declareAmountUsd", new BigDecimal(prod3DeclareAmountUsd));
+                    }
+                    if (prod4DeclareAmountUsd != null) {
+                        entity.setDetail("prod4", "declareAmountUsd", new BigDecimal(prod4DeclareAmountUsd));
+                    }
+                    if (prod5DeclareAmountUsd != null) {
+                        entity.setDetail("prod5", "declareAmountUsd", new BigDecimal(prod5DeclareAmountUsd));
+                    }
+                    if (prod6DeclareAmountUsd != null) {
+                        entity.setDetail("prod6", "declareAmountUsd", new BigDecimal(prod6DeclareAmountUsd));
+                    }
+                    if (prod7DeclareAmountUsd != null) {
+                        entity.setDetail("prod7", "declareAmountUsd", new BigDecimal(prod7DeclareAmountUsd));
+                    }
+                    if (prod8DeclareAmountUsd != null) {
+                        entity.setDetail("prod8", "declareAmountUsd", new BigDecimal(prod8DeclareAmountUsd));
+                    }
+                    if (prod9DeclareAmountUsd != null) {
+                        entity.setDetail("prod9", "declareAmountUsd", new BigDecimal(prod9DeclareAmountUsd));
+                    }
+                    if (prod10DeclareAmountUsd != null) {
+                        entity.setDetail("prod10", "declareAmountUsd", new BigDecimal(prod10DeclareAmountUsd));
                     }
                     result.add(entity);
                 }
@@ -261,8 +307,12 @@ public class PdfFileServiceImpl implements PdfFileService {
                         } catch (NumberFormatException e) {
                             convertData = null;
                         }
-                        log.info("文件[" + pdfFileEntity.getPdfFileId() + "]的第[" + page + "]页，字段[" + coordinate.getFieldName() + "]=[" + data + "]，转换后数据[" + convertData + "]，读取方式[" + coordinate.getReadType() + "]");
-                        BeanUtil.setFieldValue(result, coordinate.getFieldName(), convertData);
+                        log.info("文件[" + pdfFileEntity.getPdfFileId() + "]的第[" + page + "]页，字段[" + coordinate.getFieldType() + "." + coordinate.getFieldCategory() + "." + coordinate.getFieldName() + "]=[" + data + "]，转换后数据[" + convertData + "]，读取方式[" + coordinate.getReadType() + "]");
+                        if (PdfDataCoordinateEntity.FIELD_TYPE_LIST.equals(coordinate.getFieldType())) {
+                            BeanUtil.setFieldValue(result, coordinate.getFieldName(), convertData);
+                        } else if (PdfDataCoordinateEntity.FIELD_TYPE_DETAIL.equals(coordinate.getFieldType())) {
+                            result.setDetail(coordinate.getFieldCategory(), coordinate.getFieldName(), convertData);
+                        }
                     }
                 }
             }
@@ -461,6 +511,10 @@ public class PdfFileServiceImpl implements PdfFileService {
         if (updatedPdfEntity == null || originalPdfEntity == null) {
             return;
         }
+
+        updatedPdfEntity.initPdfListDetailMap(this.pdfListDetailService.getPdfListDetail(updatedPdfEntity.getPdfId()));
+        originalPdfEntity.initPdfListDetailMap(this.pdfListDetailService.getPdfListDetail(originalPdfEntity.getPdfId()));
+
         PdfFileEntity originalPdfFile = this.getPdfFileByPdfId(originalPdfEntity.getPdfId());
         if (originalPdfFile == null) {
             return;
@@ -493,7 +547,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                         for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                             String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
                             String originalText = getCoordinateText(coordinate, originalPdfEntity);
-                            log.info("replacePdfFileData[" + coordinate.getFieldName() + "] : originalText[" + originalText + "] - replaceText[" + replaceText + "]");
+                            log.info("replacePdfFileData[" + coordinate.getFieldType() + "." + coordinate.getFieldCategory() + "." + coordinate.getFieldName() + "] : originalText[" + originalText + "] - replaceText[" + replaceText + "]");
                             if (StringUtils.isBlank(replaceText)
                                     || StringUtils.isBlank(originalText)
                                     || replaceText.equals(originalText)) {
@@ -513,7 +567,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                             document.getPages().get_Item(page).accept(textFragmentAbsorber);
                             TextFragmentCollection textFragmentCollection = textFragmentAbsorber.getTextFragments();
                             for (TextFragment textFragment : (Iterable<TextFragment>) textFragmentCollection) {
-                                log.info("replacePdfFileData[" + coordinate.getFieldName() + "] : textFragment.getText()[" + textFragment.getText() + "] - rectangle[" + textFragment.getRectangle() + "]");
+                                log.info("replacePdfFileData[" + coordinate.getFieldType() + "." + coordinate.getFieldCategory() + "." + coordinate.getFieldName() + "] : textFragment.getText()[" + textFragment.getText() + "] - rectangle[" + textFragment.getRectangle() + "]");
                                 if (!originalText.equals(textFragment.getText())) {
                                     continue;
                                 }
@@ -591,7 +645,13 @@ public class PdfFileServiceImpl implements PdfFileService {
     private String getCoordinateText(PdfDataCoordinateEntity coordinate, PdfListEntity updatedPdf) {
         String result = "";
         try {
-            Object obj = BeanUtil.getFieldValue(updatedPdf, coordinate.getFieldName());
+            Object obj = null;
+            if (PdfDataCoordinateEntity.FIELD_TYPE_LIST.equals(coordinate.getFieldType())) {
+                obj = BeanUtil.getFieldValue(updatedPdf, coordinate.getFieldName());
+            } else if (PdfDataCoordinateEntity.FIELD_TYPE_DETAIL.equals(coordinate.getFieldType())) {
+                obj = updatedPdf.getDetail(coordinate.getFieldCategory(), coordinate.getFieldName());
+            }
+
             if (obj != null) {
                 if (PdfDataCoordinateEntity.DATA_TYPE_DECIMAL.equals(coordinate.getDataType())) {
                     BigDecimal bd = (BigDecimal)obj;

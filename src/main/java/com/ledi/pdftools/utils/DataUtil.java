@@ -10,6 +10,22 @@ import java.text.SimpleDateFormat;
 
 public class DataUtil {
 
+    public static BigDecimal valueOfBigDecimal(Object value) {
+        return valueOfBigDecimal(value, null);
+    }
+
+    public static BigDecimal valueOfBigDecimal(Object value, BigDecimal defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+
+        try {
+            return (BigDecimal) value;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
     public static BigDecimal round(BigDecimal value, int digit) {
         if (value != null) {
             return new BigDecimal((value.intValue() / digit) * digit);

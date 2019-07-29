@@ -21,36 +21,12 @@ public interface PdfListMapper {
     public static final String COLUMNS = "pdf_id as pdfId, type, awb, awb_replace as awbReplace, num, weight," +
             "declare_total_amount_usd as declareTotalAmountUsd, declare_freight_amount_usd as declareFreightAmountUsd, clearance_amount as clearanceAmount," +
             "bpr_amount as bprAmount, tariff, excise_tax as exciseTax, local_excise_tax as localExciseTax, tax_total_amount as taxTotalAmount,usd_jpy_exchange_rate as usdJpyExchangeRate," +
-            "prod1_declare_amount_usd as prod1DeclareAmountUsd, prod2_declare_amount_usd as prod2DeclareAmountUsd, prod3_declare_amount_usd as prod3DeclareAmountUsd," +
-            "prod1_tariff_rate as prod1TariffRate, prod2_tariff_rate as prod2TariffRate, prod3_tariff_rate as prod3TariffRate," +
-            "prod1_freight_pct as prod1FreightPct, prod2_freight_pct as prod2FreightPct, prod3_freight_pct as prod3FreightPct," +
-            "prod1_declare_amount_jpy as prod1DeclareAmountJpy, prod2_declare_amount_jpy as prod2DeclareAmountJpy, prod3_declare_amount_jpy as prod3DeclareAmountJpy," +
-            "prod1_tariff_base as prod1TariffBase, prod2_tariff_base as prod2TariffBase, prod3_tariff_base as prod3TariffBase," +
-            "prod1_tariff as prod1Tariff, prod2_tariff as prod2Tariff, prod3_tariff as prod3Tariff," +
-            "prod1_tariff_rounding as prod1TariffRounding, prod2_tariff_rounding as prod2TariffRounding, prod3_tariff_rounding as prod3TariffRounding," +
-            "prod1_country_excise_tax as prod1CountryExciseTax, prod2_country_excise_tax as prod2CountryExciseTax, prod3_country_excise_tax as prod3CountryExciseTax," +
-            "prod1_country_excise_tax_base as prod1CountryExciseTaxBase, prod2_country_excise_tax_base as prod2CountryExciseTaxBase, prod3_country_excise_tax_base as prod3CountryExciseTaxBase," +
-            "prod1_country_excise_tax_amount as prod1CountryExciseTaxAmount, prod2_country_excise_tax_amount as prod2CountryExciseTaxAmount, prod3_country_excise_tax_amount as prod3CountryExciseTaxAmount," +
-            "prod1_local_excise_tax_base as prod1LocalExciseTaxBase, prod2_local_excise_tax_base as prod2LocalExciseTaxBase, prod3_local_excise_tax_base as prod3LocalExciseTaxBase," +
-            "prod1_local_excise_tax_amount as prod1LocalExciseTaxAmount, prod2_local_excise_tax_amount as prod2LocalExciseTaxAmount, prod3_local_excise_tax_amount as prod3LocalExciseTaxAmount," +
             "tariff_total_amount as tariffTotalAmount, country_excise_tax_total_amount as countryExciseTaxTotalAmount, local_excise_tax_total_amount as localExciseTaxTotalAmount," +
             "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime, permission_time as permissionTime";
 
     public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight," +
             "declare_total_amount_usd, declare_freight_amount_usd, clearance_amount," +
             "bpr_amount, tariff, excise_tax, local_excise_tax, tax_total_amount,usd_jpy_exchange_rate," +
-            "prod1_declare_amount_usd, prod2_declare_amount_usd, prod3_declare_amount_usd," +
-            "prod1_tariff_rate, prod2_tariff_rate, prod3_tariff_rate," +
-            "prod1_freight_pct, prod2_freight_pct, prod3_freight_pct," +
-            "prod1_declare_amount_jpy, prod2_declare_amount_jpy, prod3_declare_amount_jpy," +
-            "prod1_tariff_base, prod2_tariff_base, prod3_tariff_base," +
-            "prod1_tariff, prod2_tariff, prod3_tariff," +
-            "prod1_tariff_rounding, prod2_tariff_rounding, prod3_tariff_rounding," +
-            "prod1_country_excise_tax, prod2_country_excise_tax, prod3_country_excise_tax," +
-            "prod1_country_excise_tax_base, prod2_country_excise_tax_base, prod3_country_excise_tax_base," +
-            "prod1_country_excise_tax_amount, prod2_country_excise_tax_amount, prod3_country_excise_tax_amount," +
-            "prod1_local_excise_tax_base, prod2_local_excise_tax_base, prod3_local_excise_tax_base," +
-            "prod1_local_excise_tax_amount, prod2_local_excise_tax_amount, prod3_local_excise_tax_amount," +
             "tariff_total_amount, country_excise_tax_total_amount, local_excise_tax_total_amount," +
             "make_status, make_time, del_status, create_time, permission_time";
 
@@ -79,18 +55,6 @@ public interface PdfListMapper {
             " declare_total_amount_usd=#{declareTotalAmountUsd}, declare_freight_amount_usd=#{declareFreightAmountUsd}," +
             " clearance_amount=#{clearanceAmount}, bpr_amount=#{bprAmount}, tariff=#{tariff}, excise_tax=#{exciseTax}, local_excise_tax=#{localExciseTax}," +
             " tax_total_amount=#{taxTotalAmount}, usd_jpy_exchange_rate=#{usdJpyExchangeRate}," +
-            " prod1_declare_amount_usd=#{prod1DeclareAmountUsd}, prod2_declare_amount_usd=#{prod2DeclareAmountUsd}, prod3_declare_amount_usd=#{prod3DeclareAmountUsd}," +
-            " prod1_tariff_rate=#{prod1TariffRate}, prod2_tariff_rate=#{prod2TariffRate}, prod3_tariff_rate=#{prod3TariffRate}," +
-            " prod1_freight_pct=#{prod1FreightPct}, prod2_freight_pct=#{prod2FreightPct}, prod3_freight_pct=#{prod3FreightPct}," +
-            " prod1_declare_amount_jpy=#{prod1DeclareAmountJpy}, prod2_declare_amount_jpy=#{prod2DeclareAmountJpy}, prod3_declare_amount_jpy=#{prod3DeclareAmountJpy}," +
-            " prod1_tariff_base=#{prod1TariffBase}, prod2_tariff_base=#{prod2TariffBase}, prod3_tariff_base=#{prod3TariffBase}," +
-            " prod1_tariff=#{prod1Tariff}, prod2_tariff=#{prod2Tariff}, prod3_tariff=#{prod3Tariff}," +
-            " prod1_tariff_rounding=#{prod1TariffRounding}, prod2_tariff_rounding=#{prod2TariffRounding}, prod3_tariff_rounding=#{prod3TariffRounding}," +
-            " prod1_country_excise_tax=#{prod1CountryExciseTax}, prod2_country_excise_tax=#{prod2CountryExciseTax}, prod3_country_excise_tax=#{prod3CountryExciseTax}," +
-            " prod1_country_excise_tax_base=#{prod1CountryExciseTaxBase}, prod2_country_excise_tax_base=#{prod2CountryExciseTaxBase}, prod3_country_excise_tax_base=#{prod3CountryExciseTaxBase}," +
-            " prod1_country_excise_tax_amount=#{prod1CountryExciseTaxAmount}, prod2_country_excise_tax_amount=#{prod2CountryExciseTaxAmount}, prod3_country_excise_tax_amount=#{prod3CountryExciseTaxAmount}," +
-            " prod1_local_excise_tax_base=#{prod1LocalExciseTaxBase}, prod2_local_excise_tax_base=#{prod2LocalExciseTaxBase}, prod3_local_excise_tax_base=#{prod3LocalExciseTaxBase}," +
-            " prod1_local_excise_tax_amount=#{prod1LocalExciseTaxAmount}, prod2_local_excise_tax_amount=#{prod2LocalExciseTaxAmount}, prod3_local_excise_tax_amount=#{prod3LocalExciseTaxAmount}," +
             " tariff_total_amount=#{tariffTotalAmount}, country_excise_tax_total_amount=#{countryExciseTaxTotalAmount}, local_excise_tax_total_amount=#{localExciseTaxTotalAmount}," +
             " make_status=#{makeStatus}, make_time=#{makeTime}, permission_time=#{permissionTime}" +
             " where pdf_id=#{pdfId}")
@@ -99,18 +63,6 @@ public interface PdfListMapper {
     @Insert("insert into pdf_list(" + ADD_COLUMNS + ")" +
             " values(#{pdfId}, #{type}, #{awb}, #{awbReplace}, #{num}, #{weight}, #{declareTotalAmountUsd}, #{declareFreightAmountUsd}," +
             " #{clearanceAmount}, #{bprAmount}, #{tariff}, #{exciseTax}, #{localExciseTax}, #{taxTotalAmount}, #{usdJpyExchangeRate}," +
-            " #{prod1DeclareAmountUsd}, #{prod2DeclareAmountUsd}, #{prod3DeclareAmountUsd}," +
-            " #{prod1TariffRate}, #{prod2TariffRate}, #{prod3TariffRate}," +
-            " #{prod1FreightPct}, #{prod2FreightPct}, #{prod3FreightPct}," +
-            " #{prod1DeclareAmountJpy}, #{prod2DeclareAmountJpy}, #{prod3DeclareAmountJpy}," +
-            " #{prod1TariffBase}, #{prod2TariffBase}, #{prod3TariffBase}," +
-            " #{prod1Tariff}, #{prod2Tariff}, #{prod3Tariff}," +
-            " #{prod1TariffRounding}, #{prod2TariffRounding}, #{prod3TariffRounding}," +
-            " #{prod1CountryExciseTax}, #{prod2CountryExciseTax}, #{prod3CountryExciseTax}," +
-            " #{prod1CountryExciseTaxBase}, #{prod2CountryExciseTaxBase}, #{prod3CountryExciseTaxBase}," +
-            " #{prod1CountryExciseTaxAmount}, #{prod2CountryExciseTaxAmount}, #{prod3CountryExciseTaxAmount}," +
-            " #{prod1LocalExciseTaxBase}, #{prod2LocalExciseTaxBase}, #{prod3LocalExciseTaxBase}," +
-            " #{prod1LocalExciseTaxAmount}, #{prod2LocalExciseTaxAmount}, #{prod3LocalExciseTaxAmount}," +
             " #{tariffTotalAmount}, #{countryExciseTaxTotalAmount}, #{localExciseTaxTotalAmount}, #{makeStatus}, #{makeTime}, #{delStatus}, now(), #{permissionTime})")
     void save(PdfListEntity pdfListEntity);
 

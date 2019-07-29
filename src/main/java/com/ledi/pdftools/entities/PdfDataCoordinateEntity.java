@@ -20,8 +20,13 @@ public class PdfDataCoordinateEntity {
     public static final String READ_TYPE_ASPOSE = "aspose";
     public static final String READ_TYPE_ITEXT = "itext";
 
+    public static final String FIELD_TYPE_LIST = "list";
+    public static final String FIELD_TYPE_DETAIL = "detail";
+
     private String id;
     private Integer pageNo;
+    private String fieldType;
+    private String fieldCategory;
     private String fieldName;
     private BigDecimal llx;
     private BigDecimal lly;

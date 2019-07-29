@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Setter
 public class PdfDetailModel {
 
-    private String prodNo;
     private BigDecimal declareAmountUsd;
     private BigDecimal tariffRate;
     private BigDecimal freightPct;
