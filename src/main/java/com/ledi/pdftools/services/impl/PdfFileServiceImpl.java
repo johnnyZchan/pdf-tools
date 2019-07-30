@@ -4,10 +4,7 @@ import com.aspose.pdf.*;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
-import com.ledi.pdftools.beans.ExportColumnModel;
-import com.ledi.pdftools.beans.PdfFileModel;
-import com.ledi.pdftools.beans.PdfListModel;
-import com.ledi.pdftools.beans.PdfModel;
+import com.ledi.pdftools.beans.*;
 import com.ledi.pdftools.constants.CodeInfo;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfFileEntity;
@@ -40,7 +37,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("pdfFileService")
 @Slf4j
@@ -50,6 +49,15 @@ public class PdfFileServiceImpl implements PdfFileService {
     String fileBaseDir;
     @Value("${pdf.tools.replace.rectangle.display}")
     boolean displayRectangle;
+
+    @Value("${pdf.tools.file.template.rectangle.left}")
+    double templateRectLeft;
+    @Value("${pdf.tools.file.template.rectangle.top}")
+    double templateRectTop;
+    @Value("${pdf.tools.file.template.rectangle.width}")
+    double templateRectWidth;
+    @Value("${pdf.tools.file.template.rectangle.height}")
+    double templateRectHeight;
 
     @Resource
     PdfFileMapper pdfFileMapper;
@@ -165,38 +173,38 @@ public class PdfFileServiceImpl implements PdfFileService {
 
                     try {
                         // 单号
-                        awb = row.getCell(0) != null ? row.getCell(0).getStringCellValue() : null;
+                        awb = DataUtil.getExcelCellStringValue(row.getCell(0));
                         // 换单号
-                        awbReplace = row.getCell(1) != null ? row.getCell(1).getStringCellValue() : null;
+                        awbReplace = DataUtil.getExcelCellStringValue(row.getCell(1));
                         // 件数
-                        num = row.getCell(2) != null ? row.getCell(2).getNumericCellValue() : null;
+                        num = DataUtil.getExcelCellDoubleValue(row.getCell(2));
                         // 重量
-                        weight = row.getCell(3) != null ? row.getCell(3).getNumericCellValue() : null;
+                        weight = DataUtil.getExcelCellDoubleValue(row.getCell(3));
                         // 总申报价值USD
-                        declareTotalAmountUsd = row.getCell(4) != null ? row.getCell(4).getNumericCellValue() : null;
+                        declareTotalAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(4));
                         // 申报运费USD
-                        declareFreightAmountUsd = row.getCell(5) != null ? row.getCell(5).getNumericCellValue() : null;
+                        declareFreightAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(5));
                         // 品名1美⾦申报价值
-                        prod1DeclareAmountUsd = row.getCell(6) != null ? row.getCell(6).getNumericCellValue() : null;
+                        prod1DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(6));
                         // 品名2美⾦申报价值
-                        prod2DeclareAmountUsd = row.getCell(7) != null ? row.getCell(7).getNumericCellValue() : null;
+                        prod2DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(7));
                         // 品名3美⾦申报价值
-                        prod3DeclareAmountUsd = row.getCell(8) != null ? row.getCell(8).getNumericCellValue() : null;
+                        prod3DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(8));
 
                         // 品名4美⾦申报价值
-                        prod4DeclareAmountUsd = row.getCell(9) != null ? row.getCell(9).getNumericCellValue() : null;
+                        prod4DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(9));
                         // 品名5美⾦申报价值
-                        prod5DeclareAmountUsd = row.getCell(10) != null ? row.getCell(10).getNumericCellValue() : null;
+                        prod5DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(10));
                         // 品名6美⾦申报价值
-                        prod6DeclareAmountUsd = row.getCell(11) != null ? row.getCell(11).getNumericCellValue() : null;
+                        prod6DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(11));
                         // 品名7美⾦申报价值
-                        prod7DeclareAmountUsd = row.getCell(12) != null ? row.getCell(12).getNumericCellValue() : null;
+                        prod7DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(12));
                         // 品名8美⾦申报价值
-                        prod8DeclareAmountUsd = row.getCell(13) != null ? row.getCell(13).getNumericCellValue() : null;
+                        prod8DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(13));
                         // 品名9美⾦申报价值
-                        prod9DeclareAmountUsd = row.getCell(14) != null ? row.getCell(14).getNumericCellValue() : null;
+                        prod9DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(14));
                         // 品名10美⾦申报价值
-                        prod10DeclareAmountUsd = row.getCell(15) != null ? row.getCell(15).getNumericCellValue() : null;
+                        prod10DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(15));
                     } catch (Exception e) {
                         log.warn("Excel数据格式不正确", e);
                     }
@@ -215,15 +223,15 @@ public class PdfFileServiceImpl implements PdfFileService {
                         entity.setWeight(new BigDecimal(weight.toString()));
                     }
                     if (declareTotalAmountUsd == null) {
-                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "总申报价值USD");
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "总申报价值USD"));
                     }
                     entity.setDeclareTotalAmountUsd(new BigDecimal(declareTotalAmountUsd.toString()));
                     if (declareFreightAmountUsd == null) {
-                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "申报运费USD");
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "申报运费USD"));
                     }
                     entity.setDeclareFreightAmountUsd(new BigDecimal(declareFreightAmountUsd.toString()));
                     if (prod1DeclareAmountUsd == null) {
-                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "品名1美金申报价值");
+                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "品名1美金申报价值"));
                     }
                     entity.setDetail("prod1", "declareAmountUsd", new BigDecimal(prod1DeclareAmountUsd));
                     if (prod2DeclareAmountUsd != null) {
@@ -288,10 +296,14 @@ public class PdfFileServiceImpl implements PdfFileService {
 
         Document document = null;
         PdfListEntity result = new PdfListEntity();
+        String templateName = this.getFileTemplateName(pdfFileEntity.getFilePath());
+        if (StringUtils.isBlank(templateName)) {
+            throw new ServiceException(MessageUtil.getMessage("pdf.file.template.name.get.error"));
+        }
         try {
             document = new Document(pdfFileEntity.getFilePath());
             for (int page = 1; page <= document.getPages().size(); page ++) {
-                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
+                List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(templateName, page);
                 if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                     for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                         String data = null;
@@ -356,6 +368,28 @@ public class PdfFileServiceImpl implements PdfFileService {
                 } catch (Exception e) {}
             }
         }
+    }
+
+    public String getFileTemplateName(String filePath) {
+        if (StringUtils.isBlank(filePath)) {
+            return null;
+        }
+
+        PdfReader reader = null;
+        try {
+            reader = new PdfReader(filePath);
+            RectModel rectModel = this.pdfDataCoordinateService.createRect(templateRectLeft, templateRectTop, templateRectWidth, templateRectHeight);
+            if (rectModel != null) {
+                String result = this.readData(reader, 1, rectModel.getLlx(), rectModel.getLly(), rectModel.getUrx(), rectModel.getUry());
+                if (StringUtils.isNotBlank(result)) {
+                    return result.replaceAll("<", "").replaceAll(">", "");
+                }
+            }
+        } catch (Exception e) {
+            log.error("获取文件模板名称失败", e);
+        }
+
+        return null;
     }
 
     public String readData(Object pdf, int page, BigDecimal llx, BigDecimal lly, BigDecimal urx, BigDecimal ury) throws IOException {
@@ -537,12 +571,16 @@ public class PdfFileServiceImpl implements PdfFileService {
         }
 
         Document document = null;
+        String templateName = this.getFileTemplateName(originalPdfFile.getFilePath());
+        if (StringUtils.isBlank(templateName)) {
+            throw new ServiceException(MessageUtil.getMessage("pdf.file.template.name.get.error"));
+        }
         try {
             document = new Document(originalPdfFile.getFilePath());
             document.getInfo().setAuthor("");
             for (int page = 1; page <= document.getPages().size(); page ++) {
                 if (isReplace) {
-                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(page);
+                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getReplacePageDataCoordinateList(templateName, page);
                     if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                         for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                             String replaceText = getCoordinateText(coordinate, updatedPdfEntity);
@@ -595,7 +633,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                 }
 
                 if (isClear) {
-                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getDeletePageDataCoordinateList(page);
+                    List<PdfDataCoordinateEntity> dataCoordinateList = this.pdfDataCoordinateService.getDeletePageDataCoordinateList(templateName, page);
                     if (dataCoordinateList != null && dataCoordinateList.size() > 0) {
                         for (PdfDataCoordinateEntity coordinate : dataCoordinateList) {
                             if (StringUtils.isNotBlank(coordinate.getFieldName())) {
@@ -739,22 +777,47 @@ public class PdfFileServiceImpl implements PdfFileService {
 
         // 创建内容
         PdfModel pdfModel = null;
+        PdfDetailModel pdfDetailModel = null;
         for (int i = 0; i < datas.size(); i ++) {
             row = sheet.createRow(i + 1);
-            for (int j = 0; j < titles.size(); j ++) {
-                if (type == PdfListEntity.TYPE_ORIGINAL) {
-                    pdfModel = datas.get(i).getOriginalPdf();
-                } else if (type == PdfListEntity.TYPE_UPDATED) {
-                    pdfModel = datas.get(i).getUpdatedPdf();
-                } else {
-                    pdfModel = datas.get(i).getComparePdf();
-                    if (pdfModel != null && datas.get(i).getUpdatedPdf() != null) {
-                        pdfModel.setAwb(datas.get(i).getUpdatedPdf().getAwb());
-                        pdfModel.setAwbReplace(datas.get(i).getUpdatedPdf().getAwbReplace());
-                    }
-                }
 
-                row.createCell(j).setCellValue(this.createRowValue(pdfModel, titles.get(j).getDataFieldName()));
+            Map<String, PdfListDetailModel> pdfDetailModelMap = new HashMap<String, PdfListDetailModel>();
+            if (datas.get(i).getDetailList() != null && !datas.get(i).getDetailList().isEmpty()) {
+                datas.get(i).getDetailList().forEach(detail -> {
+                    pdfDetailModelMap.put(detail.getProdNo(), detail);
+                });
+            }
+
+            for (int j = 0; j < titles.size(); j ++) {
+                pdfModel = null;
+                pdfDetailModel = null;
+
+                if (PdfDataCoordinateEntity.FIELD_TYPE_DETAIL.equals(titles.get(j).getDataFieldType())) {
+                    PdfListDetailModel pdfListDetailModel = pdfDetailModelMap.get(titles.get(j).getDataFieldCategory());
+                    if (pdfListDetailModel != null) {
+                        if (type == PdfListEntity.TYPE_ORIGINAL) {
+                            pdfDetailModel = pdfListDetailModel.getOriginalPdfDetail();
+                        } else if (type == PdfListEntity.TYPE_UPDATED) {
+                            pdfDetailModel = pdfListDetailModel.getUpdatedPdfDetail();
+                        }
+                    }
+
+                    row.createCell(j).setCellValue(this.createRowValue(pdfDetailModel, titles.get(j).getDataFieldName()));
+                } else {
+                    if (type == PdfListEntity.TYPE_ORIGINAL) {
+                        pdfModel = datas.get(i).getOriginalPdf();
+                    } else if (type == PdfListEntity.TYPE_UPDATED) {
+                        pdfModel = datas.get(i).getUpdatedPdf();
+                    } else {
+                        pdfModel = datas.get(i).getComparePdf();
+                        if (pdfModel != null && datas.get(i).getUpdatedPdf() != null) {
+                            pdfModel.setAwb(datas.get(i).getUpdatedPdf().getAwb());
+                            pdfModel.setAwbReplace(datas.get(i).getUpdatedPdf().getAwbReplace());
+                        }
+                    }
+
+                    row.createCell(j).setCellValue(this.createRowValue(pdfModel, titles.get(j).getDataFieldName()));
+                }
             }
         }
 
@@ -763,76 +826,57 @@ public class PdfFileServiceImpl implements PdfFileService {
 
     private List<ExportColumnModel> getColumns() {
         List<ExportColumnModel> result = new ArrayList<ExportColumnModel>();
-        result.add(new ExportColumnModel("单号", "awb"));
-        result.add(new ExportColumnModel("换单号", "awbReplace"));
-        result.add(new ExportColumnModel("制作时间", "makeTime"));
-        result.add(new ExportColumnModel("许可时间", "permissionTime"));
-        result.add(new ExportColumnModel("制作状态", "makeStatus"));
-        result.add(new ExportColumnModel("件数", "num"));
-        result.add(new ExportColumnModel("重量", "weight"));
-        result.add(new ExportColumnModel("总申报价值USD", "declareTotalAmountUsd"));
-        result.add(new ExportColumnModel("申报运费USD", "declareFreightAmountUsd"));
-        result.add(new ExportColumnModel("通关金额", "clearanceAmount"));
-        result.add(new ExportColumnModel("BPR合计", "bprAmount"));
-        result.add(new ExportColumnModel("关税", "tariff"));
-        result.add(new ExportColumnModel("消费税", "exciseTax"));
-        result.add(new ExportColumnModel("地方消费税", "localExciseTax"));
-        result.add(new ExportColumnModel("税金合计", "taxTotalAmount"));
-        result.add(new ExportColumnModel("美元日元汇率", "usdJpyExchangeRate"));
+        result.add(new ExportColumnModel("单号", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "awb"));
+        result.add(new ExportColumnModel("换单号", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "awbReplace"));
+        result.add(new ExportColumnModel("制作时间", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "makeTime"));
+        result.add(new ExportColumnModel("许可时间", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "permissionTime"));
+        result.add(new ExportColumnModel("制作状态", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "makeStatus"));
+        result.add(new ExportColumnModel("件数", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "num"));
+        result.add(new ExportColumnModel("重量", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "weight"));
+        result.add(new ExportColumnModel("总申报价值USD", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareTotalAmountUsd"));
+        result.add(new ExportColumnModel("申报运费USD", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightAmountUsd"));
+        result.add(new ExportColumnModel("通关金额", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "clearanceAmount"));
+        result.add(new ExportColumnModel("BPR合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "bprAmount"));
+        result.add(new ExportColumnModel("关税", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "tariff"));
+        result.add(new ExportColumnModel("消费税", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "exciseTax"));
+        result.add(new ExportColumnModel("地方消费税", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "localExciseTax"));
+        result.add(new ExportColumnModel("税金合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "taxTotalAmount"));
+        result.add(new ExportColumnModel("美元日元汇率", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "usdJpyExchangeRate"));
 
-        result.add(new ExportColumnModel("品名1美金申报价值", "prod1DeclareAmountUsd"));
-        result.add(new ExportColumnModel("品名1关税率", "prod1TariffRate"));
-        result.add(new ExportColumnModel("品名1运费比重", "prod1FreightPct"));
-        result.add(new ExportColumnModel("品名1日元申报价值", "prod1DeclareAmountJpy"));
-        result.add(new ExportColumnModel("品名1关税计算基数", "prod1TariffBase"));
-        result.add(new ExportColumnModel("品名1关税额", "prod1Tariff"));
-        result.add(new ExportColumnModel("品名1关税取整", "prod1TariffRounding"));
-        result.add(new ExportColumnModel("品名1国内消费税", "prod1CountryExciseTax"));
-        result.add(new ExportColumnModel("品名1国内消费税额基数", "prod1CountryExciseTaxBase"));
-        result.add(new ExportColumnModel("品名1国内消费税金额", "prod1CountryExciseTaxAmount"));
-        result.add(new ExportColumnModel("品名1地方消费税基数", "prod1LocalExciseTaxBase"));
-        result.add(new ExportColumnModel("品名1地方消费税金额", "prod1LocalExciseTaxAmount"));
+        int index = 1;
+        int max = 10;
+        while (index <= max) {
+            String fieldCategory = "prod" + index;
+            result.add(new ExportColumnModel("品名" + index + "美金申报价值", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "declareAmountUsd"));
+            result.add(new ExportColumnModel("品名" + index + "关税率", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "tariffRate"));
+            result.add(new ExportColumnModel("品名" + index + "运费比重", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "freightPct"));
+            result.add(new ExportColumnModel("品名" + index + "日元申报价值", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "declareAmountJpy"));
+            result.add(new ExportColumnModel("品名" + index + "关税计算基数", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "tariffBase"));
+            result.add(new ExportColumnModel("品名" + index + "关税额", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "tariff"));
+            result.add(new ExportColumnModel("品名" + index + "关税取整", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "tariffRounding"));
+            result.add(new ExportColumnModel("品名" + index + "国内消费税", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "countryExciseTax"));
+            result.add(new ExportColumnModel("品名" + index + "国内消费税额基数", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "countryExciseTaxBase"));
+            result.add(new ExportColumnModel("品名" + index + "国内消费税金额", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "countryExciseTaxAmount"));
+            result.add(new ExportColumnModel("品名" + index + "地方消费税基数", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "localExciseTaxBase"));
+            result.add(new ExportColumnModel("品名" + index + "地方消费税金额", PdfDataCoordinateEntity.FIELD_TYPE_DETAIL, fieldCategory, "localExciseTaxAmount"));
 
-        result.add(new ExportColumnModel("品名2美金申报价值", "prod2DeclareAmountUsd"));
-        result.add(new ExportColumnModel("品名2关税率", "prod2TariffRate"));
-        result.add(new ExportColumnModel("品名2运费比重", "prod2FreightPct"));
-        result.add(new ExportColumnModel("品名2日元申报价值", "prod2DeclareAmountJpy"));
-        result.add(new ExportColumnModel("品名2关税计算基数", "prod2TariffBase"));
-        result.add(new ExportColumnModel("品名2关税额", "prod2Tariff"));
-        result.add(new ExportColumnModel("品名2关税取整", "prod2TariffRounding"));
-        result.add(new ExportColumnModel("品名2国内消费税", "prod2CountryExciseTax"));
-        result.add(new ExportColumnModel("品名2国内消费税额基数", "prod2CountryExciseTaxBase"));
-        result.add(new ExportColumnModel("品名2国内消费税金额", "prod2CountryExciseTaxAmount"));
-        result.add(new ExportColumnModel("品名2地方消费税基数", "prod2LocalExciseTaxBase"));
-        result.add(new ExportColumnModel("品名2地方消费税金额", "prod2LocalExciseTaxAmount"));
+            index ++;
+        }
 
-        result.add(new ExportColumnModel("品名3美金申报价值", "prod3DeclareAmountUsd"));
-        result.add(new ExportColumnModel("品名3关税率", "prod3TariffRate"));
-        result.add(new ExportColumnModel("品名3运费比重", "prod3FreightPct"));
-        result.add(new ExportColumnModel("品名3日元申报价值", "prod3DeclareAmountJpy"));
-        result.add(new ExportColumnModel("品名3关税计算基数", "prod3TariffBase"));
-        result.add(new ExportColumnModel("品名3关税额", "prod3Tariff"));
-        result.add(new ExportColumnModel("品名3关税取整", "prod3TariffRounding"));
-        result.add(new ExportColumnModel("品名3国内消费税", "prod3CountryExciseTax"));
-        result.add(new ExportColumnModel("品名3国内消费税额基数", "prod3CountryExciseTaxBase"));
-        result.add(new ExportColumnModel("品名3国内消费税金额", "prod3CountryExciseTaxAmount"));
-        result.add(new ExportColumnModel("品名3地方消费税基数", "prod3LocalExciseTaxBase"));
-        result.add(new ExportColumnModel("品名3地方消费税金额", "prod3LocalExciseTaxAmount"));
-
-        result.add(new ExportColumnModel("关税合计", "tariffTotalAmount"));
-        result.add(new ExportColumnModel("国内消费税合计", "countryExciseTaxTotalAmount"));
-        result.add(new ExportColumnModel("地方消费税合计", "localExciseTaxTotalAmount"));
+        result.add(new ExportColumnModel("关税合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "tariffTotalAmount"));
+        result.add(new ExportColumnModel("国内消费税合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "countryExciseTaxTotalAmount"));
+        result.add(new ExportColumnModel("地方消费税合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "localExciseTaxTotalAmount"));
 
         return result;
     }
 
-    private String createRowValue(PdfModel pdfModel, String fieldName) {
-        if (pdfModel == null || StringUtils.isBlank(fieldName)) {
+    private String createRowValue(Object data, String fieldName) {
+        if (data == null || StringUtils.isBlank(fieldName)) {
             return "";
         }
         Object fieldVal = null;
         try {
-            fieldVal = BeanUtil.getFieldValue(pdfModel, fieldName);
+            fieldVal = BeanUtil.getFieldValue(data, fieldName);
         } catch (Exception e) {
             log.warn("获取数据失败", e);
         }
@@ -847,8 +891,8 @@ public class PdfFileServiceImpl implements PdfFileService {
             } else {
                 return "未制作";
             }
-        } else if ("prod1TariffRate".equals(fieldName) || "prod2TariffRate".equals(fieldName) || "prod3TariffRate".equals(fieldName)
-                || "prod1FreightPct".equals(fieldName) || "prod2FreightPct".equals(fieldName) || "prod3FreightPct".equals(fieldName)) {
+        } else if ("tariffRate".equals(fieldName)
+                || "freightPct".equals(fieldName)) {
             return (new BigDecimal(fieldVal.toString()).multiply(new BigDecimal(100))).toPlainString() + "%";
         } else {
             return fieldVal.toString();

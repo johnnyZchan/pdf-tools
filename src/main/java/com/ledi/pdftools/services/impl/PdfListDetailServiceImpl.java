@@ -34,10 +34,37 @@ public class PdfListDetailServiceImpl implements PdfListDetailService {
             return;
         }
 
+        if (this.isDetailEntityEmpty(pdfListDetailEntity)) {
+            return;
+        }
+
         if (StringUtils.isBlank(pdfListDetailEntity.getPdfDetailId())) {
             pdfListDetailEntity.setPdfDetailId(IDUtil.uuid());
         }
 
         this.pdfListDetailMapper.save(pdfListDetailEntity);
+    }
+
+    public boolean isDetailEntityEmpty(PdfListDetailEntity entity) {
+        if (entity == null) {
+            return true;
+        }
+
+        if (entity.getDeclareAmountUsd() == null
+                && entity.getTariffRate() == null
+                && entity.getFreightPct() == null
+                && entity.getDeclareAmountJpy() == null
+                && entity.getTariffBase() == null
+                && entity.getTariff() == null
+                && entity.getTariffRounding() == null
+                && entity.getCountryExciseTax() == null
+                && entity.getCountryExciseTaxBase() == null
+                && entity.getCountryExciseTaxAmount() == null
+                && entity.getLocalExciseTaxBase() == null
+                && entity.getLocalExciseTaxAmount() == null) {
+            return true;
+        }
+
+        return false;
     }
 }

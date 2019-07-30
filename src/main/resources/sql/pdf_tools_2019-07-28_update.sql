@@ -91,5 +91,10 @@ alter table pdf_list drop column prod1_local_excise_tax_amount;
 alter table pdf_list drop column prod2_local_excise_tax_amount;
 alter table pdf_list drop column prod3_local_excise_tax_amount;
 
+alter table pdf_data_coordinate add column template_name varchar(30) null comment '模板名称' after id;
+update pdf_data_coordinate set template_name='AIR/IMP';
+
+
+
 
 

@@ -516,7 +516,7 @@
         if (rowData != null && rowData.detailList != null) {
             $.each(rowData.detailList, function(i, item) {
                 html += "<tr>";
-                html += "<td rowspan='2'>" + item.prodNo + "</td>";
+                html += "<td rowspan='2'>" + formatProdNo(item.prodNo) + "</td>";
                 html += "<td>原始</td>";
                 if (item.originalPdfDetail != null) {
                     html += "<td>" + formatText(item.originalPdfDetail.declareAmountUsd) + "</td>";

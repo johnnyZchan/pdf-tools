@@ -24,6 +24,7 @@ public class PdfDataCoordinateEntity {
     public static final String FIELD_TYPE_DETAIL = "detail";
 
     private String id;
+    private String templateName;
     private Integer pageNo;
     private String fieldType;
     private String fieldCategory;

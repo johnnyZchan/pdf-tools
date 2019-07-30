@@ -1,6 +1,8 @@
 package com.ledi.pdftools.services.impl;
 
 
+import com.itextpdf.text.Rectangle;
+import com.ledi.pdftools.beans.RectModel;
 import com.ledi.pdftools.entities.PdfDataCoordinateEntity;
 import com.ledi.pdftools.entities.PdfListEntity;
 import com.ledi.pdftools.mappers.PdfDataCoordinateMapper;
@@ -26,17 +28,17 @@ public class PdfDataCoordinateServiceImpl implements PdfDataCoordinateService {
     @Resource
     PdfDataCoordinateMapper pdfDataCoordinateMapper;
 
-    public List<PdfDataCoordinateEntity> getDeletePageDataCoordinateList(int pageNo) {
-        return this.getPageDataCoordinateList(pageNo, PdfDataCoordinateEntity.ACTION_TYPE_DEL);
+    public List<PdfDataCoordinateEntity> getDeletePageDataCoordinateList(String templateName, int pageNo) {
+        return this.getPageDataCoordinateList(templateName, pageNo, PdfDataCoordinateEntity.ACTION_TYPE_DEL);
     }
 
-    public List<PdfDataCoordinateEntity> getReplacePageDataCoordinateList(int pageNo) {
-        return this.getPageDataCoordinateList(pageNo, PdfDataCoordinateEntity.ACTION_TYPE_REPLACE);
+    public List<PdfDataCoordinateEntity> getReplacePageDataCoordinateList(String templateName, int pageNo) {
+        return this.getPageDataCoordinateList(templateName, pageNo, PdfDataCoordinateEntity.ACTION_TYPE_REPLACE);
     }
 
     @Transactional
-    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(int pageNo, int actionType) {
-        List<PdfDataCoordinateEntity> result = this.pdfDataCoordinateMapper.findByPageAndAction(pageNo, actionType);
+    public List<PdfDataCoordinateEntity> getPageDataCoordinateList(String templateName, int pageNo, int actionType) {
+        List<PdfDataCoordinateEntity> result = this.pdfDataCoordinateMapper.findByPageAndAction(templateName, pageNo, actionType);
         if (result != null && result.size() > 0) {
             for (PdfDataCoordinateEntity entity : result) {
                 if (entity.getLlx() == null || entity.getLly() == null
@@ -73,6 +75,25 @@ public class PdfDataCoordinateServiceImpl implements PdfDataCoordinateService {
             entity.setUry(new BigDecimal(this.pdfFileHeight).subtract(entity.getMarginTop()));
             result = true;
         }
+
+        return result;
+    }
+
+    public RectModel createRect(Double left, Double top, Double width, Double height) {
+        if (left == null || top == null || width == null || height == null) {
+            return null;
+        }
+
+        BigDecimal llx = new BigDecimal(left);
+        BigDecimal lly = new BigDecimal(this.pdfFileHeight).subtract(new BigDecimal(top)).subtract(new BigDecimal(height));
+        BigDecimal urx = new BigDecimal(left).add(new BigDecimal(width));
+        BigDecimal ury = new BigDecimal(this.pdfFileHeight).subtract(new BigDecimal(top));
+
+        RectModel result = new RectModel();
+        result.setLlx(llx);
+        result.setLly(lly);
+        result.setUrx(urx);
+        result.setUry(ury);
 
         return result;
     }

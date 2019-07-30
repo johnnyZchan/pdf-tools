@@ -1,6 +1,8 @@
 package com.ledi.pdftools.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -9,6 +11,44 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
 public class DataUtil {
+
+    public static Double getExcelCellDoubleValue(Cell cell) {
+        if (cell != null) {
+            if (CellType.NUMERIC.compareTo(cell.getCellType()) == 0) {
+                return cell.getNumericCellValue();
+            } else if (CellType.STRING.compareTo(cell.getCellType()) == 0) {
+                return formatString2Double(cell.getStringCellValue());
+            }
+        }
+
+        return null;
+    }
+
+    public static String getExcelCellStringValue(Cell cell) {
+        if (cell != null) {
+            if (CellType.STRING.compareTo(cell.getCellType()) == 0) {
+                return cell.getStringCellValue();
+            } else if (CellType.NUMERIC.compareTo(cell.getCellType()) == 0) {
+                return String.valueOf(cell.getNumericCellValue());
+            }
+        }
+
+        return null;
+    }
+
+    public static Double formatString2Double(String value) {
+        try {
+            if (StringUtils.isBlank(value)) {
+                return null;
+            }
+
+            return Double.parseDouble(value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public static BigDecimal valueOfBigDecimal(Object value) {
         return valueOfBigDecimal(value, null);

@@ -7,11 +7,15 @@ import lombok.Setter;
 @Setter
 public class ExportColumnModel {
 
-    public ExportColumnModel(String title, String dataFieldName) {
+    public ExportColumnModel(String title, String dataFieldType, String dataFieldCategory, String dataFieldName) {
         this.title = title;
+        this.dataFieldType = dataFieldType;
+        this.dataFieldCategory = dataFieldCategory;
         this.dataFieldName = dataFieldName;
     }
 
     private String title;
+    private String dataFieldType;
+    private String dataFieldCategory;
     private String dataFieldName;
 }

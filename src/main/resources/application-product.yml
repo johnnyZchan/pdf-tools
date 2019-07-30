@@ -64,6 +64,12 @@ pdf:
       basedir: /usr/local/pdf_tools/upload/
       width: 595
       height: 842
+      template:
+        rectangle:
+          left: 28.01
+          top: 27.32
+          width: 53.98
+          height: 13.69
     replace:
       rectangle:
         display: false

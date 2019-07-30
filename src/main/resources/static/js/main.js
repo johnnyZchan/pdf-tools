@@ -26,3 +26,11 @@ function formatPercentText(data) {
     }
     return data;
 }
+
+function formatProdNo(data) {
+    if (data != null && data != "") {
+        return data.replace("prod", "品名")
+    }
+
+    return data;
+}

@@ -484,7 +484,7 @@ public class PdfListServiceImpl implements PdfListService {
         while (index <= max) {
             String fieldCategory = "prod" + index;
 
-            BigDecimal declareAmountUsd = DataUtil.valueOfBigDecimal(updatedEntity.getDetail(fieldCategory, "declareAmountUsd"), BigDecimal.ZERO);
+            BigDecimal declareAmountUsd = DataUtil.valueOfBigDecimal(updatedEntity.getDetail(fieldCategory, "declareAmountUsd"));
             if (declareAmountUsd != null) {
                 // 品名X关税率用原始数据
                 BigDecimal tariffRate = DataUtil.valueOfBigDecimal(originalEntity.getDetail(fieldCategory, "tariffRate"), BigDecimal.ZERO);
