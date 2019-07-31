@@ -500,7 +500,8 @@ public class PdfListServiceImpl implements PdfListService {
 
                 // 品名X日元申报价值=品名X申报价值*美元日元汇率+申报运费USD*美元日元汇率*品名X运费比重
                 BigDecimal declareAmountJpy = (declareAmountUsd.multiply(usdJpyExchangeRate)).add(updatedEntity.getDeclareFreightAmountUsd().multiply(usdJpyExchangeRate).multiply(freightPct));
-                updatedEntity.setDetail(fieldCategory, "declareAmountJpy", DataUtil.round(declareAmountJpy, 1));
+                declareAmountJpy = DataUtil.round(declareAmountJpy, 1);
+                updatedEntity.setDetail(fieldCategory, "declareAmountJpy", declareAmountJpy);
 
                 /**
                  * 如果原始数据中的税金合计=0，则更新数据保持和原始数据一致即可，不需要进行计算
