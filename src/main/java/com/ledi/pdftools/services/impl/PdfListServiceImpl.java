@@ -561,9 +561,15 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setLocalExciseTaxTotalAmount(BigDecimal.ZERO);
         if (updatedEntity.getPdfListDetailMap() != null && !updatedEntity.getPdfListDetailMap().isEmpty()) {
             for (PdfListDetailEntity detailEntity : updatedEntity.getPdfListDetailMap().values()) {
-                updatedEntity.setTariffTotalAmount(updatedEntity.getTariffTotalAmount().add(detailEntity.getTariff()));
-                updatedEntity.setCountryExciseTaxTotalAmount(updatedEntity.getCountryExciseTaxTotalAmount().add(detailEntity.getCountryExciseTaxAmount()));
-                updatedEntity.setLocalExciseTaxTotalAmount(updatedEntity.getLocalExciseTaxTotalAmount().add(detailEntity.getLocalExciseTaxAmount()));
+                if (detailEntity.getTariff() != null) {
+                    updatedEntity.setTariffTotalAmount(updatedEntity.getTariffTotalAmount().add(detailEntity.getTariff()));
+                }
+                if (detailEntity.getCountryExciseTaxAmount() != null) {
+                    updatedEntity.setCountryExciseTaxTotalAmount(updatedEntity.getCountryExciseTaxTotalAmount().add(detailEntity.getCountryExciseTaxAmount()));
+                }
+                if (detailEntity.getLocalExciseTaxAmount() != null) {
+                    updatedEntity.setLocalExciseTaxTotalAmount(updatedEntity.getLocalExciseTaxTotalAmount().add(detailEntity.getLocalExciseTaxAmount()));
+                }
             }
         }
 

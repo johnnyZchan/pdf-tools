@@ -212,7 +212,8 @@ public class PdfFileServiceImpl implements PdfFileService {
                     // 单号、总申报价值USD、申报运费USD、品名1美金申报价值是必须项
                     entity = new PdfListEntity();
                     if (StringUtils.isBlank(awb)) {
-                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, "单号");
+//                        throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "单号"));
+                        continue;
                     }
                     entity.setAwb(awb);
                     entity.setAwbReplace(awbReplace);
