@@ -22,13 +22,13 @@ public interface PdfListMapper {
             "declare_total_amount_usd as declareTotalAmountUsd, declare_freight_amount_usd as declareFreightAmountUsd, clearance_amount as clearanceAmount," +
             "bpr_amount as bprAmount, tariff, excise_tax as exciseTax, local_excise_tax as localExciseTax, tax_total_amount as taxTotalAmount,usd_jpy_exchange_rate as usdJpyExchangeRate," +
             "tariff_total_amount as tariffTotalAmount, country_excise_tax_total_amount as countryExciseTaxTotalAmount, local_excise_tax_total_amount as localExciseTaxTotalAmount," +
-            "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime, permission_time as permissionTime";
+            "make_status as makeStatus, make_time as makeTime, del_status as delStatus, create_time as createTime, permission_time as permissionTime, importer";
 
     public static final String ADD_COLUMNS = "pdf_id, type, awb, awb_replace, num, weight," +
             "declare_total_amount_usd, declare_freight_amount_usd, clearance_amount," +
             "bpr_amount, tariff, excise_tax, local_excise_tax, tax_total_amount,usd_jpy_exchange_rate," +
             "tariff_total_amount, country_excise_tax_total_amount, local_excise_tax_total_amount," +
-            "make_status, make_time, del_status, create_time, permission_time";
+            "make_status, make_time, del_status, create_time, permission_time, importer";
 
     @Select("select " + COLUMNS + " from pdf_list where pdf_id=#{id} and del_status=" + DEL_STATUS_NO)
     PdfListEntity findById(String id);
@@ -56,14 +56,14 @@ public interface PdfListMapper {
             " clearance_amount=#{clearanceAmount}, bpr_amount=#{bprAmount}, tariff=#{tariff}, excise_tax=#{exciseTax}, local_excise_tax=#{localExciseTax}," +
             " tax_total_amount=#{taxTotalAmount}, usd_jpy_exchange_rate=#{usdJpyExchangeRate}," +
             " tariff_total_amount=#{tariffTotalAmount}, country_excise_tax_total_amount=#{countryExciseTaxTotalAmount}, local_excise_tax_total_amount=#{localExciseTaxTotalAmount}," +
-            " make_status=#{makeStatus}, make_time=#{makeTime}, permission_time=#{permissionTime}" +
+            " make_status=#{makeStatus}, make_time=#{makeTime}, permission_time=#{permissionTime}, importer=#{importer}" +
             " where pdf_id=#{pdfId}")
     void update(PdfListEntity pdfListEntity);
 
     @Insert("insert into pdf_list(" + ADD_COLUMNS + ")" +
             " values(#{pdfId}, #{type}, #{awb}, #{awbReplace}, #{num}, #{weight}, #{declareTotalAmountUsd}, #{declareFreightAmountUsd}," +
             " #{clearanceAmount}, #{bprAmount}, #{tariff}, #{exciseTax}, #{localExciseTax}, #{taxTotalAmount}, #{usdJpyExchangeRate}," +
-            " #{tariffTotalAmount}, #{countryExciseTaxTotalAmount}, #{localExciseTaxTotalAmount}, #{makeStatus}, #{makeTime}, #{delStatus}, now(), #{permissionTime})")
+            " #{tariffTotalAmount}, #{countryExciseTaxTotalAmount}, #{localExciseTaxTotalAmount}, #{makeStatus}, #{makeTime}, #{delStatus}, now(), #{permissionTime}, #{importer})")
     void save(PdfListEntity pdfListEntity);
 
 }

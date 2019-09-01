@@ -67,6 +67,9 @@ public class PdfListEntity {
     private Timestamp createTime;
     private Timestamp permissionTime;
 
+    // 进口商
+    private String importer;
+
     private Map<String, PdfListDetailEntity> pdfListDetailMap;
 
     public void setDetail(String fieldCategory, String fieldName, Object value) {

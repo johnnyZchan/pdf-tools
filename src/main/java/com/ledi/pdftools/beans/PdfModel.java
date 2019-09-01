@@ -30,4 +30,5 @@ public class PdfModel {
     private Integer makeStatus;
     private Timestamp makeTime;
     private Timestamp permissionTime;
+    private String importer;
 }

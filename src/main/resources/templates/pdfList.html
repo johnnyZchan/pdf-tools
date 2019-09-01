@@ -80,6 +80,7 @@
                 <th>地方消費税</th>
                 <th>納税額合計</th>
                 <th>通貨レート USD</th>
+                <th></th>
 
                 <th></th>
                 <th></th>
@@ -106,6 +107,7 @@
                 <th>地方消费税</th>
                 <th>税金总计</th>
                 <th>美元日元汇率</th>
+                <th>进口商</th>
 
                 <th>关税合计</th>
                 <th>国内消费税合计</th>
@@ -377,6 +379,15 @@
                     className: "column-vertical-top",
                     targets : 19
                 },
+                // <th>进口商</th>
+                {
+                    render : function(data, type, row, meta) {
+                        return createColumnHtml(row, "importer");
+                    },
+                    width: "300px",
+                    className: "column-vertical-top",
+                    targets : 20
+                },
 
                 // <th>关税合计</th>
                 {
@@ -385,7 +396,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 20
+                    targets : 21
                 },
                 // <th>国内消费税合计</th>
                 {
@@ -394,7 +405,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 21
+                    targets : 22
                 },
                 // <th>地方消费税合计</th>
                 {
@@ -403,7 +414,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 22
+                    targets : 23
                 }
             ],
             language : {
