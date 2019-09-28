@@ -73,6 +73,7 @@
                 <th>貨物重量</th>
                 <th>仕入書価格</th>
                 <th>運賃</th>
+                <th></th>
                 <th>通関金額</th>
                 <th>BPR合計</th>
                 <th>関税</th>
@@ -99,7 +100,8 @@
                 <th>件数</th>
                 <th>重量</th>
                 <th>总申报价值USD</th>
-                <th>申报运费USD</th>
+                <th>申报运费</th>
+                <th>申报运费单位</th>
                 <th>通关金额</th>
                 <th>BPR合计</th>
                 <th>关税</th>
@@ -307,7 +309,7 @@
                     className: "column-vertical-top",
                     targets : 11
                 },
-                // <th>申报运费USD</th>
+                // <th>申报运费</th>
                 {
                     render : function(data, type, row, meta) {
                         return createColumnHtml(row, "declareFreightAmountUsd");
@@ -316,6 +318,15 @@
                     className: "column-vertical-top",
                     targets : 12
                 },
+                // <th>申报运费单位</th>
+                {
+                    render : function(data, type, row, meta) {
+                        return createColumnHtml(row, "declareFreightAmountUnit");
+                    },
+                    width: "140px",
+                    className: "column-vertical-top",
+                    targets : 13
+                },
                 // <th>通关金额</th>
                 {
                     render : function(data, type, row, meta) {
@@ -323,7 +334,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 13
+                    targets : 14
                 },
                 // <th>BPR合计</th>
                 {
@@ -332,7 +343,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 14
+                    targets : 15
                 },
                 // <th>关税</th>
                 {
@@ -341,7 +352,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 15
+                    targets : 16
                 },
                 // <th>消费税</th>
                 {
@@ -350,7 +361,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 16
+                    targets : 17
                 },
                 // <th>地方消费税</th>
                 {
@@ -359,7 +370,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 17
+                    targets : 18
                 },
                 // <th>税金总计</th>
                 {
@@ -368,7 +379,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 18
+                    targets : 19
                 },
                 // <th>美元日元汇率</th>
                 {
@@ -377,7 +388,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 19
+                    targets : 20
                 },
                 // <th>进口商</th>
                 {
@@ -386,7 +397,7 @@
                     },
                     width: "300px",
                     className: "column-vertical-top",
-                    targets : 20
+                    targets : 21
                 },
 
                 // <th>关税合计</th>
@@ -396,7 +407,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 21
+                    targets : 22
                 },
                 // <th>国内消费税合计</th>
                 {
@@ -405,7 +416,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 22
+                    targets : 23
                 },
                 // <th>地方消费税合计</th>
                 {
@@ -414,7 +425,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 23
+                    targets : 24
                 }
             ],
             language : {

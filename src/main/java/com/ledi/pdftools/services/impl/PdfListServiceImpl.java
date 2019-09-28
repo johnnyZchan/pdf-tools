@@ -420,6 +420,7 @@ public class PdfListServiceImpl implements PdfListService {
         model.setWeight(entity.getWeight());
         model.setDeclareTotalAmountUsd(entity.getDeclareTotalAmountUsd());
         model.setDeclareFreightAmountUsd(entity.getDeclareFreightAmountUsd());
+        model.setDeclareFreightAmountUnit(entity.getDeclareFreightAmountUnit());
         model.setClearanceAmount(entity.getClearanceAmount());
         model.setBprAmount(entity.getBprAmount());
         model.setTariff(entity.getTariff());

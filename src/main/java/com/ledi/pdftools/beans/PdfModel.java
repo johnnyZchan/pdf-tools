@@ -17,6 +17,7 @@ public class PdfModel {
     private BigDecimal weight;
     private BigDecimal declareTotalAmountUsd;
     private BigDecimal declareFreightAmountUsd;
+    private String declareFreightAmountUnit;
     private BigDecimal clearanceAmount;
     private BigDecimal bprAmount;
     private BigDecimal tariff;

@@ -40,6 +40,8 @@ public class PdfListEntity {
     private BigDecimal declareTotalAmountUsd;
     // 申报运费USD
     private BigDecimal declareFreightAmountUsd;
+    // 申报运费单位
+    private String declareFreightAmountUnit;
     // 通关金额
     private BigDecimal clearanceAmount;
     // BPR合计

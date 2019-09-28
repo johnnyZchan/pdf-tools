@@ -160,6 +160,7 @@ public class PdfFileServiceImpl implements PdfFileService {
                     Double weight = null;
                     Double declareTotalAmountUsd = null;
                     Double declareFreightAmountUsd = null;
+                    String declareFreightAmountUnit = null;
                     Double prod1DeclareAmountUsd = null;
                     Double prod2DeclareAmountUsd = null;
                     Double prod3DeclareAmountUsd = null;
@@ -184,27 +185,29 @@ public class PdfFileServiceImpl implements PdfFileService {
                         declareTotalAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(4));
                         // 申报运费USD
                         declareFreightAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(5));
+                        // 申报运费单位
+                        declareFreightAmountUnit = DataUtil.getExcelCellStringValue(row.getCell(6));
                         // 品名1美⾦申报价值
-                        prod1DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(6));
+                        prod1DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(7));
                         // 品名2美⾦申报价值
-                        prod2DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(7));
+                        prod2DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(8));
                         // 品名3美⾦申报价值
-                        prod3DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(8));
+                        prod3DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(9));
 
                         // 品名4美⾦申报价值
-                        prod4DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(9));
+                        prod4DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(10));
                         // 品名5美⾦申报价值
-                        prod5DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(10));
+                        prod5DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(11));
                         // 品名6美⾦申报价值
-                        prod6DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(11));
+                        prod6DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(12));
                         // 品名7美⾦申报价值
-                        prod7DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(12));
+                        prod7DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(13));
                         // 品名8美⾦申报价值
-                        prod8DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(13));
+                        prod8DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(14));
                         // 品名9美⾦申报价值
-                        prod9DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(14));
+                        prod9DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(15));
                         // 品名10美⾦申报价值
-                        prod10DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(15));
+                        prod10DeclareAmountUsd = DataUtil.getExcelCellDoubleValue(row.getCell(16));
                     } catch (Exception e) {
                         log.warn("Excel数据格式不正确", e);
                     }
@@ -230,6 +233,10 @@ public class PdfFileServiceImpl implements PdfFileService {
                     if (declareFreightAmountUsd == null) {
                         throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "申报运费USD"));
                     }
+                    if (StringUtils.isNotBlank(declareFreightAmountUnit)) {
+                        entity.setDeclareFreightAmountUnit(declareFreightAmountUnit);
+                    }
+
                     entity.setDeclareFreightAmountUsd(new BigDecimal(declareFreightAmountUsd.toString()));
                     if (prod1DeclareAmountUsd == null) {
                         throw new ServiceException(CodeInfo.CODE_PARAMS_NOT_NULL, MessageUtil.getMessage(CodeInfo.CODE_PARAMS_NOT_NULL, "品名1美金申报价值"));
@@ -835,7 +842,8 @@ public class PdfFileServiceImpl implements PdfFileService {
         result.add(new ExportColumnModel("件数", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "num"));
         result.add(new ExportColumnModel("重量", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "weight"));
         result.add(new ExportColumnModel("总申报价值USD", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareTotalAmountUsd"));
-        result.add(new ExportColumnModel("申报运费USD", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightAmountUsd"));
+        result.add(new ExportColumnModel("申报运费", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightAmountUsd"));
+        result.add(new ExportColumnModel("申报运费单位", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightAmountUnit"));
         result.add(new ExportColumnModel("通关金额", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "clearanceAmount"));
         result.add(new ExportColumnModel("BPR合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "bprAmount"));
         result.add(new ExportColumnModel("关税", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "tariff"));
