@@ -536,11 +536,13 @@ public class PdfListServiceImpl implements PdfListService {
                     // 品名X国内消费税额基数=品名X国内消费税，按千位向下取整
                     countryExciseTaxBase = DataUtil.round(countryExciseTax, 1000);
                     // 品名X国内消费税金额=品名X国内消费税额基数*6.3%
-                    countryExciseTaxAmount = countryExciseTaxBase.multiply(new BigDecimal(0.063));
+                    // 2019.10.1起改成7.8%
+                    countryExciseTaxAmount = countryExciseTaxBase.multiply(new BigDecimal(0.078));
                     // 品名X地方消费税基数=品名X国内消费税金额，按百位向下取整
                     localExciseTaxBase = DataUtil.round(countryExciseTaxAmount, 100);
                     // 品名X地方消费税金额=品名X地方消费税基数*17/63
-                    localExciseTaxAmount = (localExciseTaxBase.multiply(new BigDecimal(17))).divide(new BigDecimal(63), 0, BigDecimal.ROUND_HALF_UP);
+                    // 2019.10.1起改成22/78
+                    localExciseTaxAmount = (localExciseTaxBase.multiply(new BigDecimal(22))).divide(new BigDecimal(78), 0, BigDecimal.ROUND_HALF_UP);
                 }
                 updatedEntity.setDetail(fieldCategory, "tariffBase", tariffBase);
                 updatedEntity.setDetail(fieldCategory, "tariff", tariff);
