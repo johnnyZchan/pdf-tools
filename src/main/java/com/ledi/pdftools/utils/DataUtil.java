@@ -68,7 +68,8 @@ public class DataUtil {
 
     public static BigDecimal round(BigDecimal value, int digit) {
         if (value != null) {
-            return new BigDecimal((value.intValue() / digit) * digit);
+            int intVal = value.setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            return new BigDecimal((intVal / digit) * digit);
         }
 
         return value;
