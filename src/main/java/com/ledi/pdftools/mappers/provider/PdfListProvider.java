@@ -68,6 +68,13 @@ public class PdfListProvider extends BaseProvider {
                     sql.append(" and permission_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionEndTime, "yyyy-MM-dd HH:mm:ss")));
                 }
             }
+
+            if (conditions.containsKey("importer")) {
+                String importer = this.obj2String(conditions.get("importer"));
+                if (StringUtils.isNotBlank(importer)) {
+                    sql.append(" and importer like " + this.getSqlStringLikeVal(importer));
+                }
+            }
         }
         if (StringUtils.isNotBlank(orderSql)) {
             sql.append(" order by " + orderSql);
@@ -132,6 +139,13 @@ public class PdfListProvider extends BaseProvider {
                 Timestamp permissionEndTime = this.obj2Timestamp(conditions.get("permissionEndTime"));
                 if (permissionEndTime != null) {
                     sql.append(" and permission_time <= " + this.getSqlStringEqualVal(DataUtil.formatTimestamp2String(permissionEndTime, "yyyy-MM-dd HH:mm:ss")));
+                }
+            }
+
+            if (conditions.containsKey("importer")) {
+                String importer = this.obj2String(conditions.get("importer"));
+                if (StringUtils.isNotBlank(importer)) {
+                    sql.append(" and importer like " + this.getSqlStringLikeVal(importer));
                 }
             }
         }

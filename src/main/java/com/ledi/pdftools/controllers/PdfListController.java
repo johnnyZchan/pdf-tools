@@ -34,12 +34,13 @@ public class PdfListController extends BaseController {
                                     @RequestParam(name = "makeEndTime", required = false) String makeEndTime,
                                     @RequestParam(name = "permissionStartTime", required = false) String permissionStartTime,
                                     @RequestParam(name = "permissionEndTime", required = false) String permissionEndTime,
+                                    @RequestParam(name = "importer", required = false) String importer,
                                     @RequestParam(name = "start", defaultValue = "0") Integer start,
                                     @RequestParam(name = "length", defaultValue = "10") Integer length) {
-        int totalCount = pdfListService.getPdfListCount(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime);
+        int totalCount = pdfListService.getPdfListCount(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, importer);
         List<PdfListModel> dataList = new ArrayList<PdfListModel>();
         if (totalCount > 0) {
-            dataList = pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, start, length);
+            dataList = pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, importer, start, length);
         }
 
         return this.getOkResponseModel(totalCount, dataList);
@@ -53,8 +54,9 @@ public class PdfListController extends BaseController {
                               @RequestParam(name = "makeStartTime", required = false) String makeStartTime,
                               @RequestParam(name = "makeEndTime", required = false) String makeEndTime,
                               @RequestParam(name = "permissionStartTime", required = false) String permissionStartTime,
-                              @RequestParam(name = "permissionEndTime", required = false) String permissionEndTime) throws Exception {
-        List<PdfListModel> dataList = this.pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, null, null);
+                              @RequestParam(name = "permissionEndTime", required = false) String permissionEndTime,
+                              @RequestParam(name = "importer", required = false) String importer) throws Exception {
+        List<PdfListModel> dataList = this.pdfListService.getPdfModelList(awb, makeStatus, makeStartTime, makeEndTime, permissionStartTime, permissionEndTime, importer, null, null);
         HSSFWorkbook wb = this.pdfFileService.getExportWorkbook(type, dataList);
         try {
             String fileName = "PdfDataList.xls";

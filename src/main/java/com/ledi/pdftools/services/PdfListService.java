@@ -9,12 +9,12 @@ import java.util.List;
 
 public interface PdfListService {
 
-    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime);
-    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, Integer start, Integer length);
+    public int getPdfListCount(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, String importer);
+    public List<PdfListEntity> getPdfList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, String importer, Integer start, Integer length);
     public List<PdfListEntity> getPdfList(List<String> awbList, int type);
     public List<PdfListEntity> getPdfList(List<String> awbList, int type, Integer makeStatus);
 
-    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, Integer start, Integer length);
+    public List<PdfListModel> getPdfModelList(String awb, Integer makeStatus, String makeStartTime, String makeEndTime, String permissionStartTime, String permissionEndTime, String importer, Integer start, Integer length);
 
     public void addPdf(String pdfFileId, boolean coverFlg);
     public List<SkipModel> addPdf(List<String> pdfFileIdList, boolean coverFlg);

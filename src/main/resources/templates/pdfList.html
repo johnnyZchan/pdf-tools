@@ -33,6 +33,8 @@
         <input type="text" placeholder="许可开始时间" id="search_permission_startTime">
         <span> 至 </span>
         <input type="text" placeholder="许可结束时间" id="search_permission_endTime">
+
+        <input type="text" placeholder="进口商" id="search_importer">
         <button id="search_btn">查询</button>
     </div>
 </div>
@@ -184,7 +186,8 @@
                     makeStartTime: $("#search_make_startTime").val(),
                     makeEndTime: $("#search_make_endTime").val(),
                     permissionStartTime: $("#search_permission_startTime").val(),
-                    permissionEndTime: $("#search_permission_endTime").val()
+                    permissionEndTime: $("#search_permission_endTime").val(),
+                    importer: $("#search_importer").val()
                 },
                 dataFilter: function(data){
                     var json = jQuery.parseJSON(data);
@@ -949,7 +952,8 @@
                 makeStartTime: $("#search_make_startTime").val(),
                 makeEndTime: $("#search_make_endTime").val(),
                 permissionStartTime: $("#search_permission_startTime").val(),
-                permissionEndTime: $("#search_permission_endTime").val()
+                permissionEndTime: $("#search_permission_endTime").val(),
+                importer: $("#search_importer").val()
             };
             pdfListTable.settings()[0].ajax.data = param;
             pdfListTable.ajax.reload();
@@ -1053,8 +1057,9 @@
         var makeEndTime = $("#search_make_endTime").val();
         var permissionStartTime = $("#search_permission_startTime").val();
         var permissionEndTime = $("#search_permission_endTime").val();
+        var importer = $("#search_importer").val();
 
-        window.location.href = "pdf/list/export?type=" + type + "&awb=" + awb + "&makeStatus=" + makeStatus + "&makeStartTime=" + makeStartTime + "&makeEndTime=" + makeEndTime + "&permissionStartTime=" + permissionStartTime + "&permissionEndTime=" + permissionEndTime;
+        window.location.href = "pdf/list/export?type=" + type + "&awb=" + awb + "&makeStatus=" + makeStatus + "&makeStartTime=" + makeStartTime + "&makeEndTime=" + makeEndTime + "&permissionStartTime=" + permissionStartTime + "&permissionEndTime=" + permissionEndTime + "&importer=" + importer;
     }
 </script>
 </html>
