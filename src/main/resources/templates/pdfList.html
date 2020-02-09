@@ -84,6 +84,8 @@
                 <th>納税額合計</th>
                 <th>通貨レート USD</th>
                 <th></th>
+                <th></th>
+                <th></th>
 
                 <th></th>
                 <th></th>
@@ -112,6 +114,8 @@
                 <th>税金总计</th>
                 <th>美元日元汇率</th>
                 <th>进口商</th>
+                <th>申报贸易方式</th>
+                <th>申报币种</th>
 
                 <th>关税合计</th>
                 <th>国内消费税合计</th>
@@ -402,6 +406,24 @@
                     className: "column-vertical-top",
                     targets : 21
                 },
+                // <th>申报贸易方式</th>
+                {
+                    render : function(data, type, row, meta) {
+                        return createColumnHtml(row, "declareFreightTradeTerms");
+                    },
+                    width: "120px",
+                    className: "column-vertical-top",
+                    targets : 22
+                },
+                // <th>申报币种</th>
+                {
+                    render : function(data, type, row, meta) {
+                        return createColumnHtml(row, "declareFreightCurrency");
+                    },
+                    width: "80px",
+                    className: "column-vertical-top",
+                    targets : 23
+                },
 
                 // <th>关税合计</th>
                 {
@@ -410,7 +432,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 22
+                    targets : 24
                 },
                 // <th>国内消费税合计</th>
                 {
@@ -419,7 +441,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 23
+                    targets : 25
                 },
                 // <th>地方消费税合计</th>
                 {
@@ -428,7 +450,7 @@
                     },
                     width: "140px",
                     className: "column-vertical-top",
-                    targets : 24
+                    targets : 26
                 }
             ],
             language : {

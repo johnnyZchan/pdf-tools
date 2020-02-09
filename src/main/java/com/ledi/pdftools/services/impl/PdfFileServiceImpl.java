@@ -852,6 +852,8 @@ public class PdfFileServiceImpl implements PdfFileService {
         result.add(new ExportColumnModel("税金合计", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "taxTotalAmount"));
         result.add(new ExportColumnModel("美元日元汇率", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "usdJpyExchangeRate"));
         result.add(new ExportColumnModel("进口商", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "importer"));
+        result.add(new ExportColumnModel("申报贸易方式", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightTradeTerms"));
+        result.add(new ExportColumnModel("申报币种", PdfDataCoordinateEntity.FIELD_TYPE_LIST, null, "declareFreightCurrency"));
 
         int index = 1;
         int max = 10;

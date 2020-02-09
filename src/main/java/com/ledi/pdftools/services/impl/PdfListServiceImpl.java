@@ -437,6 +437,8 @@ public class PdfListServiceImpl implements PdfListService {
         model.setMakeTime(entity.getMakeTime());
         model.setPermissionTime(entity.getPermissionTime());
         model.setImporter(entity.getImporter());
+        model.setDeclareFreightTradeTerms(entity.getDeclareFreightTradeTerms());
+        model.setDeclareFreightCurrency(entity.getDeclareFreightCurrency());
 
         return model;
     }

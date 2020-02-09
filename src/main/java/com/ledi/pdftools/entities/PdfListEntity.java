@@ -71,6 +71,10 @@ public class PdfListEntity {
 
     // 进口商
     private String importer;
+    // 申报贸易条款
+    private String declareFreightTradeTerms;
+    // 申报币种
+    private String declareFreightCurrency;
 
     private Map<String, PdfListDetailEntity> pdfListDetailMap;
 

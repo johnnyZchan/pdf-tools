@@ -32,4 +32,6 @@ public class PdfModel {
     private Timestamp makeTime;
     private Timestamp permissionTime;
     private String importer;
+    private String declareFreightTradeTerms;
+    private String declareFreightCurrency;
 }
