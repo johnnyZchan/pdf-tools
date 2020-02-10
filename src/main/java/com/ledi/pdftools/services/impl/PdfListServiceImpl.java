@@ -594,5 +594,8 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setMakeStatus(PdfListEntity.MAKE_STATUS_NO);
         updatedEntity.setDelStatus(PdfListEntity.DEL_STATUS_NO);
         updatedEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+
+        updatedEntity.setDeclareFreightTradeTerms(originalEntity.getDeclareFreightTradeTerms());
+        updatedEntity.setDeclareFreightCurrency(originalEntity.getDeclareFreightCurrency());
     }
 }
