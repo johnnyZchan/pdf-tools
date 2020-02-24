@@ -439,6 +439,7 @@ public class PdfListServiceImpl implements PdfListService {
         model.setImporter(entity.getImporter());
         model.setDeclareFreightTradeTerms(entity.getDeclareFreightTradeTerms());
         model.setDeclareFreightCurrency(entity.getDeclareFreightCurrency());
+        model.setExchangeRateCurrency(entity.getExchangeRateCurrency());
 
         return model;
     }
@@ -475,8 +476,8 @@ public class PdfListServiceImpl implements PdfListService {
         if (originalEntity.getBprAmount() != null) {
             updatedEntity.setBprAmount(updatedEntity.getClearanceAmount());
         }
-        // 美元日元汇率用原始数据
-        updatedEntity.setUsdJpyExchangeRate(originalEntity.getUsdJpyExchangeRate());
+        // 美元日元汇率用原始数据 (2020-02-24 汇率现在可以通过excel上传，而且是必须项)
+//        updatedEntity.setUsdJpyExchangeRate(originalEntity.getUsdJpyExchangeRate());
 
         /**
          * 品名1是一定有的，2和3不一定有，2和3的判断标准就是判断美金申报价值是否为空
@@ -596,6 +597,5 @@ public class PdfListServiceImpl implements PdfListService {
         updatedEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
         updatedEntity.setDeclareFreightTradeTerms(originalEntity.getDeclareFreightTradeTerms());
-        updatedEntity.setDeclareFreightCurrency(originalEntity.getDeclareFreightCurrency());
     }
 }

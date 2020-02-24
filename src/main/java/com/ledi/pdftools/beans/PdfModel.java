@@ -34,4 +34,5 @@ public class PdfModel {
     private String importer;
     private String declareFreightTradeTerms;
     private String declareFreightCurrency;
+    private String exchangeRateCurrency;
 }

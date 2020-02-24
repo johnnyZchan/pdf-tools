@@ -75,6 +75,8 @@ public class PdfListEntity {
     private String declareFreightTradeTerms;
     // 申报币种
     private String declareFreightCurrency;
+    // 汇率币种
+    private String exchangeRateCurrency;
 
     private Map<String, PdfListDetailEntity> pdfListDetailMap;
 
